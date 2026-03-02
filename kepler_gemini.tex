@@ -1,0 +1,124 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\geometry{margin=1in}
+
+\title{The War with Mars: From Kepler's Geometry to AI and Bayesian Inference}
+\author{Historical and Computational Analysis}
+\date{\today}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstset{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\small\ttfamily,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\begin{document}
+
+\maketitle
+
+\section{Historical Calibration: Kepler and Brahe}
+Johannes Kepler inherited the observational data of Tycho Brahe, which achieved a then-unprecedented precision of approximately $2'$ (arcminutes) \cite{1.2.7}. Kepler's task was to calibrate a model to fit the heliocentric coordinates of Mars. 
+
+Initially, Kepler utilized the \textbf{Vicarious Hypothesis}---an eccentric circle with an equant point. While this model predicted longitudes within $2'$, it failed to predict distances correctly \cite{1.2.8}. The ultimate "calibration" was driven by a systematic \textbf{8-arcminute error} in the circular model, which led Kepler to abandon perfect circles in favor of the ellipse \cite{1.2.1, 1.2.8}.
+
+\section{The Parameterized Mathematical Model}
+Kepler's model effectively optimized a polar representation of planetary motion. In modern notation, the parameterized model he used is:
+
+\begin{equation}
+r(\theta) = \frac{a(1 - e^2)}{1 + e \cos(\theta)}
+\end{equation}
+
+Where the primary parameters for calibration include:
+\begin{itemize}
+    \item \textbf{$a$ (Semi-major axis):} The scale of the orbit (approx. 1.524 AU for Mars) \cite{1.2.1}.
+    \item \textbf{$e$ (Eccentricity):} The degree of elongation (approx. 0.0934 for Mars) \cite{1.5.7}.
+    \item \textbf{$\theta$ (True Anomaly):} The angular position relative to perihelion.
+    \item \textbf{$M$ (Mean Anomaly):} The time-varying parameter related to $E$ (Eccentric Anomaly) via $M = E - e \sin E$ \cite{1.2.1}.
+\end{itemize}
+
+\section{Modern Statistical Recovery}
+Modern work treats Kepler's discovery as a problem of inference and automated discovery.
+
+\subsection{Bayesian and Frequentist Approaches}
+In a \textbf{Frequentist} framework, researchers apply non-linear least squares to the Rudolphine Tables, minimizing residuals between observed and predicted positions \cite{1.5.7}. In a \textbf{Bayesian} framework, Markov Chain Monte Carlo (MCMC) sampling is used to determine the posterior distribution of $e$ and $a$. 
+
+Below is a Python snippet illustrating a Bayesian recovery using the \texttt{emcee} library:
+
+\begin{lstlisting}[language=Python]
+import numpy as np
+import emcee
+
+# Kepler's Elliptical Model
+def model(theta, e, a=1.524):
+    return (a * (1 - e**2)) / (1 + e * np.cos(theta))
+
+# Bayesian Probability Functions
+def log_likelihood(e, theta, r, sigma):
+    if not (0.0 < e < 1.0): return -np.inf
+    r_pred = model(theta, e)
+    return -0.5 * np.sum(((r - r_pred) / sigma)**2)
+
+# MCMC Sampler Setup
+nwalkers, ndim = 32, 1
+p0 = np.random.rand(nwalkers, ndim)
+sampler = emcee.EnsembleSampler(nwalkers, ndim, log_likelihood, args=(theta_obs, r_obs, 0.008))
+sampler.run_mcmc(p0, 1000)
+\end{lstlisting}
+
+\section{AI and Symbolic Regression}
+Modern AI techniques, such as \textbf{Symbolic Regression (SR)}, can rediscover Kepler’s laws from raw data without prior geometric assumptions \cite{1.3.1, 1.5.4}.
+
+\subsection{AI Feynman and Pareto Frontiers}
+Tools like \textit{AI Feynman} (MIT) search for the most "parsimonious" equation by exploring a \textbf{Pareto Frontier}---balancing model accuracy against mathematical complexity \cite{1.5.9}. The AI identifies the ellipse because it provides a massive reduction in complexity compared to epicyclic models while maintaining high accuracy \cite{1.5.8}.
+
+\subsection{Noise Handling: Neural Smoothing}
+To handle the $2'$ jitter in Brahe's data, modern AI uses \textbf{Neural Smoothing} \cite{1.3.5}. A neural network is first trained to interpolate the noisy data; the SR algorithm then queries this smoothed "denoised" manifold to extract the symbolic law $r(\theta)$ \cite{1.3.5}.
+
+\section{Comparison Summary}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Feature} & \textbf{Kepler (1605)} & \textbf{Modern AI/Stats} \\ \midrule
+Optimization & Manual Iteration & MCMC / Gradient Descent \\
+Error Metric & Maximum Deviation & Log-Likelihood / MDL \cite{1.3.5} \\
+Model Search & Geometric Intuition & Symbolic Regression \cite{1.5.8} \\
+Noise Filtering & 8-minute threshold & Neural Interpolation \cite{1.3.5} \\ \bottomrule
+\end{tabular}
+\end{center}
+
+\begin{thebibliography}{9}
+\bibitem{1.2.1} Galileo Project, "Johannes Kepler and Tycho Brahe," University of Virginia.
+\bibitem{1.2.7} "Kepler's Discovery of the Elliptical Orbit of Mars," St. John's Digital Archives.
+\bibitem{1.3.5} Qeios, "Kepler: The Pioneer of Data Science and AI," 2025.
+\bibitem{1.5.7} arXiv:2312.09766, "Celestial Machine Learning," 2023.
+\bibitem{1.5.8} Wikipedia, "Symbolic Regression."
+\bibitem{1.5.9} arXiv:2312.09766, "Emulating Kepler's discovery with AI Feynman."
+\end{thebibliography}
+
+\end{document}

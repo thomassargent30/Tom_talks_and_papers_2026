@@ -1,0 +1,101 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\geometry{margin=1in}
+
+\title{The War with Mars: From Kepler's Geometry to Bayesian Inference}
+\author{Historical and Computational Analysis}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Historical Calibration: Kepler and Brahe}
+Johannes Kepler inherited the observational data of Tycho Brahe, which achieved a precision of roughly $2'$ (arcminutes). Kepler's task was to calibrate the parameters of the Tychonic model to fit the heliocentric coordinates of Mars. 
+
+Kepler's breakthrough involved the rejection of the \textbf{Vicarious Hypothesis}---a model utilizing an eccentric circle and an equant point. While this model could predict longitudes within $2'$, it failed to predict distances correctly. Kepler’s ultimate calibration was driven by the "8-minute error," a small but systematic residual that the circular model could not explain.
+
+\section{The Parameterized Model}
+Kepler's "War with Mars" effectively sought to optimize a polar representation of planetary motion. The model can be parameterized as:
+
+\begin{equation}
+r(\theta) = \frac{a(1 - e^2)}{1 + e \cos(\theta)}
+\end{equation}
+
+Where the primary parameters for calibration include:
+\begin{itemize}
+    \item \textbf{$a$ (Semi-major axis):} The scale of the orbit.
+    \item \textbf{$e$ (Eccentricity):} The degree of elongation.
+    \item \textbf{$\theta$ (True Anomaly):} The angular position relative to perihelion.
+    \item \textbf{$M$ (Mean Anomaly):} Related to time via Kepler's Equation: $M = E - e \sin E$.
+\end{itemize}
+
+\section{Modern Computational Recovery}
+Modern research utilizes these historical data sets to test algorithms in automated scientific discovery and statistical robustification.
+
+\subsection{Bayesian and Frequentist Approaches}
+In a \textbf{Frequentist} framework, recovering Kepler's parameters is treated as a Non-linear Least Squares problem, minimizing the residuals between the observed angular positions and the predicted coordinates.
+
+In a \textbf{Bayesian} framework, we define a likelihood function $P(D | \theta)$ based on Gaussian observational noise. Using Markov Chain Monte Carlo (MCMC) sampling, we can recover the posterior distribution of the eccentricity $e$. For Mars, the posterior is centered at approximately $0.0934$, with a variance directly proportional to the precision of Brahe's original instruments.
+
+\subsection{Implementation via MCMC}
+The following Python logic represents the modern statistical equivalent of Kepler’s iterative search, using the \texttt{emcee} library to sample the parameter space:
+
+\begin{lstlisting}[language=Python, basicstyle=\small\ttfamily, breaklines=true, keywordstyle=\color{blue}]
+# Simplified Bayesian Likelihood for Orbit Eccentricity
+def log_likelihood(e, theta_obs, r_obs, sigma):
+    # Predicted distance based on elliptical model
+    r_pred = (a * (1 - e**2)) / (1 + e * np.cos(theta_obs))
+    return -0.5 * np.sum(((r_obs - r_pred) / sigma)**2)
+\end{lstlisting}
+
+\section{Comparison of Methods}
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Feature} & \textbf{Kepler's Manual Method} & \textbf{Modern Statistical Work} \\ \midrule
+Optimization & Iterative Geometric Trials & MCMC / Gradient Descent \\
+Error Handling & Absolute Residuals ($>8'$) & Log-Likelihood / $\chi^2$ \\
+Model Selection & Physical Intuition & Symbolic Regression / AIC \\ \bottomrule
+\end{tabular}
+\end{center}
+
+\section{AI and Symbolic Regression}
+Recent advancements in "AI Physicists" utilize \textbf{Symbolic Regression (SR)} to recover Kepler's laws without human intervention. Unlike standard neural networks, SR searches the space of mathematical expressions to find the simplest equation that fits Tycho Brahe's observations.
+
+\subsection{Expression Tree Optimization}
+The AI represents candidate models as trees of mathematical operators. Given a dataset of polar coordinates $(r, \theta)$, the algorithm optimizes the fitness function:
+\begin{equation}
+\text{Fitness} = \text{MSE}(y, \hat{y}) + \lambda \cdot \text{Complexity}
+\end{equation}
+where $\lambda$ is a penalty term for model complexity. Through this process, the AI recovers the elliptical form $r = \frac{p}{1+e\cos\theta}$ as the most "parsimonious" explanation of the data.
+
+\subsection{Discovery of the Pareto Frontier}
+By plotting error against complexity, researchers identify the elliptical model as a "kink" in the Pareto frontier. This indicates that the ellipse is not just a fit, but a fundamental law of the system, mimicking Kepler's own transition from the complex epicycles of the Tychonic model to the elegant simplicity of the ellipse.
+
+\section{Noise Robustness and Neural Smoothing}
+A significant challenge in recovering Kepler's parameters from Tycho Brahe's data is the inherent observational noise (approx. $1' - 2'$ arcminutes). Modern AI frameworks, specifically \textit{AI Feynman}, employ a two-step strategy to handle this "jitter."
+
+\subsection{Neural Interpolation}
+Before symbolic search begins, a Neural Network is trained on the raw observations. This network acts as a "noise filter" or "denoiser." By learning the underlying manifold of the planetary path, the network provides a smoothed version of the trajectory, allowing the Symbolic Regression algorithm to focus on the signal rather than the observational error.
+
+\subsection{Information-Theoretic Model Selection}
+To distinguish between a true physical constant and a noise-induced fluctuation, AI systems use the \textbf{Minimum Description Length (MDL)} principle. The "cost" of a model is defined as:
+\begin{equation}
+L(\text{Model}) = L(\text{Hypothesis}) + L(\text{Data | Hypothesis})
+\end{equation}
+Where $L$ represents the number of bits required to describe the model and the residuals. An AI will prefer the elliptical model over a high-degree polynomial because the ellipse provides a much shorter "description length," mirroring Kepler's own preference for mathematical parsimony.
+
+\section{Conclusion}
+Whether through Kepler's manual geometric iterations or modern Bayesian MCMC and AI Feynman's symbolic search, the "War with Mars" remains the foundational case study for data-driven discovery. The transition from circular dogmatism to elliptical reality is now mathematically formalized as a shift from high-residual, high-complexity models to the Pareto-optimal simplicity of Keplerian motion.
+
+
+
+\end{document}

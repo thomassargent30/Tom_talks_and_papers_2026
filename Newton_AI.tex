@@ -1,0 +1,396 @@
+\documentclass[12pt]{article}
+
+\usepackage{amsmath, amssymb}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{parskip}
+\usepackage{microtype}
+
+\geometry{margin=1.2in}
+
+\title{AI Reconstructions of Newton's Gravitational Reasoning:\\
+From Kepler's Laws to Universal Gravitation}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Several recent research programs have asked whether a modern AI system,
+given observational data of the kind available to Newton, could independently
+rediscover the law of universal gravitation.
+This note reviews those efforts, situates them within Newton's original
+mathematical reasoning in the \textit{Principia}, and draws comparisons
+between Newton's geometric method, modern calculus, symbolic regression,
+and Bayesian inference.
+The central finding is that Newton's conceptual chain---area law implies
+central force; harmonic law implies inverse-square dependence; inverse-square
+force implies conic orbits---can be reproduced algorithmically, though the
+epistemological routes differ substantially.
+\end{abstract}
+
+%----------------------------------------------------------------------
+\section{Introduction}
+
+Newton's derivation of universal gravitation is often summarized as
+``fitting an inverse-square law to Kepler's laws,'' but the actual structure
+of the argument in \textit{Principia Mathematica} (1687) is considerably
+richer.
+Newton did not curve-fit data; he built a geometric dynamical theory and
+demonstrated that Kepler's three laws follow as logical consequences of a
+single universal principle.
+
+Two broad categories of modern work revisit this achievement computationally:
+
+\begin{enumerate}
+  \item \textbf{Deep-learning systems} that infer Newtonian gravity from raw
+        trajectory data.
+  \item \textbf{Symbolic regression systems} that search for closed-form force
+        laws consistent with observed dynamics.
+\end{enumerate}
+
+Together they provide a modern lens on a classic question: how much of
+Newton's achievement was data-driven, and how much was conceptual innovation?
+
+%----------------------------------------------------------------------
+\section{Newton's Derivation in the \textit{Principia}}
+
+\subsection{Step A: Kepler's Area Law Implies a Central Force}
+
+Kepler's second law states that a planet sweeps equal areas in equal times.
+Newton reinterpreted this kinematically.
+If no force acts, a body moves in a straight line (Axiom~I).
+Newton showed (Proposition~1, Book~I) by a limiting triangular-area argument
+that, if impulses always point toward a fixed center, the resulting polygonal
+path sweeps equal triangular areas in equal times.
+In the limit of continuous force, equal areas in equal times is therefore
+\emph{equivalent} to the force being directed toward a fixed point.
+
+\textbf{Conclusion:} Kepler's second law implies a \emph{central force}.
+
+\subsection{Step B: Kepler's Harmonic Law Implies an Inverse-Square Force}
+
+Kepler's third law states
+\[
+  T^{2} \propto a^{3},
+\]
+where $T$ is the orbital period and $a$ is the semi-major axis.
+For a circular orbit of radius $r$, the centripetal acceleration is
+\[
+  a_{r} = \frac{v^{2}}{r}, \qquad v = \frac{2\pi r}{T}.
+\]
+Substituting and applying Kepler's third law ($T^{2} = k\,r^{3}$),
+\[
+  a_{r} = \frac{4\pi^{2} r}{T^{2}} = \frac{4\pi^{2} r}{k\,r^{3}}
+         = \frac{4\pi^{2}}{k}\,\frac{1}{r^{2}}.
+\]
+Hence the centripetal acceleration---and therefore the gravitational
+force---falls off as $r^{-2}$.
+
+\textbf{Conclusion:} Kepler's third law implies an \emph{inverse-square
+central force}.
+
+\subsection{Step C: An Inverse-Square Force Produces Elliptical Orbits}
+
+Newton then reversed the logic (Proposition~11, Book~I): assuming a central
+force proportional to $1/r^{2}$, he proved geometrically that the orbit is a
+conic section---an ellipse when the total energy is negative, a parabola when
+it is zero, and a hyperbola when positive.
+This established that the inverse-square law is \emph{equivalent} to Kepler's
+three laws, not merely consistent with them.
+
+\subsection{Step D: Universality---The Moon Test}
+
+Newton compared the gravitational acceleration at Earth's surface with the
+centripetal acceleration of the Moon inferred from its orbital motion.
+Let $r_{\oplus}$ and $r_{\text{Moon}}$ denote the radii of the Earth and the
+Moon's orbit respectively.
+If gravity is inverse-square,
+\[
+  \frac{g_{\text{surface}}}{a_{\text{Moon}}}
+  = \left(\frac{r_{\text{Moon}}}{r_{\oplus}}\right)^{2}.
+\]
+Newton's first calculation disagreed because he used an inaccurate value for
+Earth's radius.
+When Jean Picard's new measurement (1671) became available in England,
+Newton recomputed the ratio and found agreement to within observational error.
+This was the conceptual leap from \emph{solar} gravity to
+\textbf{universal gravitation}: the same force that accelerates a falling
+body near Earth's surface governs the Moon's orbit.
+
+%----------------------------------------------------------------------
+\section{Modern Calculus Reconstruction}
+
+The following is a calculus-based restatement of Newton's reasoning,
+using notation compatible with the AI reconstructions discussed in
+Section~\ref{sec:ai}.
+
+\subsection{Area Law and Angular Momentum Conservation}
+
+Kepler's second law in modern notation:
+\[
+  \frac{dA}{dt} = \tfrac{1}{2}r^{2}\dot\theta = \text{constant} \equiv \tfrac{h}{2},
+\]
+where $h = r^{2}\dot\theta$ is the \emph{specific angular momentum}
+(angular momentum per unit mass).
+Equivalently,
+\[
+  L = m\,r^{2}\dot\theta = m\,h = \text{constant}.
+\]
+The constancy of $h$ means the net tangential acceleration vanishes, i.e.\
+the force is central.
+
+\subsection{Harmonic Law and the Inverse-Square Force}
+
+For a circular orbit the centripetal acceleration satisfies
+$a_{r} = v^{2}/r = 4\pi^{2}r/T^{2}$.
+Kepler's third law gives $T^{2} = k\,r^{3}$, so
+\[
+  a_{r} = \frac{4\pi^{2}}{k}\,\frac{1}{r^{2}}, \qquad
+  F = m\,a_{r} \propto \frac{1}{r^{2}}.
+\]
+
+\subsection{Orbit Equation for a $1/r^{2}$ Force}
+
+Substituting $u = 1/r$ and using $h = r^{2}\dot\theta$, the radial equation
+of motion becomes the \emph{Binet equation},
+\[
+  \frac{d^{2}u}{d\theta^{2}} + u = \frac{GM}{h^{2}},
+\]
+where $M$ is the mass of the attracting body and $G$ is the gravitational
+constant.
+The general solution is
+\[
+  u(\theta) = \frac{GM}{h^{2}}\bigl[1 + e\cos(\theta - \theta_{0})\bigr],
+\]
+or equivalently,
+\[
+  r(\theta) = \frac{p}{1 + e\cos\theta}, \qquad
+  p = \frac{h^{2}}{GM},
+\]
+which is the polar equation of a conic section with semi-latus rectum $p$
+and eccentricity $e$.
+Kepler's third law follows directly: integrating the area swept over one
+orbit,
+\[
+  T^{2} = \frac{4\pi^{2}}{GM}\,a^{3}.
+\]
+This is Kepler's third law with an explicit physical constant $GM$;
+the empirical proportionality constant $k$ is identified as $4\pi^{2}/(GM)$.
+
+\subsection{Comparison: Newton's Geometry vs.\ Modern Calculus}
+
+\begin{table}[h]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{p{3cm} p{5.5cm} p{5.5cm}}
+\toprule
+\textbf{Concept} & \textbf{Newton's Geometric Method} & \textbf{Modern Calculus} \\
+\midrule
+Area law
+  & Equal triangular areas via limiting polygon argument
+  & $h = r^{2}\dot\theta = \text{const}$ \\
+Central force
+  & Force always directed toward the focus
+  & No tangential acceleration: $\ddot\theta + 2\dot r\dot\theta/r = 0$ \\
+Harmonic law
+  & Period--radius ratio for circular orbits
+  & $T^{2} = (4\pi^{2}/GM)\,a^{3}$ \\
+Orbit shape
+  & Conic sections from geometric lemmas (Prop.\ 11, Book~I)
+  & Solution to the Binet equation \\
+Inverse-square law
+  & Derived from harmonic law for circular orbits
+  & Identified from the Binet equation \\
+\bottomrule
+\end{tabular}
+\caption{Newton's geometric method and its modern calculus counterpart.}
+\end{table}
+
+Newton wrote in synthetic geometry largely because calculus was not yet
+widely accepted and he wanted the logical certainty of Euclidean proof.
+Modern reconstructions use differential equations because they are more
+compact, extend naturally to perturbations, and align with how AI systems
+represent dynamics.
+
+%----------------------------------------------------------------------
+\section{AI Reconstructions of Newtonian Gravity}
+\label{sec:ai}
+
+\subsection{Deep Learning: Lemos et al.}
+
+Lemos, Jeffrey, Cranmer, Battaglia, and Ho
+trained a neural network whose architecture encodes the inductive bias of
+classical mechanics (pairwise interactions, conservation laws) and fit it to
+roughly 30 years of real Solar System trajectory data.
+The network learned:
+\begin{itemize}
+  \item the functional form of the gravitational force law,
+  \item the relative masses of planets (which are not directly observed).
+\end{itemize}
+Symbolic regression applied to the learned force representation recovered
+$F \propto 1/r^{2}$, matching Newton's law.
+The network's acceleration vectors pointed toward the Sun (central force),
+and the extracted force law was consistent with the full inverse-square form.
+This is one of the clearest demonstrations that a modern AI system can
+reconstruct Newton's dynamical model from observational trajectory data
+alone, without prior physical knowledge.
+
+\subsection{Concept-Driven Discovery: AI-Newton}
+
+Fang, Jian, Li, and Ma (Peking University) built a system called
+\textit{AI-Newton} that takes raw, multi-experiment data, proposes
+interpretable physical concepts, and generalizes them into universal laws.
+Starting from trajectory data and without being given Kepler's laws or
+Newton's laws, the system:
+\begin{itemize}
+  \item identified central-force behavior from orbital data,
+  \item generalized the force law into a symbolic form consistent with
+        inverse-square gravity,
+  \item rediscovered Newton's second law, conservation of energy, and
+        universal gravitation.
+\end{itemize}
+The conceptual progression---empirical regularities to central force to
+inverse-square law---mirrors Newton's own chain of reasoning, executed
+without human supervision.
+
+\subsection{Symbolic Regression: Eureqa and AI-Feynman}
+
+Symbolic regression systems such as Eureqa (Schmidt \& Lipson, 2009) and
+AI-Feynman (Udrescu \& Tegmark, 2020) search the space of mathematical
+expressions for formulas that minimize prediction error while penalizing
+complexity.
+Eureqa has been used to recover Newtonian force laws from simulated
+dynamical data; AI-Feynman has systematically rediscovered equations from
+the Feynman Lectures on Physics.
+These systems use the structure of the search space (powers, products,
+inverses) analogously to Newton's geometric constructions, and both converge
+on the inverse-square law from trajectory data.
+
+\subsection{Comparison: Newton's Reasoning vs.\ AI Reconstruction}
+
+\begin{table}[h]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{p{3.5cm} p{4.5cm} p{4.5cm}}
+\toprule
+\textbf{Step} & \textbf{Newton} & \textbf{AI/ML Analogue} \\
+\midrule
+Elliptical orbits
+  & Orbits arise from central force plus inertia
+  & Neural networks learn orbital trajectories from data \\
+Equal areas
+  & Implies central force (Prop.\ 1, Book~I)
+  & Learned acceleration vectors point toward the Sun \\
+$T^{2} \propto a^{3}$
+  & Implies inverse-square force
+  & Symbolic regression recovers $F \propto 1/r^{2}$ \\
+Universality
+  & Moon test connects orbital and terrestrial gravity
+  & Multi-body networks infer $GM$ and mass ratios simultaneously \\
+\bottomrule
+\end{tabular}
+\caption{Newton's reasoning and its AI analogues.}
+\end{table}
+
+%----------------------------------------------------------------------
+\section{Perturbations and Multi-Body Dynamics}
+
+Newton recognized that Kepler's laws are approximate because planets
+mutually perturb one another, and he handled this with geometric
+approximations and early perturbation arguments.
+Modern AI systems address the same problem differently: a network trained on
+Solar System data observes that Mars's orbit deviates from a perfect ellipse
+and that these deviations correlate with Jupiter's position.
+The network learns a vector field of accelerations that includes all bodies
+simultaneously, without perturbation theory or series expansions.
+Symbolic regression applied to the learned dynamics can then recover the
+full $N$-body law,
+\[
+  \ddot{\mathbf{r}}_{i} = \sum_{j \neq i} \frac{G m_{j}}{r_{ij}^{2}}\,\hat{\mathbf{r}}_{ij},
+\]
+which Newton could only approximate analytically.
+
+%----------------------------------------------------------------------
+\section{Newton's Approach vs.\ Bayesian Inference}
+
+Newton's reasoning was model-first: derive a theoretical law from geometric
+principles, then check whether the data are consistent with it, attributing
+discrepancies to measurement error or perturbations.
+This is the opposite of modern curve-fitting; Newton trusted the mathematics
+more than the data.
+
+A Bayesian physicist would instead assign a prior probability distribution
+over force laws, compute likelihoods from the observational data, and
+update beliefs via Bayes' rule.
+If planetary trajectory data are fed into a Bayesian model-selection
+framework, the inverse-square law emerges as the overwhelmingly preferred
+model.
+
+The observation that Newton's geometric reasoning, Bayesian statistical
+inference, and AI symbolic regression all converge on $F \propto 1/r^{2}$
+through entirely different epistemological routes is striking: it suggests
+that the inverse-square law is, in a precise sense, the simplest explanation
+of the available data.
+
+%----------------------------------------------------------------------
+\section{Conclusions}
+
+These projects demonstrate that:
+\begin{itemize}
+  \item Newton's derivation of universal gravitation is algorithmically
+        reproducible from trajectory data.
+  \item Kepler's empirical laws contain sufficient information for an AI to
+        infer the same universal law Newton did.
+  \item The conceptual chain---area law, harmonic law, inverse-square
+        force, conic orbits---can be recovered without prior physics
+        knowledge, whether by symbolic regression, deep learning, or
+        Bayesian model selection.
+\end{itemize}
+
+At the same time, important differences remain.
+Newton unified terrestrial and celestial gravity through a physical argument
+(the Moon test) that required conceptual ingenuity as well as data.
+Current AI systems recover the force law from trajectory data but require
+human judgment to interpret the result as ``universal'' gravitation rather
+than a local fit.
+The question of how much of Newton's achievement was data-driven and how
+much was conceptual innovation remains partially open---and these AI
+studies suggest that both components can be partially automated.
+
+%----------------------------------------------------------------------
+\begin{thebibliography}{9}
+
+\bibitem{lemos2023}
+P.~Lemos, N.~Jeffrey, M.~Cranmer, P.~Battaglia, and S.~Ho,
+``Rediscovering Newton's Gravity and Solar System Properties Using Deep
+Learning and Inductive Biases,''
+\textit{Machine Learning: Science and Technology}, 2023.
+
+\bibitem{ainewton}
+Y.-L.~Fang, D.-S.~Jian, X.~Li, and Y.-Q.~Ma,
+``AI-Newton: A Concept-Driven Physical Law Discovery System Without Prior
+Physical Knowledge,''
+Peking University preprint, 2023.
+
+\bibitem{eureqa}
+M.~Schmidt and H.~Lipson,
+``Distilling Free-Form Natural Laws from Experimental Data,''
+\textit{Science}, vol.~324, pp.~81--85, 2009.
+
+\bibitem{aifeynman}
+S.-M.~Udrescu and M.~Tegmark,
+``AI Feynman: A Physics-Inspired Method for Symbolic Regression,''
+\textit{Science Advances}, vol.~6, no.~16, 2020.
+
+\bibitem{principia}
+I.~Newton, \textit{Philosophi\ae{} Naturalis Principia Mathematica},
+London, 1687.
+
+\end{thebibliography}
+
+\end{document}
