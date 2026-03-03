@@ -69,7 +69,15 @@ explain observed countercyclical risk prices.
 
 This paper organizes ideas around a single mathematical device: the
 \emph{likelihood ratio}, a non-negative random variable with unit mean
-that twists one probability distribution into another.  Likelihood
+that twists one probability distribution into another.
+Much of the analysis draws on two papers:
+Hansen, Sz\H{o}ke, Han, and Sargent~(2020), who construct
+twisted probability models from tilted discounted entropy balls to
+price model uncertainty, and Sz\H{o}ke~(2022), who estimates a
+robust control model with cross-equation restrictions implied by a
+representative agent's worst-case beliefs and evaluates its
+implications for the yield curve and survey expectations.
+Likelihood
 ratios---equivalently, multiplicative martingale increments---appear in
 at least four distinct roles in modern asset pricing:
 
@@ -675,7 +683,7 @@ Lucas (1978)  &  no & no & no \\[4pt]
 Epstein--Zin with LRR & maybe & yes & no \\
 \quad (PS (2007), HS (2001)) & & & \\[4pt]
 PSS (2015) &  built-in  &  built-in & yes \\[4pt]
-Sz\H{o}ke (2017) & YES  & yes & yes \\[4pt]
+Sz\H{o}ke (2022) & YES  & yes & yes \\[4pt]
 \end{tabular}
 \end{center}
 \caption{Challenges and model performances.  Affine risk prices with
@@ -862,6 +870,44 @@ By Lagrange multiplier theory,
    W(x_t, c_t \mid \tilde\theta) = J(x_t, c_t \mid \eta)
        + \tilde\theta\, \eta.
 \]
+
+
+%% ====================================================================
+%% References
+%% ====================================================================
+\begin{thebibliography}{99}
+
+\bibitem[Bansal and Yaron(2004)]{BY2004}
+Bansal, R.\ and A.\ Yaron (2004).
+``Risks for the long run: A potential resolution of asset pricing puzzles,''
+\textit{Journal of Finance} 59, 1481--1509.
+
+\bibitem[Hansen et~al.(2020)]{HSHS2020}
+Hansen, L.\,P., B.\ Sz\H{o}ke, L.\,S.\ Han, and T.\,J.\ Sargent (2020).
+``Twisted probabilities, uncertainty, and prices,''
+\textit{Journal of Econometrics} 216, 151--174.
+
+\bibitem[Hansen et~al.(1999)]{HST1999}
+Hansen, L.\,P., T.\,J.\ Sargent, and T.\,D.\ Tallarini (1999).
+``Robust permanent income and pricing,''
+\textit{Review of Economic Studies} 66, 873--907.
+
+\bibitem[Lucas(1978)]{Lucas1978}
+Lucas, R.\,E.\ (1978).
+``Asset prices in an exchange economy,''
+\textit{Econometrica} 46, 1429--1445.
+
+\bibitem[Piazzesi et~al.(2015)]{PSS2015}
+Piazzesi, M., J.\ Salomao, and M.\ Schneider (2015).
+``Trend and cycle in bond premia,''
+Working Paper, Stanford University.
+
+\bibitem[Sz\H{o}ke(2022)]{Szoke2022}
+Sz\H{o}ke, B.\ (2022).
+``Estimating robustness,''
+\textit{Journal of Economic Theory} 199, 105225.
+
+\end{thebibliography}
 
 
 \end{document}
