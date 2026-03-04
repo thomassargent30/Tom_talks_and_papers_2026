@@ -1,0 +1,138 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  citecolor=blue,
+  urlcolor=blue
+}
+
+\title{Connections between Stachurski--Sargent (2024) and\\
+Kreps--Porteus (1977, 1979)}
+\author{}
+\date{March 2026}
+
+\begin{document}
+\maketitle
+
+\section{Shared Foundational Project: Extending Dynamic Programming beyond Standard MDPs}
+
+All three papers share a fundamental ambition: \textbf{generalizing the theory of dynamic programming beyond the standard Markov decision process (MDP) framework}, where the objective is to maximize the expected discounted sum of rewards.
+
+\begin{itemize}
+\item \textbf{Kreps--Porteus (SIAM 1977)} explicitly states in its abstract that the goal is ``extending these results to criteria other than the usual expected sum of rewards, such as expected utility criteria, certain stochastic games, risk sensitive Markov decision processes, and maximin criteria.''
+
+\item \textbf{Kreps--Porteus (Econometrica 1979)} axiomatizes ``temporal von Neumann--Morgenstern utility,'' a non-additive recursive preference criterion, and shows that dynamic programming still works for it.
+
+\item \textbf{Stachurski--Sargent (2024)} builds a framework encompassing ``nonlinear recursive preferences, desire for robustness, function approximation, Monte Carlo sampling and distributional dynamic programs''---a modern descendant of the same generalization program.
+\end{itemize}
+
+
+\section{Order-Theoretic and Lattice-Theoretic Machinery}
+
+The most direct technical lineage runs through the use of \textbf{partial orders and monotonicity (isotonicity)} as the engine for optimality results.
+
+\begin{itemize}
+\item \textbf{Kreps--Porteus (1977)} works with structured value function spaces $V_t$ and $V_t^*$, and assumes that the single-stage operators $H_t^\delta$ are \textbf{isotone} (order-preserving) and \textbf{Lipschitzian} on these spaces (Assumption~R). Their proofs of optimality of structured policies rest on \textbf{monotone convergence} assumptions (IMC, DMC) and \textbf{closure} assumptions (IC, DC, GDC)---all of which are properties of partially ordered sets under pointwise ordering.
+
+\item \textbf{Stachurski--Sargent} makes this order-theoretic foundation fully explicit and abstract. Their ADP is defined as a pair $(V, \mathcal{T})$ where $V$ is a partially ordered set and each $T_\sigma$ is an \textbf{order-preserving self-map} on $V$. Their key assumptions---\textbf{order stability}, \textbf{order continuity}, \textbf{chain completeness}, and \textbf{countable Dedekind completeness}---are abstract generalizations of exactly the monotone convergence and closure assumptions that Kreps--Porteus imposed concretely.
+\end{itemize}
+
+\medskip
+\noindent
+The following table summarizes the correspondences:
+
+\bigskip
+\begin{center}
+\begin{tabular}{@{}p{0.45\textwidth}p{0.45\textwidth}@{}}
+\toprule
+\textbf{Kreps--Porteus (1977)} & \textbf{Stachurski--Sargent (2024)} \\
+\midrule
+Isotonicity of $H_t^\delta$ & Order-preserving policy operators $T_\sigma$ \\[4pt]
+Increasing Closure (IC) & Countably chain complete / chain complete $V$ \\[4pt]
+Increasing Monotone Convergence (IMC) & Order continuity of $T_\sigma$ \\[4pt]
+Decreasing Closure (DC), General Decreasing Closure (GDC) & Chain completeness / Dedekind completeness \\[4pt]
+Decreasing Monotone Convergence (DMC) & Order continuity (symmetric treatment) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+\section{Positive and Negative Dynamic Programming $\leftrightarrow$ Upward and Downward Stability}
+
+Kreps--Porteus (1977) develops two parallel theories:
+\begin{itemize}
+\item \textbf{Positive problems} (\S2): Value functions are built up from below; the optimal value is the \textbf{least} solution of the optimality equations exceeding a lower bound; \textbf{unimprovable} strategies are optimal.
+
+\item \textbf{Negative problems} (\S3): Value functions are built down from above; the optimal value is the \textbf{greatest} solution below an upper bound; \textbf{conserving} strategies are optimal.
+\end{itemize}
+
+\noindent
+Stachurski--Sargent's framework provides a unified abstract treatment through the concepts of \textbf{upward stability} ($v \preceq Sv \Rightarrow v \preceq \bar{v}$) and \textbf{downward stability} ($Sv \preceq v \Rightarrow \bar{v} \preceq v$). Their Theorem~5.1 (if the ADP is downward stable and $T$ has a fixed point, fundamental optimality holds) directly parallels the negative-problem results of Kreps--Porteus, while constructive convergence of VFI from below (Theorems~5.3, 5.5) parallels the positive-problem results.
+
+
+\section{The Bellman Equation, Greedy Policies, and the Principle of Optimality}
+
+All three papers establish the same trio of fundamental results:
+\begin{enumerate}
+\item[\textbf{(B1)}] Existence of an optimal value function $v^*$ (greatest element of lifetime values).
+\item[\textbf{(B2)}] $v^*$ is the unique solution to the Bellman equation.
+\item[\textbf{(B3)}] Bellman's principle of optimality: $\sigma$ is optimal $\iff$ $\sigma$ is $v^*$-greedy.
+\end{enumerate}
+
+\noindent
+In Kreps--Porteus (1977), these correspond to Theorem~4 parts~(d)--(h) for positive problems and Theorems~5--6 for negative problems. In Kreps--Porteus (1979), Theorem~3 establishes an analogous result in the temporal utility setting. Stachurski--Sargent's Lemma~4.2 proves that (B2) and (B3) are equivalent given (B1), and their main theorems (5.1--5.5) give different sufficient conditions for all three.
+
+
+\section{Kreps--Porteus Temporal Preferences as a Motivating Application for Abstract DPs}
+
+Kreps--Porteus (1979) introduces preferences where the recursion defining value functions is:
+\[
+v_t(\pi;\, y_t, x_t)
+= E_{\delta_t}\!\bigl[u_t^*\bigl(y_t,\, \tilde{z}_t,\,
+      v_{t+1}(\pi;\, (y_t, \tilde{z}_t),\, \tilde{x}_{t+1})\bigr)\bigr].
+\]
+This is \textbf{not} additively separable---the aggregator $u_t^*$ is a general nonlinear function of the continuation value. This class of preferences (later developed by Epstein--Zin (1989) into the widely-used recursive utility framework) is exactly one of the motivating applications for Stachurski--Sargent. Their Section~7.1 on ``Non-EU Discrete Choice'' and their treatment of risk-sensitive preferences (Section~3.2) handle generalizations of Kreps--Porteus temporal preferences by replacing the standard conditional expectation with a \textbf{certainty equivalent operator} $\mathcal{E}$ that can be nonlinear---encompassing both the Kreps--Porteus temporal utility and risk-sensitive/robustness preferences.
+
+
+\section{Policy Iteration and Strategy Improvement}
+
+Kreps--Porteus (1977) proves that in negative problems, if strategy $\pi$ is a \textbf{one-step improvement} on $\pi'$, then $\pi$ nets a higher value (Theorem~5(h)). This rules out cycling in strategy (policy) iteration. Stachurski--Sargent provide convergence results for \textbf{Howard policy iteration (HPI)}---the modern name for the same procedure---under their abstract conditions (Theorems~5.3--5.5, with finite-step convergence in Theorem~5.4).
+
+
+\section{The Role of the Porteus (1975) Operator Framework}
+
+Both Kreps--Porteus papers build on Porteus (1975), ``On the Optimality of Structured Policies in Countable Stage Decision Processes,'' which introduced the operator-based approach to dynamic programming with structured policies. The 1977 paper is explicitly ``Part~II'' of this line. Stachurski--Sargent's framework can be seen as a further abstraction of this same operator approach---where Porteus's single-stage operators $H_t^\delta$ evolve into the family of policy operators $\{T_\sigma\}$, and the structured value function spaces $V_t^*$ evolve into the abstract partially ordered set~$V$.
+
+
+\section{Summary}
+
+The Stachurski--Sargent paper is a modern, abstract descendant of the research program initiated by Kreps and Porteus in the 1970s. Kreps--Porteus pioneered:
+\begin{enumerate}
+\item[(a)] extending dynamic programming optimality theory beyond expected-sum-of-rewards criteria using order-theoretic (isotonicity/monotone-convergence) methods, and
+\item[(b)] showing that non-additive recursive preferences (temporal utility) are amenable to dynamic programming.
+\end{enumerate}
+
+\noindent
+Stachurski--Sargent takes these ideas to their logical conclusion by working in a fully abstract partially ordered set, unifying positive/negative DP into a single framework via order stability, and encompassing not just Kreps--Porteus preferences but also distributional DP, empirical DP, function approximation, and other modern applications.
+
+
+\bigskip
+\subsection*{Papers discussed}
+
+\begin{enumerate}
+\item D.\,M.\ Kreps and E.\,L.\ Porteus, ``On the Optimality of Structured Policies in Countable Stage Decision Processes.\ II: Positive and Negative Problems,'' \textit{SIAM Journal on Applied Mathematics}, 32(2):457--466, 1977.
+
+\item D.\,M.\ Kreps and E.\,L.\ Porteus, ``Dynamic Choice Theory and Dynamic Programming,'' \textit{Econometrica}, 47(1):91--100, 1979.
+
+\item J.\ Stachurski and T.\,J.\ Sargent, ``Dynamic Programs on Partially Ordered Sets,'' 2024. Available at \url{http://www.tomsargent.com/research/adps_3.pdf}.
+\end{enumerate}
+
+\end{document}
