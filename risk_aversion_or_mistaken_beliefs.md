@@ -25,14 +25,19 @@ kernelspec:
 This lecture explores how **risk aversion** and **mistaken beliefs** are
 confounded in asset pricing data.
 
-Under rational expectations with a risk-averse representative investor,
-higher mean returns compensate for higher risks. But if the representative
-investor holds wrong beliefs, observed average returns depend on *both*
-risk aversion *and* misunderstood return distributions. Wrong beliefs
-contribute what look like "stochastic discount factor shocks" and can
-potentially explain observed countercyclical risk prices.
+In a  rational expectations equilibrium  containing a risk-averse representative investor,
+higher mean returns compensate for higher risks. 
 
-We organize ideas around a single mathematical device: the **likelihood ratio**,
+But in a non-rational expectations model in which  representative
+investor holds  beliefs that differ from "the econometrician's", observed average returns depend on *both*
+risk aversion *and* misunderstood return distributions. 
+
+Wrong beliefs contribute what look like "stochastic discount factor shocks" when viewed  from the perspective of an econometrician  who
+trusts his  model. 
+
+Those different perspectives can potentially explain observed countercyclical risk prices.
+
+We organize a discussion of these ideas around a single mathematical device, namely, a **likelihood ratio**,
 a non-negative random variable with unit mean that twists one probability
 distribution into another.
 
@@ -72,7 +77,7 @@ from numpy.linalg import inv, eigvals, norm
 
 ## Likelihood Ratios and Twisted Densities
 
-### The baseline model
+### The econometrician's baseline model
 
 Let $\varepsilon$ denote a vector of risks to be taken and priced. Under the
 econometrician's probability model, $\varepsilon$ has a standard multivariate
@@ -94,7 +99,7 @@ Define a **likelihood ratio**
 m(\varepsilon) = \exp\!\left(-\lambda'\varepsilon - \frac{1}{2}\,\lambda'\lambda\right) \geq 0
 ```
 
-which satisfies $E\, m(\varepsilon) = 1$ by construction.
+which satisfies $E\, m(\varepsilon) = 1$ when the mathematical expectation $E$ is taken with respect to the econometrician's model.
 
 ### The twisted density
 
@@ -664,11 +669,11 @@ prices $\lambda^* x_t$ vary less than the $\lambda x_t$ estimated by the
 rational-expectations econometrician.
 
 
-## Rational Expectations and Its Limits
+## Rationalizing Rational Expectations
 
 ### The informal justification
 
-The standard justification for rational expectations treats it as the outcome of
+The standard justification for assuming rational expectations regards it as an outcome of
 learning from an infinite history: least-squares learning converges to rational
 expectations. The argument requires that:
 
