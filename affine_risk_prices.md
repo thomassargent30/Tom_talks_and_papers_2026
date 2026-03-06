@@ -67,7 +67,7 @@ We start with some standard imports:
 ```{code-cell} ipython3
 import numpy as np
 import matplotlib.pyplot as plt
-from numpy.linalg import matrix_power
+from numpy.linalg import matrix_power, eigvals
 ```
 
 ## The Model
@@ -429,20 +429,31 @@ class AffineTermStructure:
 To build intuition, we start with a single-factor ($m=1$) Gaussian model.
 
 ```{code-cell} ipython3
-# ── One-factor Gaussian model ──────────────────────────────────────────────────
-# State z_t follows an AR(1): z_{t+1} = μ(1 - φ) + φ z_t + σ ε_{t+1}
-# Short rate: r_t = δ_0 + δ_1 z_t
-# Risk price:  λ_t = λ_0 + λ_z z_t  (usually λ_z < 0)
+# ── One-factor Gaussian model (quarterly, standardized state) ───────────
+# z_t has unit innovation variance; C = I absorbs the volatility.
+# δ_1 translates z into short-rate units (small: ~1bp per unit of z).
 
-mu = np.array([0.01])        # unconditional mean of z
-phi = np.array([[0.95]])     # persistence
-C = np.array([[0.01]])       # shock volatility (σ = 0.01)
-delta0 = 0.005               # constant in short rate
-delta1 = np.array([1.0])     # loading on z in short rate
-lambda0 = np.array([0.5])    # constant risk price
-lambdaz = np.array([[-20.0]]) # state-dependent risk price (negative: higher z → lower λ)
+mu      = np.array([0.0])          # VAR intercept → E[z]=0
+phi     = np.array([[0.95]])       # persistence
+C       = np.array([[1.0]])        # identity (standardized shocks)
+delta0  = 0.01                     # base short rate: 1%/quarter = 4% p.a.
+delta1  = np.array([0.001])        # ≈ 40bp p.a. per std-dev of z
+lambda0 = np.array([0.05])         # constant risk price
+lambdaz = np.array([[-0.01]])      # countercyclical (λ falls when z rises)
 
 model_1f = AffineTermStructure(mu, phi, C, delta0, delta1, lambda0, lambdaz)
+
+# Check stability
+phi_Q = model_1f.phi_rn[0, 0]
+half_life = np.log(2) / (-np.log(phi[0, 0]))
+uncond_std_z = 1.0 / np.sqrt(1 - phi[0,0]**2)   # std dev of stationary z
+print(f"Physical AR(1):      φ   = {phi[0,0]:.3f}  (half-life {half_life:.1f} quarters)")
+print(f"Risk-neutral AR(1):  φ^Q = {phi_Q:.3f}  "
+      f"{'✓ stable' if abs(phi_Q) < 1 else '✗ UNSTABLE!'}")
+print(f"Unconditional std of z:  σ_z = {uncond_std_z:.2f}")
+print(f"Mean short rate = {model_1f.short_rate(np.array([0.0]))*4*100:.1f}% p.a.")
+print(f"Short rate range (±2σ): [{(delta0-delta1[0]*2*uncond_std_z)*4*100:.1f}%, "
+      f"{(delta0+delta1[0]*2*uncond_std_z)*4*100:.1f}%] p.a.")
 ```
 
 ### Yield curve shapes
@@ -450,26 +461,46 @@ model_1f = AffineTermStructure(mu, phi, C, delta0, delta1, lambda0, lambdaz)
 We compute yield curves across a range of short-rate states $z_t$.
 
 ```{code-cell} ipython3
-maturities = np.arange(1, 121)   # 1 to 120 periods (e.g., months)
-n_max = 120
+# ── Yield curves: one-factor model ──────────────────────────────────────
+n_max_1f = 60   # 60 quarters = 15 years
+maturities_1f = np.arange(1, n_max_1f + 1)
 
-# Three states: low, medium, high short rate
-z_low  = np.array([-0.02])
-z_mid  = np.array([0.01])
-z_high = np.array([0.04])
+# Three states spanning the short-rate range
+# z < 0 → low short rate, z > 0 → high short rate
+z_low  = np.array([-5.0])     # short rate well below mean → expect rise → upward slope
+z_mid  = np.array([0.0])      # at the mean
+z_high = np.array([5.0])      # short rate well above mean → expect decline → inverted
 
-fig, ax = plt.subplots(figsize=(8, 5))
+fig, ax = plt.subplots(figsize=(9, 5.5))
 
-for z, label, color in [(z_low, "Low state", "steelblue"),
-                         (z_mid, "Median state", "seagreen"),
-                         (z_high, "High state", "firebrick")]:
-    y = model_1f.yields(z, n_max) * 400   # annualise (×400 for quarterly data)
-    ax.plot(maturities, y, color=color, lw=2, label=label)
+for z, label, color in [
+    (z_low,  f"Low state  (r₁ = {model_1f.short_rate(z_low)*4*100:.1f}%)", "steelblue"),
+    (z_mid,  f"Median state (r₁ = {model_1f.short_rate(z_mid)*4*100:.1f}%)", "seagreen"),
+    (z_high, f"High state (r₁ = {model_1f.short_rate(z_high)*4*100:.1f}%)", "firebrick"),
+]:
+    y = model_1f.yields(z, n_max_1f) * 4 * 100   # annualised %
+    ax.plot(maturities_1f, y, color=color, lw=2.2, label=label)
+    ax.plot(1, y[0], 'o', color=color, ms=7, zorder=5)
 
-ax.set_xlabel("Maturity (periods)", fontsize=13)
-ax.set_ylabel("Yield (annualised, bps × 4)", fontsize=13)
-ax.set_title("Affine Term Structure — One-Factor Model", fontsize=14)
-ax.legend()
+# Mark unconditional mean short rate
+r_bar = model_1f.short_rate(np.array([0.0])) * 4 * 100
+ax.axhline(r_bar, color='grey', ls=':', lw=1.2, alpha=0.7,
+           label=f"Mean short rate ({r_bar:.1f}%)")
+
+ax.set_xlabel("Maturity (quarters)")
+ax.set_ylabel("Yield (% per annum)")
+ax.set_title("Yield Curves — One-Factor Affine Model")
+ax.legend(fontsize=10, loc='best')
+ax.set_xlim(1, n_max_1f)
+
+# Secondary x-axis in years
+ax2 = ax.twiny()
+ax2.set_xlim(ax.get_xlim())
+year_ticks = [4, 8, 12, 20, 28, 40, 60]
+ax2.set_xticks(year_ticks)
+ax2.set_xticklabels([f"{t/4:.0f}y" for t in year_ticks])
+ax2.set_xlabel("Maturity (years)")
+
 plt.tight_layout()
 plt.show()
 ```
@@ -480,18 +511,23 @@ rate moves across states — a key qualitative feature of observed bond markets.
 ### Short rate dynamics
 
 ```{code-cell} ipython3
+# ── Simulated short rate ────────────────────────────────────────────────
 T = 200
-Z = model_1f.simulate(z_mid, T)
-short_rates = [model_1f.short_rate(Z[t]) * 400 for t in range(T + 1)]
+Z = model_1f.simulate(np.array([0.0]), T)
+short_rates = np.array([model_1f.short_rate(Z[t]) * 4 * 100 for t in range(T + 1)])
+r_bar_pct = model_1f.short_rate(np.array([0.0])) * 4 * 100
 
-fig, ax = plt.subplots(figsize=(9, 4))
-ax.plot(short_rates, color="steelblue", lw=1.5)
-ax.axhline(model_1f.short_rate(mu) * 400, color="red", ls="--", lw=1.2,
-           label="Unconditional mean")
-ax.set_xlabel("Period", fontsize=13)
-ax.set_ylabel("Short rate (annualised)", fontsize=13)
-ax.set_title("Simulated Short Rate — One-Factor Model", fontsize=14)
-ax.legend()
+fig, ax = plt.subplots(figsize=(10, 4))
+quarters = np.arange(T + 1)
+ax.plot(quarters, short_rates, color="steelblue", lw=1.3)
+ax.axhline(r_bar_pct, color="red", ls="--", lw=1.3,
+           label=f"Unconditional mean ({r_bar_pct:.1f}%)")
+ax.fill_between(quarters, short_rates, r_bar_pct, alpha=0.08, color="steelblue")
+ax.set_xlabel("Quarter")
+ax.set_ylabel("Short rate (% p.a.)")
+ax.set_title("Simulated Short Rate — One-Factor Model (50 years)")
+ax.set_xlim(0, T)
+ax.legend(fontsize=11)
 plt.tight_layout()
 plt.show()
 ```
@@ -503,44 +539,93 @@ factors.  We now introduce a two-factor specification in which the factors
 can be interpreted as a **level** component and a **slope** component.
 
 ```{code-cell} ipython3
-# ── Two-factor model ────────────────────────────────────────────────────────────
+# ── Two-factor model (quarterly, standardized state) ────────────────────
 # z = [level, slope]'
-mu2    = np.array([0.01,  0.0])
-phi2   = np.array([[0.97, -0.05],   # level is very persistent
-                   [0.00,  0.92]])  # slope is somewhat persistent
-C2     = np.array([[0.008, 0.000],
-                   [0.000, 0.012]])
-delta0_2  = 0.003
-delta1_2  = np.array([1.0, 0.5])           # both factors affect short rate
-lambda0_2 = np.array([0.4,  0.2])
-lambdaz_2 = np.array([[-15.0,  0.0],
-                      [  0.0, -8.0]])
+mu2      = np.array([0.0,  0.0])
+phi2     = np.array([[0.97, -0.03],    # level very persistent, slope feeds back
+                     [0.00,  0.90]])   # slope moderately persistent
+C2       = np.array([[1.0, 0.0],       # identity (standardized shocks)
+                     [0.0, 1.0]])
+delta0_2 = 0.01                         # base short rate = 4% p.a.
+delta1_2 = np.array([0.002, 0.001])     # level matters more for r
+lambda0_2 = np.array([0.01,  0.005])    # small constant risk prices
+lambdaz_2 = np.array([[-0.005, 0.0],    # level risk price falls when level rises
+                      [ 0.0, -0.003]])  # slope risk price falls when slope rises
 
 model_2f = AffineTermStructure(mu2, phi2, C2,
                                 delta0_2, delta1_2,
                                 lambda0_2, lambdaz_2)
+
+print("Physical measure VAR:")
+print(f"  φ =\n{phi2}")
+print(f"  eigenvalues of φ: {eigvals(phi2).real.round(4)}")
+print()
+print("Risk-neutral measure VAR:")
+print(f"  φ^Q = φ - Cλ_z =\n{model_2f.phi_rn.round(4)}")
+eigs_Q = eigvals(model_2f.phi_rn).real
+print(f"  eigenvalues of φ^Q: {eigs_Q.round(4)}")
+stable = all(abs(e) < 1 for e in eigs_Q)
+print(f"  {'✓ All eigenvalues inside unit circle' if stable else '✗ UNSTABLE!'}")
+print()
+print("→ Risk prices make Q dynamics MORE persistent than P dynamics")
 ```
 
 ```{code-cell} ipython3
-n_max = 120
-maturities = np.arange(1, n_max + 1)
+# ── Yield curves + factor loadings: two-factor model ────────────────────
+n_max_2f = 60
+maturities_2f = np.arange(1, n_max_2f + 1)
 
-# Different (level, slope) combinations
 states = {
-    "Normal (flat)":        np.array([0.005,  0.000]),
-    "Steep (low short)":    np.array([-0.01,  0.020]),
-    "Flat/inverted (high)": np.array([0.025, -0.015]),
+    "Normal":              np.array([0.0,   0.0]),
+    "Low short rate":      np.array([-4.0,  3.0]),
+    "High short rate":     np.array([4.0,  -3.0]),
 }
 
-fig, ax = plt.subplots(figsize=(8, 5))
-for label, z in states.items():
-    y = model_2f.yields(z, n_max) * 400
-    ax.plot(maturities, y, lw=2, label=label)
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5.5))
 
-ax.set_xlabel("Maturity (periods)", fontsize=13)
-ax.set_ylabel("Yield (annualised bps × 4)", fontsize=13)
-ax.set_title("Affine Term Structure — Two-Factor Model", fontsize=14)
-ax.legend()
+# ── Left: Yield curves ──
+colors_2f = ["seagreen", "steelblue", "firebrick"]
+for (label, z), color in zip(states.items(), colors_2f):
+    r_now = model_2f.short_rate(z) * 4 * 100
+    y = model_2f.yields(z, n_max_2f) * 4 * 100
+    ax1.plot(maturities_2f, y, lw=2.2, color=color,
+             label=f"{label} (r₁ = {r_now:.1f}%)")
+    ax1.plot(1, y[0], 'o', color=color, ms=7, zorder=5)
+
+ax1.annotate("Curves converge as\nmean reversion dominates",
+             xy=(50, 3.8), fontsize=9, color="gray", ha='center',
+             style='italic')
+ax1.set_xlabel("Maturity (quarters)")
+ax1.set_ylabel("Yield (% p.a.)")
+ax1.set_title("Yield Curves — Two-Factor Model")
+ax1.legend(fontsize=10)
+ax1.set_xlim(1, n_max_2f)
+
+# ── Right: Factor loadings B_n ──
+A_bar, B_bar = model_2f.bond_coefficients(n_max_2f)
+ns = np.arange(1, n_max_2f + 1)
+B_n = np.array([-B_bar[n] / n for n in ns])   # B_n = -B̄_n / n
+
+ax2.plot(ns, B_n[:, 0], lw=2.2, color="purple", label=r"Level loading $B_{n,1}$")
+ax2.plot(ns, B_n[:, 1], lw=2.2, color="orange", label=r"Slope loading $B_{n,2}$")
+ax2.axhline(0, color='black', lw=0.6)
+ax2.set_xlabel("Maturity (quarters)")
+ax2.set_ylabel(r"Yield loading $B_{n,k}$")
+ax2.set_title("Factor Loadings on Yields")
+ax2.legend(fontsize=11)
+ax2.set_xlim(1, n_max_2f)
+ax2.annotate("Level factor stays\nimportant at long maturities",
+             xy=(45, B_n[44, 0]), fontsize=9, color="purple",
+             ha='center', va='bottom')
+
+# Year labels on top
+for ax in (ax1, ax2):
+    ax_top = ax.twiny()
+    ax_top.set_xlim(ax.get_xlim())
+    year_ticks = [4, 12, 20, 40, 60]
+    ax_top.set_xticks(year_ticks)
+    ax_top.set_xticklabels([f"{t/4:.0f}y" for t in year_ticks])
+
 plt.tight_layout()
 plt.show()
 ```
@@ -573,22 +658,64 @@ def term_premiums(model, z, n_max):
                    for n in range(1, n_max + 1)])
     return tp
 
-maturities_tp = np.arange(1, 121)
+n_max_tp = 60
+maturities_tp = np.arange(1, n_max_tp + 1)
 
-fig, axes = plt.subplots(1, 2, figsize=(12, 5))
-
-z_states = {
-    r"Low $z$ (low short rate)": np.array([-0.01, 0.01]),
-    r"High $z$ (high short rate)": np.array([0.03, -0.01]),
+z_states_tp = {
+    "Low rate (z₁ < 0)":  np.array([-3.0, 2.0]),
+    "High rate (z₁ > 0)": np.array([3.0, -2.0]),
 }
 
-for ax, (label, z) in zip(axes, z_states.items()):
-    tp = term_premiums(model_2f, z, 120) * 400
-    ax.plot(maturities_tp, tp, color="purple", lw=2)
-    ax.axhline(0, color="black", lw=0.8, ls="--")
-    ax.set_xlabel("Maturity (periods)", fontsize=12)
-    ax.set_ylabel("Term premium (annualised)", fontsize=12)
-    ax.set_title(f"Term Premiums — {label}", fontsize=12)
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5.5))
+
+# ── Left: Total term premiums at two states ──
+tp_colors = ["steelblue", "firebrick"]
+for (label, z), color in zip(z_states_tp.items(), tp_colors):
+    tp = term_premiums(model_2f, z, n_max_tp) * 4 * 100   # annualised %
+    r_now = model_2f.short_rate(z) * 4 * 100
+    lam = model_2f.risk_prices(z)
+    ax1.plot(maturities_tp, tp, color=color, lw=2.2,
+             label=f"{label}\n  r={r_now:.1f}%, λ=[{lam[0]:.3f}, {lam[1]:.3f}]")
+
+ax1.axhline(0, color="black", lw=0.8, ls="--")
+ax1.set_xlabel("Maturity (quarters)")
+ax1.set_ylabel("Term premium (% p.a.)")
+ax1.set_title("Term Premiums — Two Regimes\n"
+              r"($\lambda_z < 0$: higher premiums when rates are low)")
+ax1.legend(fontsize=9)
+ax1.set_xlim(1, n_max_tp)
+
+# ── Right: Decomposition by factor at z = [0,0] ──
+z_decomp = np.array([0.0, 0.0])
+A_bar_d, B_bar_d = model_2f.bond_coefficients(n_max_tp + 1)
+lam_t = model_2f.risk_prices(z_decomp)
+C_lam = model_2f.C @ lam_t
+
+tp_level = np.array([-B_bar_d[n, 0] * C_lam[0]
+                      for n in range(1, n_max_tp + 1)]) * 4 * 100
+tp_slope = np.array([-B_bar_d[n, 1] * C_lam[1]
+                      for n in range(1, n_max_tp + 1)]) * 4 * 100
+tp_total = tp_level + tp_slope
+
+ax2.plot(maturities_tp, tp_total, 'k-', lw=2.2, label="Total")
+ax2.plot(maturities_tp, tp_level, color="purple", lw=1.8, ls="--",
+         label="Level factor")
+ax2.plot(maturities_tp, tp_slope, color="orange", lw=1.8, ls="--",
+         label="Slope factor")
+ax2.axhline(0, color="black", lw=0.6, ls=":")
+ax2.set_xlabel("Maturity (quarters)")
+ax2.set_ylabel("Term premium (% p.a.)")
+ax2.set_title("Factor Decomposition at z = [0, 0]")
+ax2.legend(fontsize=10)
+ax2.set_xlim(1, n_max_tp)
+
+# Year labels
+for ax in (ax1, ax2):
+    ax_top = ax.twiny()
+    ax_top.set_xlim(ax.get_xlim())
+    year_ticks = [4, 12, 20, 40, 60]
+    ax_top.set_xticks(year_ticks)
+    ax_top.set_xticklabels([f"{t/4:.0f}y" for t in year_ticks])
 
 plt.tight_layout()
 plt.show()
@@ -656,29 +783,25 @@ We can verify that this agrees with {eq}`eq_bondprice` by iterating the affine
 recursion under the risk-neutral VAR.  Below we confirm this numerically.
 
 ```{code-cell} ipython3
+# ── Risk-neutral Monte Carlo verification ────────────────────────────
 def bond_price_monte_carlo_Q(model, z0, n, n_sims=50_000, rng=None):
-    """
-    Estimate p_t(n) by Monte Carlo under the risk-neutral measure Q.
-    """
+    """Estimate p_t(n) by Monte Carlo under Q."""
     if rng is None:
         rng = np.random.default_rng(2024)
     m_dim = len(z0)
-    Z = np.tile(z0, (n_sims, 1))     # (n_sims, m)
-    disc = np.zeros(n_sims)           # cumulative discount
-
-    phi_Q = model.phi_rn              # φ - C λ_z
-    mu_Q  = model.mu_rn               # μ - C λ_0
+    Z = np.tile(z0, (n_sims, 1))
+    disc = np.zeros(n_sims)
+    phi_Q = model.phi_rn
+    mu_Q  = model.mu_rn
     C_mat = model.C
-
     for _ in range(n):
-        r_t = model.delta0 + Z @ model.delta1   # (n_sims,)
+        r_t = model.delta0 + Z @ model.delta1
         disc += r_t
         eps = rng.standard_normal((n_sims, m_dim))
         Z = mu_Q + Z @ phi_Q.T + eps @ C_mat.T
-
     return np.mean(np.exp(-disc))
 
-# Compare analytical and Monte Carlo bond prices
+# Compare at selected maturities
 z_test = np.array([0.01, 0.005])
 n_max_test = 40
 p_analytic = model_2f.bond_prices(z_test, n_max_test)
@@ -766,37 +889,48 @@ is actually a systematic forecast bias.
 ### Numerical illustration
 
 ```{code-cell} ipython3
-# Physical parameters (two-factor model from above)
-phi_P  = np.array([[0.97, -0.05], [0.00, 0.92]])
-mu_P   = np.array([0.01, 0.0])
+# ── Distorted beliefs: recover κ_0, κ_z ────────────────────────────────
+phi_P = phi2.copy()
+mu_P  = mu2.copy()
 
-# Subjective parameters: more persistent level and slope
-phi_S  = np.array([[0.985, -0.04], [0.00, 0.96]])
-mu_S   = np.array([0.009, 0.0])
+# Subjective parameters: experts believe factors are MORE persistent
+phi_S = np.array([[0.985, -0.025], [0.00, 0.94]])
+mu_S  = np.array([-0.005, 0.0])
 
-# Distortion parameters: κ_z such that  (φ - C κ_z) = φ_S
-#   ⟹  C κ_z = φ_P - φ_S
+# With C = I, distortion parameters are simply:
+# κ_z = C⁻¹(φ_P - φ_S) = φ_P - φ_S
+# κ_0 = C⁻¹(μ_P - μ_S) = μ_P - μ_S
 C2_mat = model_2f.C
 kappa_z = np.linalg.solve(C2_mat, phi_P - phi_S)
 kappa_0 = np.linalg.solve(C2_mat, mu_P - mu_S)
-print("Distortion κ_0:", kappa_0.round(2))
-print("Distortion κ_z:\n", kappa_z.round(1))
 
-# Rational-expectations econometrician sees:
-#   λ̂_t = λ*_t + κ_t
-# Suppose true risk prices are
-lambda_star_0 = np.array([0.3,  0.1])
-lambda_star_z = np.array([[-8.0, 0.0], [0.0, -4.0]])
+print("Distortion parameters (κ quantifies how experts' beliefs differ from P):")
+print(f"  κ_0 = {kappa_0.round(4)}")
+print(f"  κ_z =\n{kappa_z.round(4)}")
+print()
+print("Eigenvalue comparison:")
+eig_P = sorted(eigvals(phi_P).real, reverse=True)
+eig_S = sorted(eigvals(phi_S).real, reverse=True)
+print(f"  Physical φ eigenvalues:   {[round(e, 4) for e in eig_P]}")
+print(f"  Subjective φ̂ eigenvalues: {[round(e, 4) for e in eig_S]}")
+print("  → Experts believe both factors are more persistent")
+print()
 
-# Econometrician attributes these risk prices:
+# True risk prices (what a correctly-specified agent would use)
+lambda_star_0 = np.array([0.03, 0.015])
+lambda_star_z = np.array([[-0.006, 0.0], [0.0, -0.004]])
+
+# Econometrician who ignores belief distortion attributes:
 lambda_hat_0 = lambda_star_0 + kappa_0
 lambda_hat_z = lambda_star_z + kappa_z
-print("\nTrue λ*_0      :", lambda_star_0.round(3))
-print("Econometrician's λ̂_0:", lambda_hat_0.round(3))
+
+print("True risk prices:         λ*_0 =", lambda_star_0.round(4))
+print("Econometrician estimates: λ̂_0  =", lambda_hat_0.round(4))
+print(f"  → Belief distortion inflates λ̂_0 by κ_0 = {kappa_0.round(4)}")
 ```
 
 ```{code-cell} ipython3
-# Compare term premiums under true vs. distorted risk price estimates
+# ── Term premiums: true vs. distorted ──────────────────────────────────
 model_true = AffineTermStructure(mu2, phi2, C2,
                                   delta0_2, delta1_2,
                                   lambda_star_0, lambda_star_z)
@@ -805,21 +939,56 @@ model_econ = AffineTermStructure(mu2, phi2, C2,
                                   delta0_2, delta1_2,
                                   lambda_hat_0, lambda_hat_z)
 
-z_ref = np.array([0.01, 0.005])
-maturities_tp = np.arange(1, 121)
+# Verify both models have stable Q dynamics
+for name, mdl in [("True", model_true), ("Econometrician", model_econ)]:
+    eigs = eigvals(mdl.phi_rn).real
+    print(f"{name} model: φ^Q eigenvalues = {eigs.round(4)}, "
+          f"{'✓' if all(abs(e) < 1 for e in eigs) else '✗ UNSTABLE'}")
 
-tp_true = term_premiums(model_true, z_ref, 120) * 400
-tp_econ = term_premiums(model_econ, z_ref, 120) * 400
+z_ref = np.array([0.0, 0.0])
+n_max_db = 60
+maturities_db = np.arange(1, n_max_db + 1)
 
-fig, ax = plt.subplots(figsize=(8, 5))
-ax.plot(maturities_tp, tp_true, lw=2, color="steelblue",  label=r"True risk prices $\lambda^\star_t$")
-ax.plot(maturities_tp, tp_econ, lw=2, color="firebrick", ls="--",
-        label=r"RE econometrician's estimate $\hat\lambda_t = \lambda^\star_t + \kappa_t$")
-ax.axhline(0, color="black", lw=0.8, ls=":")
-ax.set_xlabel("Maturity (periods)", fontsize=13)
-ax.set_ylabel("Term premium (annualised)", fontsize=13)
-ax.set_title("Term Premiums: True vs. Distorted-Belief Estimates", fontsize=13)
-ax.legend(fontsize=11)
+tp_true = term_premiums(model_true, z_ref, n_max_db) * 4 * 100
+tp_econ = term_premiums(model_econ, z_ref, n_max_db) * 4 * 100
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5.5))
+
+# ── Left: Level comparison with shading ──
+ax1.plot(maturities_db, tp_true, lw=2.2, color="steelblue",
+         label=r"True risk prices $\lambda^\star_t$")
+ax1.plot(maturities_db, tp_econ, lw=2.2, color="firebrick", ls="--",
+         label=r"RE econometrician $\hat\lambda_t = \lambda^\star_t + \kappa_t$")
+ax1.fill_between(maturities_db, tp_true, tp_econ, alpha=0.15, color="firebrick",
+                 label="Belief distortion component")
+ax1.axhline(0, color="black", lw=0.8, ls=":")
+ax1.set_xlabel("Maturity (quarters)")
+ax1.set_ylabel("Term premium (% p.a.)")
+ax1.set_title("True vs. Distorted-Belief Term Premiums")
+ax1.legend(fontsize=9.5)
+ax1.set_xlim(1, n_max_db)
+
+# ── Right: Ratio ──
+mask = np.abs(tp_true) > 1e-8
+ratio = np.full_like(tp_true, np.nan)
+ratio[mask] = tp_econ[mask] / tp_true[mask]
+
+ax2.plot(maturities_db[mask], ratio[mask], lw=2.2, color="darkred")
+ax2.axhline(1, color="black", lw=0.8, ls="--", label="No distortion (ratio = 1)")
+ax2.set_xlabel("Maturity (quarters)")
+ax2.set_ylabel(r"$\hat{tp}\, /\, tp^\star$")
+ax2.set_title("Overstatement Ratio from Ignoring Belief Bias")
+ax2.legend(fontsize=11)
+ax2.set_xlim(1, n_max_db)
+
+# Year labels
+for ax in (ax1, ax2):
+    ax_top = ax.twiny()
+    ax_top.set_xlim(ax.get_xlim())
+    year_ticks = [4, 12, 20, 40, 60]
+    ax_top.set_xticks(year_ticks)
+    ax_top.set_xticklabels([f"{t/4:.0f}y" for t in year_ticks])
+
 plt.tight_layout()
 plt.show()
 ```
