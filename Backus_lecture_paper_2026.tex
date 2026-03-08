@@ -22,7 +22,17 @@
 \onehalfspacing
 
 \title{Risk Aversion or Mistaken Beliefs?\\[6pt]
-\large Three Martingales and More}
+\large Three Martingales and More\thanks{This paper is the basis for
+the inaugural David Backus Memorial Lecture.
+Dave was a pioneer in the study of affine term structure models and
+international risk sharing.
+His 2001 paper with Foresi and Telmer on affine models of currency
+pricing is a direct intellectual ancestor of the framework presented
+here.
+His insistence on connecting theory tightly to data and his
+generosity as a colleague and teacher at NYU Stern
+animate every section of this paper.
+I thank  Jonathan Payne, Jiao Shi, and B\'alint Sz\H{o}ke and for helpful discussions that preceded my giving the Backus lecture.}}
 
 \author{Thomas J.\ Sargent\\[4pt]
 \small New York University}
@@ -63,9 +73,23 @@ confounded in asset pricing data.  Under rational expectations with a
 risk-averse representative investor, higher mean returns compensate for
 higher risks.  But if the representative investor holds wrong beliefs,
 observed average returns depend on \emph{both} risk aversion \emph{and}
-misunderstood return distributions.  Wrong beliefs contribute what
-look like ``stochastic discount factor shocks'' and can potentially
+misunderstood return distributions.  Wrong beliefs contribute what from the point of view of an econometrician's baseline model 
+look like ``stochastic discount factor shocks'' that have the  potential to 
 explain observed countercyclical risk prices.
+
+Long-standing puzzles about the term structure of interest rates
+motivate this paper.  The nominal yield curve usually slopes upward,
+the long-minus-short yield spread narrows before recessions and widens
+after them, and---most strikingly---long-term bond yields are nearly
+as volatile as short-term yields even though, under the
+rational-expectations expectations theory of the term structure, they
+should be much smoother averages of expected future short rates.  This
+is Shiller's ``volatility puzzle.''  To resolve it, risk prices---or
+something observationally equivalent---must be large, volatile, and
+state-dependent.  What generates those state-dependent risk prices?  It
+could be risk aversion, it could be wrong beliefs, or it could be fears
+of model misspecification.  Disentangling these sources is the central
+challenge of this paper.
 
 This paper organizes ideas around a single mathematical device: the
 \emph{likelihood ratio}, a non-negative random variable with unit mean
@@ -98,6 +122,12 @@ $m_{t+1}^b = \exp\bigl(-b_t' \varepsilon_{t+1} - \tfrac{1}{2} b_t' b_t \bigr)$
 with $b_t = 0$, $\lambda_t$, $w_t$, or a worst-case distortion.}
 \label{tab:four-measures}
 \end{table}
+
+The ``three martingales'' of the title are the cumulative likelihood
+ratio processes $\{M_t\}$ formed from (i)~risk prices $\lambda_t$,
+(ii)~belief distortions $w_t^*$, and (iii)~worst-case model distortions
+$\tilde w_t$.  The ``and more'' refers to $\bar w_t$, the parametric
+long-run risk worry that tilts the entropy ball.
 
 The rest of the paper proceeds as follows.  Section~\ref{sec:risks-and-beliefs}
 sets up the Gaussian framework in which a likelihood ratio twists
@@ -376,6 +406,17 @@ mistakes?  Ignorance of good econometrics?  And how distorted are they
 in terms of the divergence of probabilities?  These questions motivate a
 theory of belief distortions rooted in robust control theory.
 
+An intriguing interpretive question lurks here: are professional
+forecasters reporting their best guess of the future, or the scenario
+that rationalizes their portfolio decisions?  If the latter, their
+``mistakes'' may not be mistakes at all but instead reflect a
+pessimistic model that they use precisely because they fear
+misspecification.  Section~\ref{sec:robust} develops a theory in which
+this distinction is formalized: the robust control agent's worst-case
+model generates forecasts that look like the experts' distorted beliefs,
+but arise from an optimizing response to model uncertainty rather than
+from ignorance.
+
 
 %% ====================================================================
 \section{Rational Expectations and Its Limits}
@@ -395,6 +436,13 @@ converges to rational expectations.  The argument requires that:
 \end{itemize}
 However, long intertemporal dependencies make
 {\color{red} rates of convergence slow}.
+For example, distinguishing two Gaussian AR(1) processes whose
+persistence parameters differ by $0.01$ (say $\rho = 0.98$ versus
+$\rho = 0.99$) at the $5\%$ level requires several hundred years of
+quarterly data.  For the long-run risk specifications considered by
+Bansal and Yaron~(2004), the required sample lengths can exceed a
+millennium.  This is not a failure of econometrics---it is the
+statistical reality that makes model uncertainty economically important.
 
 \subsection{Good econometricians}
 
@@ -438,6 +486,15 @@ Undiscounted entropy over infinite sequences excludes many models that
 are very difficult to distinguish from the econometrician's model with
 limited data, because undiscounted entropy includes only models that
 share laws of large numbers.
+To see why this matters, note that undiscounted entropy effectively
+requires alternative models to share the same long-run averages as the
+baseline---it excludes models that differ only in persistent,
+low-frequency dynamics.
+But those are precisely the models that are hardest to distinguish with
+finite data and that matter most for long-lived asset prices.
+Discounted entropy, by treating future divergences less severely, admits
+these statistically elusive but economically important alternatives into
+the set of models that the dubious agent contemplates.
 
 \subsection{Valuation under the econometrician's model}
 
@@ -578,6 +635,18 @@ certain conditions, the EZ value function is the indirect utility
 function of a dubious agent.  This sets the stage for big risk
 prices---but not countercyclical ones.
 
+\begin{remark}[EZ--robust control equivalence]
+The equivalence between Epstein--Zin preferences and robust control,
+established by Hansen and Sargent~(2001) and Maenhout~(2004), implies
+that EZ preferences with unit elasticity of intertemporal substitution
+and risk aversion $\gamma > 1$ are observationally equivalent to expected
+utility with $\gamma = 1$ combined with a penalty parameter
+$\theta = 1/(\gamma - 1)$ governing robustness.  The higher the risk
+aversion under EZ, the smaller the entropy ball the robust agent is
+willing to tolerate---she fears a narrower but more intense set of model
+misspecifications.
+\end{remark}
+
 \subsection{Concern about bigger long-run risk in the Sz\H{o}ke model}
 
 Inspired by Bansal and Yaron~(2004), an agent fears particular long-run
@@ -667,6 +736,16 @@ Several recognized patterns characterize the U.S.\ term structure:
       observationally equivalent) must depend on volatile state
       variables.
 \end{itemize}
+
+Specific historical episodes bring these patterns to life.  The yield
+curve inverted before each of the last seven U.S.\ recessions.
+In the Sz\H{o}ke model, inversions correspond to states where
+$\xi(x_t)$ is small---the agent's long-run risk worry is muted---which
+tightens the entropy constraint and compresses risk prices.
+Conversely, during the 2008--09 financial crisis and the March~2020
+COVID shock, term premia spiked as uncertainty about long-run
+consumption growth surged, exactly the pattern that the tilted entropy
+ball is designed to capture.
 
 \subsection{Challenges and responses}
 
@@ -811,6 +890,13 @@ shocks are important throughout macroeconomics:
 \begin{itemize}
 \item \textbf{Costs of aggregate fluctuations.}  Welfare assessments of
       business cycles depend sensitively on how risks are priced.
+      Lucas~(1987) calculated the welfare cost of business cycles at
+      roughly $0.05\%$ of lifetime consumption under standard risk
+      aversion.  But if the representative agent fears model
+      misspecification in the sense formalized above, that cost can rise
+      by one or two orders of magnitude (Hansen, Sargent, and
+      Tallarini~1999), because the agent evaluates fluctuations under a
+      pessimistic probability model that amplifies downside risk.
 \item \textbf{Consumption Euler equations.}  The ``New Keynesian IS
       curve'' is a log-linearized consumption Euler equation whose risk
       adjustments are controlled by the stochastic discount factor.
@@ -877,10 +963,25 @@ By Lagrange multiplier theory,
 %% ====================================================================
 \begin{thebibliography}{99}
 
+\bibitem[Backus et~al.(2001)]{BFT2001}
+Backus, D.\,K., S.\ Foresi, and C.\,I.\ Telmer (2001).
+``Affine term structure models and the forward premium anomaly,''
+\textit{Journal of Finance} 56, 279--304.
+
 \bibitem[Bansal and Yaron(2004)]{BY2004}
 Bansal, R.\ and A.\ Yaron (2004).
 ``Risks for the long run: A potential resolution of asset pricing puzzles,''
 \textit{Journal of Finance} 59, 1481--1509.
+
+\bibitem[Dai and Singleton(2000)]{DS2000}
+Dai, Q.\ and K.\,J.\ Singleton (2000).
+``Specification analysis of affine term structure models,''
+\textit{Journal of Finance} 55, 1943--1978.
+
+\bibitem[Hansen and Sargent(2001)]{HS2001}
+Hansen, L.\,P.\ and T.\,J.\ Sargent (2001).
+``Robust control and model uncertainty,''
+\textit{American Economic Review} 91, 60--66.
 
 \bibitem[Hansen et~al.(2020)]{HSHS2020}
 Hansen, L.\,P., B.\ Sz\H{o}ke, L.\,S.\ Han, and T.\,J.\ Sargent (2020).
@@ -892,15 +993,41 @@ Hansen, L.\,P., T.\,J.\ Sargent, and T.\,D.\ Tallarini (1999).
 ``Robust permanent income and pricing,''
 \textit{Review of Economic Studies} 66, 873--907.
 
+\bibitem[Hicks(1939)]{Hicks1939}
+Hicks, J.\,R.\ (1939).
+\textit{Value and Capital}.
+Oxford: Clarendon Press.
+
 \bibitem[Lucas(1978)]{Lucas1978}
 Lucas, R.\,E.\ (1978).
 ``Asset prices in an exchange economy,''
 \textit{Econometrica} 46, 1429--1445.
 
+\bibitem[Lucas(1987)]{Lucas1987}
+Lucas, R.\,E.\ (1987).
+\textit{Models of Business Cycles}.
+Oxford: Basil Blackwell.
+
+\bibitem[Maenhout(2004)]{Maenhout2004}
+Maenhout, P.\,J.\ (2004).
+``Robust portfolio rules and asset pricing,''
+\textit{Review of Financial Studies} 17, 951--983.
+
+\bibitem[Piazzesi and Schneider(2007)]{PS2007}
+Piazzesi, M.\ and M.\ Schneider (2007).
+``Equilibrium yield curves,''
+\textit{NBER Macroeconomics Annual} 21, 389--442.
+
 \bibitem[Piazzesi et~al.(2015)]{PSS2015}
 Piazzesi, M., J.\ Salomao, and M.\ Schneider (2015).
 ``Trend and cycle in bond premia,''
 Working Paper, Stanford University.
+
+\bibitem[Shiller(1979)]{Shiller1979}
+Shiller, R.\,J.\ (1979).
+``The volatility of long-term interest rates and expectations models of
+the term structure,''
+\textit{Journal of Political Economy} 87, 1190--1219.
 
 \bibitem[Sz\H{o}ke(2022)]{Szoke2022}
 Sz\H{o}ke, B.\ (2022).
