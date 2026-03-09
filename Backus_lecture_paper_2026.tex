@@ -29,9 +29,7 @@ international risk sharing.
 His 2001 paper with Foresi and Telmer on affine models of currency
 pricing is a direct intellectual ancestor of the framework presented
 here.
-His insistence on connecting theory tightly to data and his
-generosity as a colleague and teacher at NYU Stern
-animate every section of this paper.
+Dave  insisted on connecting theory tightly to data. More important, Dave was extraordinarily generous as a colleague and teacher at NYU Stern.
 I thank  Jonathan Payne, Jiao Shi, and B\'alint Sz\H{o}ke and for helpful discussions that preceded my giving the Backus lecture.}}
 
 \author{Thomas J.\ Sargent\\[4pt]
@@ -68,28 +66,32 @@ prices needed to explain hitherto puzzling term-structure movements.
 \label{sec:intro}
 %% ====================================================================
 
-The effects of \emph{risk aversion} and \emph{wrong beliefs} are
-confounded in asset pricing data.  Under rational expectations with a
-risk-averse representative investor, higher mean returns compensate for
-higher risks.  But if the representative investor holds wrong beliefs,
-observed average returns depend on \emph{both} risk aversion \emph{and}
-misunderstood return distributions.  Wrong beliefs contribute what from the point of view of an econometrician's baseline model 
-look like ``stochastic discount factor shocks'' that have the  potential to 
-explain observed countercyclical risk prices.
 
-Long-standing puzzles about the term structure of interest rates
-motivate this paper.  The nominal yield curve usually slopes upward,
-the long-minus-short yield spread narrows before recessions and widens
+
+Long-standing puzzles about the term structure of interest rates motivated some of Dave Backus's important work. They motvate this paper too.  These puzzles are about the joint distribution of macroeconomic variables and asset returns implied by  some popular benchmark macroeconomic models.   The nominal yield curve usually slopes upward, the long-minus-short yield spread narrows before recessions and widens
 after them, and---most strikingly---long-term bond yields are nearly
 as volatile as short-term yields even though, under the
 rational-expectations expectations theory of the term structure, they
 should be much smoother averages of expected future short rates.  This
-is Shiller's ``volatility puzzle.''  To resolve it, risk prices---or
-something observationally equivalent---must be large, volatile, and
-state-dependent.  What generates those state-dependent risk prices?  It
-could be risk aversion, it could be wrong beliefs, or it could be fears
-of model misspecification.  Disentangling these sources is the central
-challenge of this paper.
+is Robert Shiller's (1979) ``volatility puzzle.''
+Sargent~(1972, 1979) had tested the cross-equation restrictions on
+vector autoregressions implied by the rational expectations theory of
+the term structure, finding support for the theory's implications for
+conditional means but early hints of the difficulties with conditional
+second moments that Shiller later codified.  To resolve the volatility
+puzzle, risk prices---or something observationally equivalent---must be
+large, volatile, and state-dependent.  What generates those state-dependent risk prices? Risk aversion? Wrong beliefs? Fears
+of model misspecification?   Disentangling potential  sources of those puzzling risk prices is the topic this paper.
+
+Consequences  of investors'  \emph{risk aversion} and \emph{wrong beliefs} are
+confounded in asset pricing data.  In a rational expectations model with a
+risk-averse representative investor, higher mean returns compensate for
+higher risks.  But if the representative investor holds wrong beliefs,
+observed average returns depend on \emph{both} risk aversion \emph{and}
+misunderstood return distributions.  Wrong beliefs can contribute what from the point of view of an econometrician's baseline model 
+look like ``stochastic discount factor shocks'' that have the  potential to 
+explain observed countercyclical risk prices.
+
 
 This paper organizes ideas around a single mathematical device: the
 \emph{likelihood ratio}, a non-negative random variable with unit mean
@@ -123,7 +125,7 @@ with $b_t = 0$, $\lambda_t$, $w_t$, or a worst-case distortion.}
 \label{tab:four-measures}
 \end{table}
 
-The ``three martingales'' of the title are the cumulative likelihood
+The ``three martingales'' of the sub title are the cumulative likelihood
 ratio processes $\{M_t\}$ formed from (i)~risk prices $\lambda_t$,
 (ii)~belief distortions $w_t^*$, and (iii)~worst-case model distortions
 $\tilde w_t$.  The ``and more'' refers to $\bar w_t$, the parametric
@@ -154,6 +156,14 @@ joint probability distributions matter for macroeconomics.
 \section{Risks and Beliefs}
 \label{sec:risks-and-beliefs}
 %% ====================================================================
+
+This section introduces the paper's central mathematical device: a
+likelihood ratio that twists one probability distribution into another.
+In a Gaussian setting, this twist amounts to shifting the mean of the
+shock distribution by a vector~$\lambda$ while leaving the covariance
+structure unchanged.  The resulting framework is deliberately
+simple---it sets up the vocabulary and notation that will recur
+throughout the paper.
 
 Let $\varepsilon$ denote a vector of risks to be taken and priced.
 Suppose that, under the econometrician's probability model,
@@ -192,6 +202,15 @@ perturbations under model uncertainty.
 \section{Asset Pricing with Likelihood Ratios}
 \label{sec:asset-pricing}
 %% ====================================================================
+
+With the likelihood ratio in hand, we now embed it in a dynamic asset
+pricing framework.  The key insight is that the same formulas used to
+price assets under risk neutrality and rational expectations carry over
+to settings with risk-averse or belief-distorted investors---one simply
+replaces the econometrician's probability measure with a twisted one.
+This section develops that idea in a linear Gaussian state-space setting
+and shows how a single likelihood ratio generates the risk-neutral
+dynamics that underlie modern affine term structure models.
 
 \subsection{The econometrician's model}
 
@@ -304,6 +323,15 @@ measure {\color{red} twisted by risk aversion}.
 \label{sec:identification}
 %% ====================================================================
 
+The elegance of the likelihood ratio device comes at a cost: the same
+mathematical object can represent very different economic forces.  This
+section makes the observational equivalence precise.  Because asset
+pricing formulas depend on~$\lambda_t$ but not on its interpretation,
+the data alone cannot tell us whether observed risk premia reflect the
+representative investor's risk aversion or systematically mistaken
+beliefs.  Resolving this issue requires either additional data
+or additional theory---the subjects of the sections that follow.
+
 The vector $\lambda_t$ can be interpreted as either:
 \begin{itemize}
 \item a risk price vector expressing the representative agent's risk
@@ -328,6 +356,15 @@ more information (the PSS approach using survey data) or more theory
 \section{More Information: Experts' Forecasts}
 \label{sec:PSS}
 %% ====================================================================
+
+One natural strategy for breaking the identification deadlock is to
+bring in additional data.  Piazzesi, Salomao, and Schneider~(2015)
+pursue exactly this approach by exploiting surveys of professional
+forecasters.  If forecasters' reported expectations differ
+systematically from those implied by the econometrician's model, the
+discrepancy can be attributed to belief distortions, leaving a smaller
+residual to be explained by risk aversion alone.  This section describes
+their framework and its empirical findings.
 
 \subsection{The PSS framework}
 
@@ -419,9 +456,23 @@ from ignorance.
 
 
 %% ====================================================================
-\section{Rational Expectations and Its Limits}
+\section{Rational Expectations and Its Alternatives}
 \label{sec:RE-limits}
 %% ====================================================================
+
+Before developing a theory of belief distortions, it is worth pausing to
+ask why a rational expectations model might not be a good approximation.%
+\footnote{Sargent~(2008) discusses the intellectual history of rational
+expectations and adaptive learning, framing the tension between them as
+one between ``intelligent design'' and ``evolution.''  The introduction
+to Lucas and Sargent~(1981) lays out the case for rational expectations
+as a discipline on econometric practice.}
+The standard justification treats rational expectations as the outcome
+of learning from a long history---but how long is long enough?  This
+section reviews the conditions under which learning converges to
+rational expectations and highlights circumstances, particularly those
+involving persistent dynamics, in which convergence is so slow that
+model uncertainty becomes economically first-order.
 
 \subsection{The 1970s--1980s informal justification}
 
@@ -464,6 +515,16 @@ is like a good econometrician:
 \section{A Theory of Belief Distortions: Robust Control}
 \label{sec:robust}
 %% ====================================================================
+
+Having seen that survey data point to systematic belief distortions and
+that statistical theory explains why such distortions are hard to
+eliminate through learning, we now develop a theory that rationalizes
+them.  Robust control theory provides a framework in which a decision
+maker who acknowledges that her model may be misspecified optimally
+distorts her probability assessments toward a worst-case scenario.  The
+resulting worst-case beliefs look like the ``mistakes'' identified by
+PSS, but arise from a coherent response to model uncertainty rather than
+from ignorance.
 
 \subsection{Hansen's dubious agent}
 
@@ -589,6 +650,16 @@ prices of risk (or prices of model uncertainty).
 \label{sec:tilted}
 %% ====================================================================
 
+The basic robust control model of the previous section has a limitation:
+it generates worst-case distortions that are constant across states, and
+therefore cannot explain the countercyclical variation in risk prices
+that the data demand.  This section shows how Hansen and Sz\H{o}ke
+overcome this limitation by \emph{tilting} the entropy ball---requiring
+it to include particular parametric alternatives, such as models with
+more long-run risk.  The tilt makes the entropy constraint bind
+differently across states, producing the state-dependent uncertainty
+prices needed to match term-structure dynamics.
+
 \subsection{Hansen and Sz\H{o}ke's more refined dubious agent}
 
 To generate state-dependent uncertainty prices, Hansen and Sz\H{o}ke
@@ -713,6 +784,15 @@ and the worst-case model is $(\tilde A, C, \tilde D, G)$ with
 \section{Empirical Results}
 \label{sec:empirics}
 %% ====================================================================
+
+We now confront the theoretical framework with data.  This section
+reviews the key empirical patterns in the U.S.\ term structure of
+interest rates---the upward-sloping yield curve, the predictive power of
+the yield spread for recessions, and Shiller's volatility puzzle---and
+assesses how well different models account for them.  The centerpiece is
+Sz\H{o}ke's~(2022) estimation of the tilted entropy ball model, which
+imposes cross-equation restrictions linking the worst-case model to both
+bond prices and survey forecasts.
 
 \subsection{The U.S.\ term structure}
 
@@ -864,10 +944,24 @@ analysis:
 \label{sec:motivation}
 %% ====================================================================
 
+A recurring theme throughout the rational expectations econometrics
+literature is that equilibrium models impose testable restrictions across
+the equations of a vector autoregression.\footnote{See \citet{LucasSargent1981}}  
+This section highlights how
+the robust control framework preserves that desirable feature: even
+though the decision maker's beliefs depart from the econometrician's
+model, the departure is disciplined by the worst-case optimization
+problem, yielding a new but equally sharp set of cross-equation
+restrictions that can be taken to the data.
+
 A key appeal of the robust control approach is that it lets us deviate
 from rational expectations while still preserving a set of powerful
-cross-equation restrictions on decision makers' beliefs.  As Sz\H{o}ke
-puts it:
+cross-equation restrictions on decision makers' beliefs.
+Hansen and Sargent~(1991) provided systematic methods for deriving and
+imposing the cross-equation restrictions on vector autoregressions that
+are implied by exact linear rational expectations models; those methods
+set the stage for the estimation strategy used here.
+As Sz\H{o}ke puts it:
 \begin{quote}
 An appealing feature of robust control theory is that it lets us deviate
 from rational expectations, but still preserves a set of powerful
@@ -978,6 +1072,14 @@ Dai, Q.\ and K.\,J.\ Singleton (2000).
 ``Specification analysis of affine term structure models,''
 \textit{Journal of Finance} 55, 1943--1978.
 
+\bibitem[Hansen and Sargent(1991)]{HansenSargent1991}
+Hansen, L.\,P.\ and T.\,J.\ Sargent (1991).
+``Exact linear rational expectations models: Specification and
+estimation,''
+in L.\,P.\ Hansen and T.\,J.\ Sargent (eds.),
+\textit{Rational Expectations Econometrics},
+Boulder, CO: Westview Press.
+
 \bibitem[Hansen and Sargent(2001)]{HS2001}
 Hansen, L.\,P.\ and T.\,J.\ Sargent (2001).
 ``Robust control and model uncertainty,''
@@ -1008,6 +1110,11 @@ Lucas, R.\,E.\ (1987).
 \textit{Models of Business Cycles}.
 Oxford: Basil Blackwell.
 
+\bibitem[Lucas and Sargent(1981)]{LucasSargent1981}
+Lucas, R.\,E.\ and T.\,J.\ Sargent (eds.) (1981).
+\textit{Rational Expectations and Econometric Practice}.
+Minneapolis: University of Minnesota Press.
+
 \bibitem[Maenhout(2004)]{Maenhout2004}
 Maenhout, P.\,J.\ (2004).
 ``Robust portfolio rules and asset pricing,''
@@ -1022,6 +1129,22 @@ Piazzesi, M.\ and M.\ Schneider (2007).
 Piazzesi, M., J.\ Salomao, and M.\ Schneider (2015).
 ``Trend and cycle in bond premia,''
 Working Paper, Stanford University.
+
+\bibitem[Sargent(2008)]{Sargent2008}
+Sargent, T.\,J.\ (2008).
+``Evolution and intelligent design,''
+\textit{American Economic Review} 98, 5--37.
+
+\bibitem[Sargent(1972)]{Sargent1972}
+Sargent, T.\,J.\ (1972).
+``Rational expectations and the term structure of interest rates,''
+\textit{Journal of Money, Credit and Banking} 4, 74--97.
+
+\bibitem[Sargent(1979)]{Sargent1979}
+Sargent, T.\,J.\ (1979).
+``A note on maximum likelihood estimation of the rational expectations
+model of the term structure,''
+\textit{Journal of Monetary Economics} 5, 133--143.
 
 \bibitem[Shiller(1979)]{Shiller1979}
 Shiller, R.\,J.\ (1979).
