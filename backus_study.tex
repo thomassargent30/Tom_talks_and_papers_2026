@@ -1,0 +1,126 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue}
+
+\title{Study Note of Backus Lecture Paper}
+\author{}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Math}
+
+\begin{enumerate}[label=\textbf{M\arabic*.}, leftmargin=*, itemsep=10pt, listparindent=1em]
+
+\item \textbf{[pp.~15, 18]}
+Both problems minimize over $\{w_t\}_{t\geq1}$, but the sums start at $t=0$ and the 
+state equations use $w_t$ at $t=0$, so $w_0$ is needed but not in the choice set. 
+Should the choice set instead be $\{w_t\}_{t\geq0}$?
+
+\item \textbf{[pp.~16--18]}
+In \S8.2 (p.~16):
+$$
+  \xi(x_t) = \tfrac{1}{2} \bar w_t' \bar w_t.
+$$
+In \S8.4 (p.~17):
+$$
+  \xi(x_t) := x_t' \bar w'\bar w x_t = x_t' \Xi x_t,
+$$
+which drops the $\frac{1}{2}$.  
+
+I think the correct form for \S8.4 $\xi(x_t)$ might be
+$$
+  \xi(x_t) := \tfrac{1}{2} x_t' \bar w'\bar w x_t =: \tfrac{1}{2} x_t' \Xi x_t, \qquad 
+  \Xi :=  \bar w'\bar w
+$$
+becuase Eq.~(12) holds with this form.
+
+Eq.~(12) on p.~18 is the Lagrangian of eq.~(10) with the tilted constraint~(11).  The constraint~(11) has $\frac{1}{2}w_t'w_t$ on the left and $\xi(x_t)$ on the right, so the Lagrangian penalty is $\hat\theta\sum\beta^t[\frac{1}{2}w_t'w_t - \xi(x_t)]$.  
+
+\begin{itemize}
+  \item With the p.~16 definition $\xi(x_t)=\frac{1}{2}x_t'\bar w'\bar w x_t$, this factors as $\hat\theta \frac{1}{2}\sum\beta^t[w_t'w_t - x_t'\Xi x_t]$ matching eq.~(12).
+  \item With the p.~17 definition $\xi=x_t'\Xi x_t$ (no~$\frac{1}{2}$), the penalty becomes $\hat\theta[\frac{1}{2}w_t'w_t - x_t'\Xi x_t]$ and the common $\frac{1}{2}$ does not factor out, so eq.~(12) as written cannot hold.
+\end{itemize}
+
+In Hansen, Sz\H{o}ke, Han, and Sargent (2020) and Sz\H{o}ke (2022), the $\frac{1}{2}$ sits outside the entropy penalty rather than inside $\xi$:
+\begin{itemize}[nosep]
+  \item Hansen et al.\ use $\frac{\delta}{2} E \int e^{-\delta t}M_t^H[|H_t|^2-\xi(X_t)] dt$;
+  \item Sz\H{o}ke's Lagrangian: $u(C_t)+\frac{\lambda}{2}[|H_t|^2-\xi(X_t)]$;
+  \item Hansen et al.'s Example~3.1: $\xi(x)=\tilde\eta(x)\cdot\tilde\eta(x)$ (no $\frac{1}{2}$).
+\end{itemize}
+
+So I think the current formulation mixes their convention with the setup in \S8.2.
+
+\item \textbf{[p.~21]}
+Eq.~(13) prices bonds via the product $m_{t+1}^{\tilde w}\cdot m_{t+1}^{\tilde\lambda}$, 
+where each factor is a separately normalised likelihood ratio. However, 
+the product is not a likelihood ratio.
+
+Eq.~(13) defines
+$$
+  m_{t+1}^{\tilde w} = \exp \Bigl(-\tilde w_t'\varepsilon_{t+1} - \tfrac{1}{2}\tilde w_t'\tilde w_t\Bigr),
+  \qquad
+  m_{t+1}^{\tilde\lambda} = \exp \Bigl(-\tilde\lambda_t'\varepsilon_{t+1} - \tfrac{1}{2}\tilde\lambda_t'\tilde\lambda_t\Bigr).
+$$
+Each is a valid log-normal likelihood ratio on its own.  Their product is
+\begin{align*}
+  m^{\tilde w}\cdot m^{\tilde\lambda}
+  &= \exp \Bigl(-(\tilde w_t+\tilde\lambda_t)'\varepsilon_{t+1}
+     - \tfrac{1}{2}\tilde w_t'\tilde w_t - \tfrac{1}{2}\tilde\lambda_t'\tilde\lambda_t\Bigr).
+\end{align*}
+But since
+$$
+  \tfrac{1}{2}\|\tilde w_t\|^2 + \tfrac{1}{2}\|\tilde\lambda_t\|^2
+  = \tfrac{1}{2}\|\tilde w_t+\tilde\lambda_t\|^2 - \tilde w_t'\tilde\lambda_t,
+$$
+We actually get
+$$
+  m^{\tilde w}\cdot m^{\tilde\lambda}
+  = \exp\bigl(\tilde w_t'\tilde\lambda_t\bigr)\cdot m^{\mathrm{total}},
+  \qquad
+  m^{\mathrm{total}} := \exp \Bigl(-(\tilde w_t+\tilde\lambda_t)'\varepsilon_{t+1} - \tfrac{1}{2}\|\tilde w_t+\tilde\lambda_t\|^2\Bigr).
+$$
+The product has factor $\exp(\tilde w_t'\tilde\lambda_t)\ne 1$:
+$$
+  E_t[m^{\tilde w}\cdot m^{\tilde\lambda}]
+  = \exp(\tilde w_t'\tilde\lambda_t) \underbrace{E_t[m^{\mathrm{total}}]}_{=1}
+  = \exp(\tilde w_t'\tilde\lambda_t) \ne 1,
+$$
+where $E_t[m^{\mathrm{total}}]=1$ because $m^{\mathrm{total}}$ has the standard log-normal likelihood ratio form $\exp(-a'\varepsilon_{t+1}-\frac{1}{2}\|a\|^2)$ with $a=\tilde w_t+\tilde\lambda_t$. 
+So $m^{\tilde w}\cdot m^{\tilde\lambda}$ is not a likelihood ratio. 
+
+Should we replace the product with the single combined ratio $m^{\mathrm{total}}$? 
+It then becomes consistent with the paper's eq.~(6) where $\lambda_t = \tilde w_t + \tilde\lambda_t$ and I think it is also consistent with the risk-price vector in 
+Sz\H{o}ke (2022) and the idea of summing two parts.
+
+
+\item \textbf{[p.~24]} 
+The recursion uses $\exp(-\beta W(x_{t+1},c_{t+1})/\theta)$, but the ``attained by'' line gives
+$$B
+  m_{t+1}^* \propto \exp \bigl(-W(x_{t+1},c_{t+1})/\theta\bigr).
+$$
+This might be $\exp(-\beta W(x_{t+1},c_{t+1})/\theta)$.
+
+Eq.~(15) minimises $E[m_{t+1}[\beta W(x_{t+1},c_{t+1}) + \theta\log m_{t+1}] \mid x_t]$ subject to $E[m_{t+1}]=1$. Setting $f=\beta W$, the solution is $m^* = \exp(-f/\theta)/E[\exp(-f/\theta)]$, giving $m^*\propto\exp(-\beta W/\theta)$.
+
+\end{enumerate}
+
+\section{Grammar and Notation}
+
+\begin{enumerate}[label=\textbf{G\arabic*.}, leftmargin=*, itemsep=6pt, listparindent=1em]
+
+\item \textbf{[p.~5]}
+p.~5 says Section~7 introduces the tilted entropy ball, but it appears in Section~8.
+
+\item \textbf{[pp.~15, 17]}
+On p.~15, $w_t = \bar w$ makes $\bar w$ a constant vector; on p.~17, $\bar w_t = \bar w x_t$ makes it a matrix. Would using $\bar W$ for the matrix help?
+
+\end{enumerate}
+
+\end{document}
