@@ -18,7 +18,6 @@
 \newtheorem{definition}{Definition}
 \newtheorem{proposition}{Proposition}
 \newtheorem{remark}{Remark}
-% Added Bierwag and Grove (1967) reference
 \onehalfspacing
 
 \title{Risk Aversion or Mistaken Beliefs?\\[6pt]
@@ -29,8 +28,10 @@ international risk sharing.
 His 2001 paper with Foresi and Telmer on affine models of currency
 pricing is a direct intellectual ancestor of the framework presented
 here.
-Dave insisted on connecting theory tightly to data. More importantly, Dave was extraordinarily generous as a colleague and teacher at NYU Stern.
-I thank Jonathan Payne, Jiao Shi, and B\'alint Sz\H{o}ke for helpful discussions preceding my delivery of the Backus lecture.}}
+Dave was skilled at connecting theory to data in sophisticated ways. He was also extraordinarily generous as a colleague,
+critic, and teacher.
+I thank Jonathan Payne, Jiao Shi, and B\'alint Sz\H{o}ke for helpful discussions preceding my delivery of the Backus lecture,
+and Ziyue Yang for criticisms of earlier drafts of this paper.}}
 
 \author{Thomas J.\ Sargent\\[4pt]
 \small New York University}
@@ -58,8 +59,8 @@ prices needed to explain hitherto puzzling term-structure movements.
 \end{abstract}
 
 \newpage
-\tableofcontents
-\newpage
+%\tableofcontents
+%\newpage
 
 %% ====================================================================
 \section{Introduction}
@@ -68,9 +69,9 @@ prices needed to explain hitherto puzzling term-structure movements.
 
 
 
-Long-standing puzzles about the term structure of interest rates that motivated some of Dave Backus's work motivate this paper too. I define a ``puzzle'' as a feature of the joint distribution of macroeconomic variables and asset returns implied by a ``standard'' benchmark macroeconomic model that is contradicted by U.S.\ time series data. In fact, the nominal yield curve usually slopes upward. The long-minus-short yield spread narrows before recessions and widens after them. Most strikingly, long-term bond yields are nearly as volatile as short-term yields even though, under the expectations theory of the term structure, they should be much smoother averages of expected future short rates.\footnote{For influential research about the expectations theory of the term structure of interest rates before rational expectations was imposed, see \citet{bierwag1967model} and \citet{meiselman1961term}.  For the rational expectations approach to the term structure, see \citet{hansen2019exact}.} This is Robert Shiller's (1979) ``volatility puzzle.''
+Long-standing puzzles about the term structure of interest rates that motivated some of Dave Backus's work motivate this paper too. I define a ``puzzle'' as a feature of the joint distribution of macroeconomic variables and asset returns implied by a ``standard'' benchmark macroeconomic model that is contradicted by U.S.\ time series data. In fact, the nominal yield curve usually slopes upward. The long-minus-short yield spread narrows before recessions and widens after them. Remarkably, long-term bond yields are nearly as volatile as short-term yields even though, under a rational expectations version of the expectations theory of the term structure, they should be much smoother averages of expected future short rates.\footnote{For influential research about the expectations theory of the term structure of interest rates before rational expectations was imposed, see Bierwag and Grove~(1967) and Meiselman~(1961).} This is Robert Shiller's (1979) ``volatility puzzle.''
 
-Sargent~(1972, 1979) tested the cross-equation restrictions on vector autoregressions implied by the rational expectations theory of the term structure. He found support for the theory's implications for conditional means, but also early hints of the difficulties with conditional second moments that Shiller emphasized. To resolve the volatility puzzle, risk prices---or something observationally equivalent---must be large, volatile, and state-dependent. What generates those state-dependent risk prices? Risk aversion? Wrong beliefs? Fears of model misspecification? Disentangling these possible sources is the topic of this paper.
+Sargent~(1972, 1979) and Hansen and Sargent~(1991) tested cross-equation restrictions on vector autoregressions implied by the rational expectations theory of the term structure. They found some support for the theory's implications for conditional means, but also early hints of the difficulties with conditional second moments that Shiller emphasized. To resolve the volatility puzzle, risk prices---or something observationally equivalent---must be large, volatile, and state-dependent. What generates those state-dependent risk prices? Risk aversion? Wrong beliefs? Fears of model misspecification? Disentangling these possible sources is the topic of this paper.
 
 Consequences of investors' \emph{risk aversion} and \emph{wrong beliefs} are
 confounded in asset pricing data.  In a rational expectations model with a
@@ -113,7 +114,7 @@ with $b_t = 0$, $\lambda_t$, $w_t$, or a worst-case distortion.}
 \label{tab:four-measures}
 \end{table}
 
-The ``three martingales'' of my  subtitle are  cumulative likelihood
+The ``three martingales'' of my subtitle are cumulative likelihood
 ratio processes $\{M_t\}$ formed from (i)~risk prices $\lambda_t$,
 (ii)~belief distortions $w_t^*$, and (iii)~worst-case model distortions
 $\tilde w_t$.  The ``and more'' refers to $\bar w_t$, the parametric
@@ -125,18 +126,21 @@ probabilities while preserving a tractable structure.
 Section~\ref{sec:asset-pricing} reviews rational-expectations asset
 pricing and shows how a single likelihood ratio turns risk-neutral
 pricing formulas into modern asset pricing formulas.
-Section~\ref{sec:identification} discusses a parameter  identification issue:
+Section~\ref{sec:identification} discusses a parameter identification issue:
 the same likelihood ratio can be interpreted as risk aversion or as
 belief distortion. Section~\ref{sec:PSS} describes an approach of
 Piazzesi, Salomao, and Schneider~(2015), who use survey data on
 professional forecasters to decompose the likelihood ratio into a
 smaller risk price and a belief distortion.
+Section~\ref{sec:RE-limits} pauses to examine why rational expectations
+may not be a good approximation when persistent dynamics make convergence
+of learning slow.
 Section~\ref{sec:robust} develops a robust control theory approach,
 beginning with Hansen's formulation with a discounted entropy ball. Section~\ref{sec:tilted}
-discusses  Hansen and Sz\H{o}ke's tilted entropy ball that
+discusses Hansen and Sz\H{o}ke's tilted entropy ball that
 accommodates concerns about parametric alternatives with more long-run
 risk.  Section~\ref{sec:empirics} summarizes empirical results. Section~\ref{sec:motivation} describes how models 
-of robustness impose powerful  cross-equation restrictions that resemble those imposed by rational expectations models. 
+of robustness impose powerful cross-equation restrictions that resemble those imposed by rational expectations models.
 Section~\ref{sec:conclusion} concludes with reflections on why different interpretations and fits of these
 joint probability distributions matter for macroeconomics. Appendix~\ref{sec:multiplier} describes some details
 about multiplier preferences. 
@@ -417,7 +421,7 @@ The key variables in PSS's state-space system are:
 
 PSS find $w^* \neq 0$:
 \begin{itemize}
-\item The expert's model differs systematically from the
+\item The experts' model differs systematically from the
       econometrician's.
 \item Experts perceive the level and slope of the yield curve to be more
       persistent than the econometrician's estimates imply.
@@ -597,8 +601,8 @@ The likelihood ratio process $\{M_t\}_{t=0}^\infty$ is a multiplicative
 
 With the log-normal likelihood ratio
 \[
-   m_{t+1} := \exp\!\left(-\tfrac{w_t' w_t}{2}
-       - w_t'\, \varepsilon_{t+1}\right),
+   m_{t+1} := \exp\!\left(- w_t'\, \varepsilon_{t+1}
+       - \tfrac{w_t' w_t}{2}\right),
 \]
 conditional entropy takes the simple form
 \[
@@ -608,7 +612,7 @@ conditional entropy takes the simple form
 Substituting this into~\eqref{eq:hansen-seq} yields the reformulated
 problem:
 \begin{align}
-J(x_0, c_0 \mid \eta) &:= \min_{\{w_t\}_{t\geq 1}}
+J(x_0, c_0 \mid \eta) &:= \min_{\{w_t\}_{t\geq 0}}
     E^w\!\left[\sum_{t=0}^{\infty} \beta^t\, c_t
     \;\middle|\; x_0, c_0\right] \label{eq:hansen-seq2}\\
 &\quad \text{s.t.}\quad
@@ -722,8 +726,11 @@ This corresponds to $\bar w_t = \bar w\, x_t$ with
    \bar w = -C^{-1}(\bar A - A),
 \]
 which implies a quadratic $\xi$ function:
+%\[
+%   \xi(x_t) := x_t'\,\bar w'\,\bar w\, x_t =: x_t'\,\Xi\, x_t.
+%\]
 \[
-   \xi(x_t) := x_t'\,\bar w'\,\bar w\, x_t =: x_t'\,\Xi\, x_t.
+   \xi(x_t) := \frac{1}{2} x_t'\,\bar w'\,\bar w\, x_t =: \frac{1}{2} x_t'\,\Xi\, x_t.
 \]
 
 \begin{figure}[t]
@@ -748,7 +755,7 @@ ignite countercyclical market prices of uncertainty.
 The resulting linear-quadratic problem is:
 \begin{align}
 J(x_0, c_0 \mid \Xi) &:= \max_{\tilde\theta \geq 0}\;
-    \min_{\{w_t\}_{t\geq 1}}\;
+    \min_{\{w_t\}_{t\geq 0}}\;
     E^w\!\left[\sum_{t=0}^{\infty} \beta^t\, c_t
     + \tilde\theta\, \tfrac{1}{2}\sum_{t=0}^{\infty} \beta^t
     \bigl(w_t' w_t - x_t'\,\Xi\, x_t\bigr)
@@ -763,12 +770,12 @@ J(x_0, c_0 \mid \Xi) &:= \max_{\tilde\theta \geq 0}\;
 \end{align}
 The worst-case shock mean distortion is
 \[
-   \tilde w_t = \tilde w\, x_t,
+   \tilde w_t = \tilde W\, x_t,
 \]
 and the worst-case model is $(\tilde A, C, \tilde D, G)$ with
 \begin{align*}
-\tilde A &= A - C\,\tilde w, \\
-\tilde D &= D - G\,\tilde w.
+\tilde A &= A - C\,\tilde W, \\
+\tilde D &= D - G\,\tilde W.
 \end{align*}
 
 
@@ -855,18 +862,31 @@ Sz\H{o}ke proceeds in two stages:
       them simultaneously with risk prices $\tilde\lambda\, x_t$ from
       data $\{p_t(n+1)\}_{n=1}^N$, $t = 0, \ldots, T$, by imposing
       cross-equation restrictions:
+%\begin{align}
+%p_t(n+1) &= \exp(-r_t)\, E_t\!\left[
+%    m_{t+1}^{\tilde w}\, m_{t+1}^{\tilde\lambda}\,
+%    p_{t+1}(n)\right], \label{eq:szoke-pricing}\\
+%m_{t+1}^{\tilde w} &= \exp\!\left(-\tilde w_t'\,\varepsilon_{t+1}
+%    - \tfrac{\tilde w_t'\,\tilde w_t}{2}\right), \notag\\
+%m_{t+1}^{\tilde\lambda} &= \exp\!\left(-\tilde\lambda_t'\,
+%    \varepsilon_{t+1}
+%    - \tfrac{\tilde\lambda_t'\,\tilde\lambda_t}{2}\right), \notag
+%\end{align}
 \begin{align}
 p_t(n+1) &= \exp(-r_t)\, E_t\!\left[
-    m_{t+1}^{\tilde w}\, m_{t+1}^{\tilde\lambda}\,
+    m_{t+1}^{\rm total} \, %m_{t+1}^{\tilde w}\, m_{t+1}^{\tilde\lambda}\,
     p_{t+1}(n)\right], \label{eq:szoke-pricing}\\
-m_{t+1}^{\tilde w} &= \exp\!\left(-\tilde w_t'\,\varepsilon_{t+1}
-    - \tfrac{\tilde w_t'\,\tilde w_t}{2}\right), \notag\\
-m_{t+1}^{\tilde\lambda} &= \exp\!\left(-\tilde\lambda_t'\,
-    \varepsilon_{t+1}
-    - \tfrac{\tilde\lambda_t'\,\tilde\lambda_t}{2}\right), \notag
+m_{t+1}^{\rm total} &= \exp\left( - (\tilde w_t +\tilde \lambda_t)' \varepsilon_{t+1} - \frac{1}{2} || \tilde w_t +\tilde \lambda_t||^2 \right)
+\notag
+%
+%\exp\!\left(-\tilde w_t'\,\varepsilon_{t+1}
+%    - \tfrac{\tilde w_t'\,\tilde w_t}{2}\right), \notag\\
+%m_{t+1}^{\tilde\lambda} &= \exp\!\left(-\tilde\lambda_t'\,
+%    \varepsilon_{t+1}
+%    - \tfrac{\tilde\lambda_t'\,\tilde\lambda_t}{2}\right), \notag
 \end{align}
 where $E_t$ is taken with respect to the econometrician's model and
-$\tilde w_t = \tilde w\, x_t$ is the dubious investor's worst-case
+$\tilde w_t = \tilde W\, x_t$ is the dubious investor's worst-case
 model.
 \end{enumerate}
 
@@ -874,10 +894,10 @@ model.
 \begin{enumerate}
 \item Assess improvements in predicted behavior of the term structure.
 \item Use estimated worst-case dynamics to form distorted forecasts
-      $\tilde x_{t+1} = (A - C\,\tilde w)\, x_t$ and compare them to
+      $\tilde x_{t+1} = (A - C\,\tilde W)\, x_t$ and compare them to
       those of professional forecasters.
 \item Compute discounted relative entropy of the worst-case twisted
-      model $(A - C\,\tilde w, C, D - G\,\tilde w, G)$ relative to the
+      model $(A - C\,\tilde W, C, D - G\,\tilde W, G)$ relative to the
       econometrician's model $(A,C,D,G)$, and use it together with
       Chernoff--Newman--Stuck entropy measures to assess the difficulty
       of distinguishing the two models.
@@ -900,7 +920,7 @@ interpretations:
 Sz\H{o}ke's framework delivers:
 \begin{enumerate}
 \item A theory of state-dependent belief distortions
-      $\tilde w_t = \tilde w\, x_t$.
+      $\tilde w_t = \tilde W\, x_t$.
 \item A theory about the question that professional forecasters answer:
       they respond with their worst-case model because they hear ``tell
       me forecasts that rationalize your (max-min) decisions.''
@@ -914,7 +934,7 @@ He uses his estimated $\Xi$ matrix:
       parameterized by $\bar w$ that concern the representative
       investor---these models have more long-run risk than the
       econometrician's model;
-\item to infer a worst-case mean distortion $\tilde w\, x_t$ whose
+\item to infer a worst-case mean distortion $\tilde W\, x_t$ whose
       state dependence causes the term structure to move with $x_t$ in
       ways that explain hitherto puzzling term-structure movements,
       including Shiller's ``volatility puzzle.''
@@ -926,7 +946,7 @@ To summarize, three distinct probability twisters play roles in this
 analysis:
 \begin{itemize}
 \item $w_t^*$: Piazzesi, Salomao, and Schneider's mistaken agent;
-\item $\bar w_t$: Sz\H{o}ke's especial LRR parametric worry;
+\item $\bar w_t$: Sz\H{o}ke's especial LRR parametric concern;
 \item $\tilde w_t$: Sz\H{o}ke's worst-case model.
 \end{itemize}
 
@@ -938,7 +958,7 @@ analysis:
 
 A recurring theme throughout the rational expectations econometrics
 literature is that equilibrium models impose testable restrictions across
-the equations of a vector autoregression.\footnote{See \citet{LucasSargent1981}}  
+the equations of a vector autoregression.\footnote{See Lucas and Sargent~(1981).}  
 This section highlights how
 the robust control framework preserves that desirable feature: even
 though the decision maker's beliefs depart from the econometrician's
@@ -1000,7 +1020,7 @@ shocks are important throughout macroeconomics:
 
 Understanding whether observed asset prices reflect risk aversion,
 mistaken beliefs, or fears of model misspecification---and quantifying
-each component---is therefore essential for both positive and normative
+each component---matters for both positive and normative
 macroeconomics.
 
 
@@ -1074,12 +1094,12 @@ estimation,''
 in L.\,P.\ Hansen and T.\,J.\ Sargent (eds.),
 \textit{Rational Expectations Econometrics},
 Boulder, CO: Westview Press.
-
-\bibitem[Hansen and Sargent(2019)]{hansen2019exact}
-Hansen, L.\,P.\ and T.\,J.\ Sargent (2019).
-``Exact linear rational expectations models: Specification and
-estimation,'' in \textit{Rational Expectations Econometrics},
-pp.\ 45--75. CRC Press.
+%
+%\bibitem[Hansen and Sargent(2019)]{hansen2019exact}
+%Hansen, L.\,P.\ and T.\,J.\ Sargent (2019).
+%``Exact linear rational expectations models: Specification and
+%estimation,'' in \textit{Rational Expectations Econometrics},
+%pp.\ 45--75. CRC Press.
 
 \bibitem[Hansen and Sargent(2001)]{HS2001}
 Hansen, L.\,P.\ and T.\,J.\ Sargent (2001).
