@@ -214,16 +214,21 @@ x_{t+1} &= A\, x_t + C\, \varepsilon_{t+1}, \label{eq:state}\\
 y_{t+1} &= D\, x_t + G\, \varepsilon_{t+1}, \label{eq:obs}\\
 \varepsilon_{t+1} &\sim {\mathcal N}(0,I), \notag
 \end{align}
-where $y_{t+1}$ collects utility-relevant variables,
+where $y_{t+1}$ collects utility-relevant variables such as the first difference $c_{t+1} - c_t$ of the logarithm of per capita consumption,
 $r_t = \bar r\, x_t$ is the risk-free one-period interest rate, and
-$d_t = \bar d\, x_t$ is the payout process from an asset.  The object
+$d_t = \bar d\, x_t$ is the payout process from an asset.\footnote{To accommodate constant terms easily,
+we  assume that the  first entry in the  state vector is a constant $1$ so that 
+ $x_t = \begin{bmatrix} 1 \cr \check x_t \end{bmatrix}$ where 
+ $A = \begin{bmatrix} 1 & 0 \cr 0 & \check A \end{bmatrix} $ and $\check A$ is a stable matrix,  
+ $C = \begin{bmatrix} 0 \cr  \check C \end{bmatrix} $, and the first component of $x_0$ is $1$.}
+   The object
 of interest is the price at date~$t$ of a claim to the random payout
-stream $\{d_{t+j}\}_{j=1}^\infty$.
+stream $\{d_{t+j}\}_{j=1}^\infty$. Figure \ref{fig:econometrician} illustrates a model of the form \eqref{eq:state}-\eqref{eq:obs} in which $y_{t+1} = c_{t+1} - c_t$ where $c_t$ is the log of per capita consumption. 
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth,keepaspectratio]{fig2_tom.pdf}
-\caption{The econometrician's model: estimated state dynamics.}
+\caption{An econometrician's model of growth in aggregate consumption: estimated state dynamics.}
 \label{fig:econometrician}
 \end{figure}
 
@@ -235,7 +240,7 @@ stock prices satisfy (Shiller):
    p_t = \exp(-r_t)\, E_t\bigl( p_{t+1} + d_{t+1}\bigr).
 \]
 The expectations theory of the term structure of interest rates
-(Hicks--Shiller) prices a zero-coupon risk-free claim to one dollar at
+(citet{Hicks1939}--Shiller) prices a zero-coupon risk-free claim to one dollar at
 time $t+n$ as:
 \begin{align}
 p_t(1) &= \exp(-r_t), \notag\\
@@ -265,8 +270,8 @@ ${\mathcal N}(-\lambda\, x_t, I)$.  Covariances of returns with
 $m_{t+1}^\lambda$ affect mean returns---this is the channel through
 which risk aversion prices risks.
 
-With this device, modern asset pricing (Lucas--Hansen for stocks,
-Dai--Singleton--Backus--Zin for bonds) takes the form:
+With this device, modern asset pricing (\citet{Lucas1978} for stocks,
+\citet{DS2000}, \citet{cox1985theory}, and  \citet{BZ1994} for bonds) takes the form:
 \begin{align}
 p_t &= \exp(-r_t)\, E_t\bigl(
     {\color{red} m_{t+1}^\lambda}\,(p_{t+1} + d_{t+1})\bigr),
@@ -768,9 +773,19 @@ J(x_0, c_0 \mid \Xi) &:= \max_{\tilde\theta \geq 0}\;
     x_{t+1} = A\, x_t + C\,(\tilde\varepsilon_{t+1}
     - {\color{orange} w_t}). \notag
 \end{align}
-The worst-case shock mean distortion is
+The worst-case shock mean distortion
+ is\footnote{We have assumed that first entry in the the state vector is a constant $1$ so that 
+ $x_t = \begin{bmatrix} 1 \cr \check x_t \end{bmatrix}$ where 
+ $A = \begin{bmatrix} 1 & 0 \cr 0 & \check A \end{bmatrix} $ and $\check A$ is a stable matrix.
+ Consequently, the worst-case distortion is now affine the stochastic part $\check x_t$ of the state vector:
+$$
+\tilde{w}_t = a + \check {W} \check x_t
+$$
+where $a$ is a constant vector determined by the linear terms in the value function.
+When $\Xi = 0$ (no tilting), the constant $a$ reduces to the Hansen $\bar{w}$ from the untilted problem.
+However, when $\Xi \neq 0$ the two differ because the quadratic value function contributes an additional $2\beta C^\top \Xi C$ term to the left-hand side of the first-order condition for the constant part. The state-dependent component $\check{W} \check x_t$ is the new contribution of the tilted entropy ball, and is what generates countercyclical uncertainty prices. }
 \[
-   \tilde w_t = \tilde W\, x_t,
+   \tilde w_t = \widetilde W\, x_t,
 \]
 and the worst-case model is $(\tilde A, C, \tilde D, G)$ with
 \begin{align*}
@@ -1074,6 +1089,11 @@ Backus, D.\,K., S.\ Foresi, and C.\,I.\ Telmer (2001).
 ``Affine term structure models and the forward premium anomaly,''
 \textit{Journal of Finance} 56, 279--304.
 
+\bibitem[Backus and Zin(1994)]{BZ1994}
+Backus, D.\,K.\ and S.\,E.\ Zin (1994).
+``Reverse engineering the yield curve,''
+NBER Working Paper No.\ 4676.
+
 \bibitem[Bierwag and Grove(1967)]{bierwag1967model}
 Bierwag, Gerald O. and M.A. Grove (1967). "A model of the term structure of interest rates." \textit{The Review of Economics and Statistics}, 49(1), 50--62.
 
@@ -1081,6 +1101,11 @@ Bierwag, Gerald O. and M.A. Grove (1967). "A model of the term structure of inte
 Bansal, R.\ and A.\ Yaron (2004).
 ``Risks for the long run: A potential resolution of asset pricing puzzles,''
 \textit{Journal of Finance} 59, 1481--1509.
+
+\bibitem[Cox et~al.(1985)]{cox1985theory}
+Cox, J.\,C., J.\,E.\ Ingersoll, and S.\,A.\ Ross (1985).
+``A theory of the term structure of interest rates,''
+\textit{Econometrica} 53, 385--407.
 
 \bibitem[Dai and Singleton(2000)]{DS2000}
 Dai, Q.\ and K.\,J.\ Singleton (2000).
