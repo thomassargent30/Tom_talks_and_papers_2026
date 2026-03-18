@@ -21,8 +21,8 @@
 \onehalfspacing
 
 \title{Risk Aversion or Mistaken Beliefs?\\[6pt]
-\large Three Martingales and More\thanks{This paper is the basis for
-the inaugural David Backus Memorial Lecture.
+\large Three Martingales and More\thanks{The research presented in this paper was  the basis for
+the 2017 inaugural David Backus Memorial Lecture.
 Dave was a pioneer in the study of affine term structure models and
 international risk sharing.
 His 2001 paper with Foresi and Telmer on affine models of currency
@@ -47,15 +47,14 @@ This paper explores the confounding of risk aversion and mistaken beliefs
 in asset pricing.  A likelihood ratio---a multiplicative martingale
 increment---serves as the key mathematical object that connects
 risk-neutral pricing, subjective belief distortions, and concerns about
-model misspecification.  I describe three uses of likelihood ratios:
-(i)~to encode a representative investor's risk aversion, following
-Lucas and Hansen; (ii)~to represent mistaken beliefs of professional
-forecasters, following Piazzesi, Salomao, and Schneider; and (iii)~to
-capture fears of model misspecification, following Hansen and
-Sz\H{o}ke.  I show how the third use, with a tilted discounted entropy
+model misspecification.  I describe  likelihood ratios that:
+(i)~encode a representative investor's risk aversion, following
+Lucas and Hansen; (ii)~represent mistaken beliefs of professional
+forecasters, following Piazzesi, Salomao, and Schneider; and (iii)~capture fears of model misspecification, following Hansen and
+Sz\H{o}ke.  I show how by using  a tilted discounted entropy
 ball that accommodates concerns about particular parametric models
-featuring long-run risk, can generate the state-dependent uncertainty
-prices needed to explain hitherto puzzling term-structure movements.
+featuring long-run risk, the third likelihood ratio can generate the state-dependent uncertainty
+prices that can explain hitherto puzzling term-structure movements.
 \end{abstract}
 
 \newpage
@@ -69,23 +68,23 @@ prices needed to explain hitherto puzzling term-structure movements.
 
 
 
-Long-standing puzzles about the term structure of interest rates that motivated some of Dave Backus's work motivate this paper too. I define a ``puzzle'' as a feature of the joint distribution of macroeconomic variables and asset returns implied by a ``standard'' benchmark macroeconomic model that is contradicted by U.S.\ time series data. In fact, the nominal yield curve usually slopes upward. The long-minus-short yield spread narrows before recessions and widens after them. Remarkably, long-term bond yields are nearly as volatile as short-term yields even though, under a rational expectations version of the expectations theory of the term structure, they should be much smoother averages of expected future short rates.\footnote{For influential research about the expectations theory of the term structure of interest rates before rational expectations was imposed, see Bierwag and Grove~(1967) and Meiselman~(1961).} This is Robert Shiller's (1979) ``volatility puzzle.''
+This paper honors  David Backus by trying to think hard about   long-standing puzzles about the term structure of interest rates that also  preoccupied Dave. By ``puzzle'' I mean a feature of a joint distribution of macroeconomic variables and asset returns, implied by a ``standard'' benchmark model, that is contradicted by U.S.\ time series data. Three patterns qualify as puzzles under this definition: 1) the nominal yield curve usually slopes upward; 2) the long-minus-short yield spread narrows before recessions and widens after them; and 3) long-term bond yields are nearly as volatile as short-term yields even though, under a rational expectations version of the expectations theory of the term structure, they should be much smoother averages of expected future short rates---this is what Shiller~(1979) called the \emph{volatility puzzle}.\footnote{For influential research about the expectations theory of the term structure of interest rates before rational expectations was imposed, see Bierwag and Grove~(1967) and Meiselman~(1961).}
 
 Sargent~(1972, 1979) and Hansen and Sargent~(1991) tested cross-equation restrictions on vector autoregressions implied by the rational expectations theory of the term structure. They found some support for the theory's implications for conditional means, but also early hints of the difficulties with conditional second moments that Shiller emphasized. To resolve the volatility puzzle, risk prices---or something observationally equivalent---must be large, volatile, and state-dependent. What generates those state-dependent risk prices? Risk aversion? Wrong beliefs? Fears of model misspecification? Disentangling these possible sources is the topic of this paper.
 
-Consequences of investors' \emph{risk aversion} and \emph{wrong beliefs} are
-confounded in asset pricing data.  In a rational expectations model with a
+In asset pricing data, the effects of investors' \emph{risk aversion} and \emph{wrong beliefs} are
+confounded.  In a rational expectations model with a
 risk-averse representative investor, higher mean returns compensate for
-higher risks.  But if the rational expectations assumption is wrong because the representative investor holds wrong beliefs,
+higher risks.  But if the representative investor holds wrong beliefs, belying a rational expectations assumption,
 observed average returns depend on \emph{both} risk aversion \emph{and}
-misunderstood return distributions.  Thus, wrong beliefs can contribute what, from the point of view of an econometrician's approximating model,
-look like ``stochastic discount factor shocks.'' Does the presence of such ``shocks'' have the potential to explain observed countercyclical risk prices?
+misunderstood return distributions.  Wrong beliefs can generate what, from the perspective of an econometrician's approximating model, look
+like ``stochastic discount factor shocks.'' Can such ``shocks'' explain the observed countercyclical behavior of risk prices?
 
 
-This paper organizes ideas around a single mathematical device: the
+This paper organizes ideas around a single concept: the
 \emph{likelihood ratio}, a non-negative random variable with unit mean
 that twists one probability distribution into another.
-Much of the analysis draws on two papers:
+Much of the analysis draws on two contributions:
 Hansen, Sz\H{o}ke, Han, and Sargent~(2020), who construct
 twisted probability models from tilted discounted entropy balls to
 price model uncertainty, and Sz\H{o}ke~(2022), who estimates a
@@ -115,10 +114,10 @@ with $b_t = 0$, $\lambda_t$, $w_t$, or a worst-case distortion.}
 \end{table}
 
 The ``three martingales'' of my subtitle are cumulative likelihood
-ratio processes $\{M_t\}$ formed from (i)~risk prices $\lambda_t$,
+ratio processes $\{M_t = \prod_{s=0}^t m_t \}_{t=0}^\infty$ formed from (i)~risk prices $\lambda_t$,
 (ii)~belief distortions $w_t^*$, and (iii)~worst-case model distortions
-$\tilde w_t$.  The ``and more'' refers to $\bar w_t$, the parametric
-long-run risk worry that tilts the entropy ball.
+$\tilde w_t$.  The ``and more'' in my subtitle refers to $\bar w_t$, a parametric
+long-run risk worry that tilts an entropy ball.
 
 The rest of this paper proceeds as follows.  Section~\ref{sec:risks-and-beliefs}
 sets up a Gaussian statistical framework in which a likelihood ratio twists
@@ -142,8 +141,7 @@ accommodates concerns about parametric alternatives with more long-run
 risk.  Section~\ref{sec:empirics} summarizes empirical results. Section~\ref{sec:motivation} describes how models 
 of robustness impose powerful cross-equation restrictions that resemble those imposed by rational expectations models.
 Section~\ref{sec:conclusion} concludes with reflections on why different interpretations and fits of these
-joint probability distributions matter for macroeconomics. Appendix~\ref{sec:multiplier} describes some details
-about multiplier preferences. 
+joint probability distributions matter for macroeconomics. Appendix~\ref{sec:multiplier} describes the multiplier preference formulation of a dubious agent's problem.
 
 
 %% ====================================================================
@@ -1006,8 +1004,8 @@ model.
 \label{sec:conclusion}
 %% ====================================================================
 
-Joint probability distributions of interest rates and macroeconomic
-shocks are important throughout macroeconomics:
+Joint probability distributions of asset prices and macroeconomic fundamentals matter throughout macroeconomics.
+This paper has used likelihood ratios to organize three distinct explanations for observed risk prices---risk aversion, mistaken beliefs, and fears of model misspecification---and has shown how the third, properly formalized, can account for puzzling term-structure dynamics.
 \begin{itemize}
 \item \textbf{Costs of aggregate fluctuations.}  Welfare assessments of
       business cycles depend sensitively on how risks are priced.
@@ -1021,6 +1019,7 @@ shocks are important throughout macroeconomics:
 \item \textbf{Consumption Euler equations.}  The ``New Keynesian IS
       curve'' is a log-linearized consumption Euler equation whose risk
       adjustments are controlled by the stochastic discount factor.
+      Whether those adjustments reflect risk aversion, wrong beliefs, or model uncertainty affects how monetary policy transmits to real activity through intertemporal substitution.
 \item \textbf{Optimal taxation and government debt management.}
        Government bond prices embed risk prices whose state dependence
        matters for optimal fiscal policy.
@@ -1036,7 +1035,7 @@ shocks are important throughout macroeconomics:
 Understanding whether observed asset prices reflect risk aversion,
 mistaken beliefs, or fears of model misspecification---and quantifying
 each component---matters for both positive and normative
-macroeconomics.
+macroeconomics. Dave Backus spent a lot of time teaching us how to  improve connections  between theory and evidence. I wish he were still here. But  I  still hear him.
 
 
 %% ====================================================================
