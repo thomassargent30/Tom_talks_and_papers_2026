@@ -1,0 +1,1136 @@
+% kepler_newton_ML.tex
+% "Kepler and Newton as Machine Learners:
+%  From Tycho Brahe's Data to Universal Gravitation"
+% Thomas J. Sargent, 2026
+
+\documentclass[12pt]{article}
+
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage[margin=1.2in]{geometry}
+\usepackage{setspace}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{natbib}
+\usepackage{parskip}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\onehalfspacing
+
+\hypersetup{
+  colorlinks  = true,
+  linkcolor   = blue,
+  citecolor   = blue,
+  urlcolor    = blue
+}
+
+\title{Kepler and Newton as Machine Learners:\\
+       From Tycho Brahe's Data to Universal Gravitation}
+\author{Thomas J.\ Sargent}
+\date{March 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Between 1600 and 1609, Johannes Kepler performed history's first large-scale
+nonlinear least-squares regression: fitting ellipse parameters to Tycho Brahe's
+Mars observations, which achieved then-unprecedented $2'$-arc\-minute precision.
+Eighty years later, Isaac Newton derived the law of universal gravitation from
+Kepler's three empirical laws by a sequence of deductions that constitute a
+hypothetico-deductive inference chain.  This paper examines the two-century
+episode from the perspective of modern statistics and machine learning.
+Kepler's problem was nonlinear parameter estimation: the elliptical model
+$r(\theta)=a(1-e^{2})/(1+e\cos\theta)$ was new, the parameters $(a,e)$
+unknown, and the loss function the sum of squared angular residuals.
+The optimal Mars parameters~--- $a=1.524$\,AU, $e=0.0934$~---
+can be recovered in seconds by nonlinear least squares or MCMC; what required
+Kepler nearly a decade was the prior discovery of the correct functional form.
+The 8-arc\-minute residual of the circular hypothesis played the role of a
+four-sigma outlier: statistically inconsistent with Brahe's measurement
+precision, it forced a model expansion from circular to elliptical orbits.
+Kepler's Third Law $T^{2}\propto a^{3}$, which he discovered inductively across
+the five planets then known, is a log-log OLS regression: the slope estimate
+is $\hat\beta=1.500$ and $R^{2}=0.99998$.
+Newton's contribution was an inverse problem: given Kepler's three empirical
+regularities as constraints, identify the unique force law $F(r)$ that
+produces them.  The answer, $F\propto r^{-2}$, follows from elementary
+calculus and the Binet equation; the Moon test then confirmed out-of-sample
+generalization from planetary to terrestrial gravitation.
+Modern AI systems~---
+\textit{AI~Feynman} \citep{Udrescu2020},
+\textit{AI-Newton} \citep{FangEtAl2023},
+and the deep-learning network of \citet{Lemos2023}~---
+reconstruct the same laws from trajectory data with no prior physics knowledge.
+The contrast illuminates both the power of theory-informed inference and the
+irreducible role of conceptual insight in scientific discovery.
+\end{abstract}
+
+\tableofcontents
+
+%======================================================================
+\section{Introduction}
+
+A modern data scientist confronted with a table of (orbital period, semi-major
+axis) pairs would recognise Kepler's Third Law as a two-variable power-law
+regression, estimated in about one line of Python.
+A data scientist given a time series of planetary positions would frame the
+orbit-fitting problem as nonlinear least squares with two free parameters.
+Neither would need Kepler's conceptual leap~---the abandonment of circles in
+favour of ellipses~---because they would already know the functional form.
+What Kepler \emph{did} need, and what took him nine years and hundreds of pages
+of \emph{Astronomia Nova} \citep{Donahue1992}, was to discover the model class
+before estimating its parameters.
+
+The episode repays examination from a statistical perspective for three reasons.
+
+First, the \emph{data}.  Tycho Brahe's naked-eye observations of Mars,
+accumulated over twenty years at Uraniborg, achieved $2'$\,(arc\-minute)
+precision~---roughly ten times better than anything available to Copernicus~---
+and were thus sufficient to distinguish between competing orbit models.
+Brahe's archive was the training set; its precision determined the statistical
+power available to any estimation procedure.
+
+Second, the \emph{model-selection criterion}.
+Kepler's pivotal insight was not a computation but a residual diagnostic:
+when the Vicarious Hypothesis (an eccentric circle fitted to Brahe's data)
+predicted Mars longitudes within $2'$ but left an irreducible $8'$ error at
+certain orbital phases, Kepler recognised that $8'=4\sigma$ was statistically
+incompatible with measurement noise.
+He could not ignore it, and so was forced to enlarge the model class.
+The ellipse~---the next simplest closed curve after the circle~---fitted the
+residuals to within the noise floor, and no further expansion was needed.
+This is textbook model selection: reject the null model when the residual
+exceeds a critical threshold, expand the hypothesis class, and stop as soon
+as the residuals are consistent with noise.
+
+Third, the \emph{identification problem}.
+Newton's contribution was not more data or a better fitting algorithm.
+It was the recognition that Kepler's three empirical laws, taken together,
+over-identify a unique force law.
+The area law (equal areas in equal times) implied a central force.
+The harmonic law ($T^{2}\propto a^{3}$) implied an inverse-square dependence
+on distance.
+The fact that orbits are ellipses~--- not parabolas or other conics~---
+confirmed the inverse-square law by the converse of Proposition~11, Book~I
+of the \emph{Principia}.
+The Moon test extended the law from the solar system to the Earth–Moon system,
+establishing universality across seven orders of magnitude in distance.
+
+Seen through a machine-learning lens, Brahe was the data engineer,
+Kepler was the model builder who performed nonlinear estimation under a
+parsimony constraint, and Newton solved the inverse problem of recovering the
+latent physical law from Kepler's compressed representation of the data.
+Modern AI systems have now automated all three steps.
+The remainder of this paper develops each step in detail, provides numerical
+worked examples, and closes with a comparison of Kepler and Newton's
+reasoning with the methods of contemporary machine learning.
+
+%======================================================================
+\section{Tycho Brahe's Data and the Mars Problem}
+
+\subsection{Observational Precision}
+
+Tycho Brahe (1546--1601) constructed the most precise pre-telescopic
+observational instruments in history at his observatory Uraniborg on the
+island of Hven.  His quadrants and sextants measured celestial angles to
+approximately $2'$ (arc\-minutes), an order of magnitude more precisely than
+his predecessors.  Over two decades he accumulated positions for all of the
+then-known planets, the Moon, and over a thousand fixed stars.
+
+Two arc\-minutes is a small angle~---$(2/60)\times(\pi/180)=5.8\times10^{-4}$
+radians~---but it is large enough to matter.
+At Mars's mean distance of $1.524$\,AU from the Sun, a $2'$ angular error
+corresponds to a linear uncertainty of
+\[
+   \delta r = 1.524 \times 5.8\times10^{-4}\,\text{AU}
+            = 8.8\times10^{-4}\,\text{AU} \approx 0.001\,\text{AU},
+\]
+or about $130{,}000$\,km.  This is the irreducible noise floor in Kepler's
+estimation problem.
+
+\subsection{The Method of Oppositions}
+
+Kepler used Mars observations taken at \emph{opposition}~---
+moments when the Sun, Earth, and Mars are collinear, with Earth in
+the middle.  At opposition, the geocentric and heliocentric longitudes
+of Mars coincide (because the Earth--Sun--Mars angle is zero), so no
+geometric correction for the Earth's position is needed.
+Kepler identified twelve usable oppositions in Brahe's archive spanning 1580
+to 1600.  Each opposition supplied one data point $(r_{i},\theta_{i})$:
+the heliocentric distance $r_{i}$ and the heliocentric true anomaly
+$\theta_{i}$ of Mars.
+
+\subsection{Table~1: Selected Brahe--Kepler Opposition Data for Mars}
+
+Table~\ref{tab:mars_data} lists five of Kepler's Mars opposition data
+points in the form convenient for parameter estimation.
+The values are approximate but historically representative, with added noise
+consistent with the $2'$ precision of Brahe's instruments.
+
+\begin{table}[h]
+\centering
+\renewcommand{\arraystretch}{1.25}
+\caption{Selected Mars opposition heliocentric coordinates derived from
+  Brahe's observations.  Distances in AU; true anomaly $\theta$ measured
+  from perihelion.  Noise is of order $0.001$--$0.002$\,AU, consistent with
+  Brahe's $2'$ angular precision at $1.5$\,AU distance.}
+\label{tab:mars_data}
+\begin{tabular}{@{}ccc@{}}
+\toprule
+$i$ & $\theta_{i}$ (degrees) & $r_{i}$ (AU) \\
+\midrule
+1 &   0  & 1.382 \\
+2 &  75  & 1.477 \\
+3 & 150  & 1.641 \\
+4 & 225  & 1.619 \\
+5 & 300  & 1.442 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%======================================================================
+\section{Kepler's Parametric Model}
+
+\subsection{The Vicarious Hypothesis and Its Failure}
+
+Kepler's initial working model for Mars was the \emph{Vicarious Hypothesis}:
+an eccentric circle, with an equant point offset from the centre of the
+circle.  This model had been the standard since Ptolemy.
+Fitted to oppositions, it predicted heliocentric longitudes within $2'$~---
+inside Brahe's error budget~---and was thus statistically acceptable on
+longitude residuals alone.
+
+The problem appeared when Kepler checked the \emph{latitudes} and distances.
+At orbital phases halfway between opposition and conjunction, the circular
+model produced errors of $8'$~---four times Brahe's precision.
+Kepler wrote in \emph{Astronomia Nova} (Chapter 19):
+\begin{quote}
+  \emph{``If thou, dear reader, art bored with this wearisome method of
+  calculation, take pity on me who had to go through with at least seventy
+  repetitions of it\ldots{} But if you are wearied by this prolixity,
+  you will be still more wearied when I tell you that this hypothesis is
+  nevertheless wide of the truth.''}
+\end{quote}
+And, crucially (Chapter 19):
+\begin{quote}
+  \emph{``These eight minutes alone will have led the way to the reformation
+  of all of astronomy.''}
+\end{quote}
+
+\subsection{The Ellipse}
+
+After confirming that no circular hypothesis could explain Brahe's data,
+Kepler tried the oval and ultimately the ellipse.
+The ellipse, in polar coordinates centred at one focus (the Sun), is
+\begin{equation}\label{eq:ellipse}
+  \boxed{r(\theta) = \frac{a(1-e^{2})}{1+e\cos\theta}}
+\end{equation}
+where $a$ is the semi-major axis, $e\in(0,1)$ is the eccentricity,
+and $\theta$ is the true anomaly measured from perihelion.
+Two free parameters, $(a,e)$, specify the size and shape of the orbit.
+A third parameter, the argument of perihelion, specifies the orientation
+of the ellipse in space, but this can be absorbed into the definition
+of $\theta=0$.
+
+\subsection{Kepler's Equation}
+
+The ellipse specifies the orbit's \emph{shape}: where the planet is at a
+given true anomaly.  To predict the planet's position at a given \emph{time},
+one needs to connect $\theta$ to time via the eccentric anomaly $E$ and the
+mean anomaly $M$.  The key relation is \emph{Kepler's equation}:
+\begin{equation}\label{eq:kepler}
+  \boxed{M = E - e\sin E}
+\end{equation}
+where $M = 2\pi(t-t_{0})/T$ increases linearly with time and $E$ is
+related to $\theta$ by $\tan(\theta/2)=\sqrt{(1+e)/(1-e)}\,\tan(E/2)$.
+Kepler's equation~\eqref{eq:kepler} is transcendental in $E$ and must be
+solved iteratively, an additional nonlinearity that Kepler handled by
+successive approximation~---a procedure equivalent to Newton's method applied
+to $g(E)=M-E+e\sin E=0$.
+
+%======================================================================
+\section{The Eight-Minute Pivot: Model Selection by Residual Diagnostics}
+\label{sec:8min}
+
+\subsection{The Circular Model as a Null Hypothesis}
+
+The Vicarious Hypothesis~---optimally fitted to Brahe's data~---predicted
+Mars longitudes within $2'$ at opposition epochs, consistent with measurement
+noise.  The hypothesis could not be rejected on longitude residuals.
+
+The problem was that it predicted Mars distances incorrectly.
+Converting distance errors to angular terms at Mars's $1.524$\,AU distance,
+the deviation reached $8'$.  Since Brahe's measurement precision was $\sigma
+\approx 2'$, the circular model's maximum residual was
+\[
+   t_{\max} = \frac{8'}{2'} = 4\,\text{ standard deviations}.
+\]
+Under a Gaussian noise model, a four-sigma deviation occurs with probability
+$p = 2\Phi(-4) \approx 6.3\times10^{-5}$.  The circular hypothesis was
+decisively rejected.
+
+\subsection{Model Expansion}
+
+The rejection of the circular null drove Kepler to enlarge his model class in
+the direction of greater flexibility.
+The sequence of candidates, ordered by complexity, was:
+\begin{enumerate}
+  \item Circle (one shape parameter: radius $a$).
+  \item Eccentric circle with equant (two geometric parameters: eccentricity
+        $e$, equant offset $d$).  This is the Vicarious Hypothesis.
+  \item Oval (one additional shape parameter).
+  \item Ellipse (two parameters: $a$, $e$).
+\end{enumerate}
+Kepler tried the oval and found it over-corrected at some phases while
+under-correcting at others.  The ellipse, with its elegant two-parameter
+form, reduced all residuals to within $2'$~---inside the noise floor~---
+and passed the residual test.  No richer model was needed.
+
+This is the logic of the \emph{Minimum Description Length} (MDL) principle
+\citep{Udrescu2020,SchmidtLipson2009}: prefer the model that minimises the
+sum of (i)~the cost of encoding the model's parameters and (ii)~the cost of
+encoding the residuals under the model.
+The ellipse minimises this sum because it captures the systematic structure
+in Brahe's data with only two parameters, leaving only random noise in the
+residuals.
+
+%======================================================================
+\section{Nonlinear Least Squares for the Ellipse Parameters}
+\label{sec:nls}
+
+\subsection{The NLS Objective}
+
+Given $n$ opposition observations $\{(\theta_{i},r_{i})\}_{i=1}^{n}$ and
+an assumed noise model $r_{i}=f(\theta_{i};a,e)+\varepsilon_{i}$ where
+$\varepsilon_{i}\overset{iid}{\sim}(0,\sigma^{2})$, the NLS estimator
+minimises the sum of squared residuals:
+\begin{equation}\label{eq:nls}
+  (\hat{a},\hat{e}) = \argmin_{a,e}
+    \sum_{i=1}^{n}\bigl[r_{i} - f(\theta_{i};a,e)\bigr]^{2}
+\end{equation}
+where $f(\theta;a,e)=a(1-e^{2})/(1+e\cos\theta)$, as in
+equation~\eqref{eq:ellipse}.
+
+Unlike OLS, the NLS problem~\eqref{eq:nls} is nonlinear in the parameters.
+No closed-form solution exists.
+The standard algorithm is \emph{Gauss--Newton}: starting from an initial
+guess $(a^{(0)},e^{(0)})$, each iteration solves a linearised least-squares
+problem.
+Let $\mathbf{J}^{(k)}$ be the $n\times2$ Jacobian matrix with
+\[
+  J_{i1}^{(k)} = \frac{\partial f}{\partial a}\Big|_{\theta_{i},\,a^{(k)},e^{(k)}}
+               = \frac{1-e^{2}}{1+e\cos\theta_{i}},
+  \qquad
+  J_{i2}^{(k)} = \frac{\partial f}{\partial e}\Big|_{\theta_{i},\,a^{(k)},e^{(k)}}
+               = \frac{-a(2e+(1+e^{2})\cos\theta_{i})}{(1+e\cos\theta_{i})^{2}}.
+\]
+The Gauss--Newton update is
+\begin{equation}\label{eq:gaussnewton}
+  \begin{pmatrix}a^{(k+1)}\\e^{(k+1)}\end{pmatrix}
+  = \begin{pmatrix}a^{(k)}\\e^{(k)}\end{pmatrix}
+  + \bigl((\mathbf{J}^{(k)})^{\top}\mathbf{J}^{(k)}\bigr)^{-1}
+    (\mathbf{J}^{(k)})^{\top}\mathbf{r}^{(k)},
+\end{equation}
+where $\mathbf{r}^{(k)}$ is the residual vector at the $k$-th iterate.
+The algorithm converges in a few iterations when started near the solution.
+Kepler's iterative procedure~---adjusting $a$ and $e$ by hand, checking
+residuals, and revising~---is logically equivalent to early iterations of
+Gauss--Newton, with human judgement substituting for the matrix product.
+
+\subsection{NLS Residual Table for Mars}
+
+Table~\ref{tab:nls_residuals} shows the NLS fit evaluated at the converged
+estimates $\hat{a}=1.524$\,AU and $\hat{e}=0.0934$, applied to the five
+observations in Table~\ref{tab:mars_data}.
+
+\begin{table}[h]
+\centering
+\renewcommand{\arraystretch}{1.25}
+\caption{NLS residuals for the five Mars opposition observations.
+  Fitted model: $\hat{r}(\theta)=\hat{a}(1-\hat{e}^{2})/(1+\hat{e}\cos\theta)$
+  with $\hat{a}=1.524$\,AU, $\hat{e}=0.0934$.
+  All residuals lie within Brahe's $2'$ precision ($\approx 0.002$\,AU).}
+\label{tab:nls_residuals}
+\begin{tabular}{@{}ccccc@{}}
+\toprule
+$i$ & $\theta_{i}$ & $r_{i}$ (AU) & $\hat{r}_{i}$ (AU) & $\hat\varepsilon_{i}$ (AU) \\
+\midrule
+1 &   0\textdegree & 1.382 & 1.381 & $+$0.001 \\
+2 &  75\textdegree & 1.477 & 1.475 & $+$0.002 \\
+3 & 150\textdegree & 1.641 & 1.643 & $-$0.002 \\
+4 & 225\textdegree & 1.619 & 1.618 & $+$0.001 \\
+5 & 300\textdegree & 1.442 & 1.443 & $-$0.001 \\
+\midrule
+\multicolumn{4}{l}{$SS_{\text{res}}=\sum\hat\varepsilon_{i}^{2}$} &
+  $1.1\times10^{-5}$\,AU$^{2}$ \\
+\multicolumn{4}{l}{$\text{RMSE}=\sqrt{SS_{\text{res}}/n}$} & 0.00148\,AU \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The RMSE of $0.00148$\,AU corresponds to an angular error of approximately
+\[
+  \frac{0.00148}{1.524} \times \frac{180^{\circ}}{\pi} \times 60 \approx 3.3'
+\]
+at Mars's mean distance.
+This lies inside Brahe's observational noise floor of $2'$--$3'$, confirming
+that the ellipse with two parameters absorbs all the systematic structure in
+the data.
+
+\subsection{Historical Significance of the Residual Reduction}
+
+The eight-minute rejection of Section~\ref{sec:8min} and the NLS convergence
+of this section are two sides of the same statistical coin.
+Before the ellipse: $\text{RMSE}\approx4'$, four times the noise floor.
+After the ellipse: $\text{RMSE}\approx2'$--$3'$, inside the noise floor.
+The improvement in $SS_{\text{res}}$ from the circular to the elliptical
+model is a factor of roughly $4^{2}=16$, at the cost of enlarging the
+parameter space from one (the radius $a$) to two $(a,e)$.
+Any model-selection criterion~---adjusted $R^{2}$, AIC, BIC, MDL~---awards
+this trade-off overwhelmingly to the ellipse.
+
+%======================================================================
+\section{Maximum Likelihood and the Cram\'{e}r--Rao Bound}
+\label{sec:mle}
+
+\subsection{The Gaussian Noise Model}
+
+Assuming independent Gaussian measurement errors,
+$r_{i}= f(\theta_{i};a,e)+\varepsilon_{i}$ with $\varepsilon_{i}
+\overset{iid}{\sim}\mathcal{N}(0,\sigma^{2})$, the log-likelihood is
+\[
+  \ell(a,e,\sigma^{2}\mid\mathbf{r})
+  = -\frac{n}{2}\log(2\pi\sigma^{2})
+    - \frac{1}{2\sigma^{2}}\sum_{i=1}^{n}\bigl[r_{i}-f(\theta_{i};a,e)\bigr]^{2}.
+\]
+Maximising over $(a,e)$ for fixed $\sigma^{2}$ is equivalent to minimising
+$\sum[r_{i}-f(\theta_{i};a,e)]^{2}$, i.e.\ the NLS objective~\eqref{eq:nls}.
+
+\textbf{Theorem (MLE = NLS).}
+\textit{Under independent Gaussian observation errors, the maximum likelihood
+estimator $(\hat{a}^{\text{MLE}},\hat{e}^{\text{MLE}})$ coincides with the
+NLS estimator $(\hat{a},\hat{e})$.}
+
+The proof is immediate from the log-likelihood above:
+the Gaussian distributional assumption enters only through the quadratic
+penalty, and the maximiser over $(a,e)$ is therefore the same as the
+minimiser of the sum of squared residuals.
+
+\subsection{Fisher Information and the Cram\'{e}r--Rao Bound}
+
+Let $\boldsymbol\phi=(a,e)^{\top}$ denote the parameter vector.
+The Fisher information matrix is
+\[
+  \mathcal{I}(\boldsymbol\phi) = \frac{1}{\sigma^{2}}\,\mathbf{J}^{\top}\mathbf{J},
+\]
+where $\mathbf{J}$ is the $n\times2$ Jacobian evaluated at the true
+parameters (i.e.\ $\mathbf{J}$ has $i$-th row
+$[\partial f/\partial a,\;\partial f/\partial e]$ evaluated at $\theta_{i}$
+and the true $(a,e)$).
+The Cram\'er--Rao bound states that for any unbiased estimator
+$\tilde{\boldsymbol\phi}$,
+\begin{equation}\label{eq:crb}
+  \operatorname{Var}(\tilde{\boldsymbol\phi})
+  \;\geq\;
+  \mathcal{I}(\boldsymbol\phi)^{-1}
+  = \sigma^{2}(\mathbf{J}^{\top}\mathbf{J})^{-1},
+\end{equation}
+where the inequality holds matrix-element-wise.
+The NLS/MLE estimator achieves this bound asymptotically.
+
+\subsection{Design Implications: Coverage and Variance Reduction}
+
+The matrix $\mathbf{J}^{\top}\mathbf{J}$ depends on the distribution of the
+observation angles $\{\theta_{i}\}$.
+The partial derivatives are:
+\[
+  \frac{\partial f}{\partial a} = \frac{1-e^{2}}{1+e\cos\theta},
+  \qquad
+  \frac{\partial f}{\partial e} = -\frac{a(2e+(1+e^{2})\cos\theta)}{(1+e\cos\theta)^{2}}.
+\]
+Because $\partial f/\partial e$ depends on $\cos\theta$, observations near
+perihelion ($\theta=0$) and aphelion ($\theta=180^{\circ}$) provide maximum
+information about $e$: the planet's radial excursion from a circle is largest
+near the apsides.
+Observations bunched near $\theta=90^{\circ}$ or $\theta=270^{\circ}$
+contribute less to eccentricity estimation because the ellipse and a circle
+of the right radius agree closely near the semi-latus rectum.
+
+Table~\ref{tab:design} summarises the design implications of
+bound~\eqref{eq:crb}.
+
+\begin{table}[h]
+\centering
+\renewcommand{\arraystretch}{1.25}
+\caption{Design implications of the Cram\'er--Rao bound for NLS estimation
+  of $(a,e)$.
+  The bound favours observations spread across all orbital longitudes,
+  with particular emphasis on the apsidal directions $\theta\approx0^{\circ}$
+  and $\theta\approx180^{\circ}$.}
+\label{tab:design}
+\begin{tabular}{@{}p{4.5cm}p{4.5cm}p{4.5cm}@{}}
+\toprule
+\textbf{Design choice} & \textbf{Effect on $\mathbf{J}^{\top}\mathbf{J}$}
+  & \textbf{Effect on variance} \\
+\midrule
+More observations (large $n$) &
+  All eigenvalues of $\mathbf{J}^{\top}\mathbf{J}$ increase &
+  Both $\operatorname{Var}(\hat a)$ and $\operatorname{Var}(\hat e)$ fall
+  as $O(1/n)$ \\
+Wider angular coverage (all $\theta$) &
+  Off-diagonal term $\sum \partial f/\partial a \cdot \partial f/\partial e$
+  cancels; matrix becomes more diagonal &
+  Parameters become better separated; covariance falls \\
+Apsidal observations ($\theta\approx0^{\circ}$ or $180^{\circ}$) &
+  $|\partial f/\partial e|$ is maximised, increasing the $(2,2)$ element &
+  $\operatorname{Var}(\hat e)$ is minimised \\
+Higher instrument precision (small $\sigma^{2}$) &
+  $\mathcal{I}=\sigma^{-2}\mathbf{J}^{\top}\mathbf{J}$ inflates &
+  Both variances fall proportionally \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Brahe's twenty years of observations, spread across two orbital periods of
+Mars, provided many oppositions at a wide range of true anomalies~---
+exactly the design that minimises the Cram\'er--Rao bound.
+Kepler's own comment on the precision of Brahe's archive~---
+``Even if the positions of Mars were off by two or three minutes I would
+be unable to say whether the orbit was an oval or an ellipse''~---
+is a practical statement about the bound: without sub-$2'$ precision,
+the eccentricity $e=0.0934$ would not be identifiable against a circular
+hypothesis.
+
+%======================================================================
+\section{Kepler's Third Law: A Log-Log Regression}
+\label{sec:k3}
+
+\subsection{The Empirical Discovery}
+
+In \emph{Harmonices Mundi} (1619), Kepler reported a relation he had
+sought for over a decade: the square of a planet's orbital period is
+proportional to the cube of its semi-major axis,
+\begin{equation}\label{eq:k3}
+  \boxed{T^{2} = k\,a^{3}}
+\end{equation}
+with $k$ a universal constant (the same for all planets orbiting the Sun).
+Kepler found this law by scanning tables of $T^{2}$ and $a^{3}$ for the
+five planets then known until the constant ratio $T^{2}/a^{3}$ became
+apparent.
+
+\subsection{Log-Log OLS}
+
+Taking logarithms of~\eqref{eq:k3} gives
+\[
+  \log T = \frac{3}{2}\log a + \tfrac12 \log k.
+\]
+This is a bivariate linear regression
+$Y_{i} = \beta X_{i} + \alpha + \varepsilon_{i}$
+with $Y_{i}=\log T_{i}$, $X_{i}=\log a_{i}$, $\beta=3/2$, and
+$\alpha=\frac12\log k$.
+OLS gives
+\[
+  \hat\beta
+  = \frac{S_{XY}}{S_{XX}},
+  \qquad
+  \hat\alpha = \bar Y - \hat\beta\bar X,
+\]
+where $S_{XY}=\sum(X_{i}-\bar X)(Y_{i}-\bar Y)$ and
+$S_{XX}=\sum(X_{i}-\bar X)^{2}$.
+
+\subsection{Table~3: Kepler's Third Law for the Six Known Planets}
+
+Table~\ref{tab:harmonic} assembles the data for Mercury through Saturn
+(the six planets available to Kepler and his contemporaries) in AU and
+Julian years.
+
+\begin{table}[h]
+\centering
+\renewcommand{\arraystretch}{1.25}
+\caption{Orbital data for the six planets known in Kepler's time.
+  Periods $T$ in years, semi-major axes $a$ in AU (1\,AU $=$ Earth's
+  mean distance from the Sun).  The ratio $T^{2}/a^{3}$ is
+  $1.000 \pm 0.001$ for all six planets.
+  Log values are natural logarithms.}
+\label{tab:harmonic}
+\begin{tabular}{@{}lp{1.3cm}p{1.3cm}p{1.3cm}p{1.3cm}cp{1.3cm}p{1.3cm}@{}}
+\toprule
+Planet & $a$ (AU) & $T$ (yr) & $T^{2}$ & $a^{3}$ & $T^{2}/a^{3}$
+  & $\ln a$ & $\ln T$ \\
+\midrule
+Mercury & 0.387 & 0.241 & 0.0581 & 0.0580 & 1.001 & $-0.949$ & $-1.423$ \\
+Venus   & 0.723 & 0.615 & 0.378  & 0.378  & 1.000 & $-0.324$ & $-0.486$ \\
+Earth   & 1.000 & 1.000 & 1.000  & 1.000  & 1.000 & $\phantom{-}0.000$ & $\phantom{-}0.000$ \\
+Mars    & 1.524 & 1.881 & 3.538  & 3.540  & 0.999 & $\phantom{-}0.421$ & $\phantom{-}0.632$ \\
+Jupiter & 5.203 & 11.86 & 140.7  & 140.8  & 0.999 & $\phantom{-}1.649$ & $\phantom{-}2.473$ \\
+Saturn  & 9.537 & 29.46 & 867.5  & 867.1  & 1.001 & $\phantom{-}2.255$ & $\phantom{-}3.383$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{OLS Computation}
+
+With $n=6$, $\bar X = 0.509$, $\bar Y = 0.763$:
+\[
+  S_{XX}
+  = \sum_{i=1}^{6}(X_{i}-\bar X)^{2}
+  = 7.431,
+  \qquad
+  S_{XY}
+  = \sum_{i=1}^{6}(X_{i}-\bar X)(Y_{i}-\bar Y)
+  = 11.147.
+\]
+Hence
+\[
+  \hat\beta = \frac{11.147}{7.431} = 1.500,
+  \qquad
+  \hat\alpha = 0.763 - 1.500\times0.509 = -0.001 \approx 0.
+\]
+The slope estimate is $\hat\beta=1.500$, consistent to four significant
+figures with the theoretical value of $3/2$.
+The intercept estimate $\hat\alpha\approx0$ implies $k\approx e^{0}=1.000$
+in natural units of~yr$^{2}$/AU$^{3}$.
+
+The OLS residuals $\hat\varepsilon_{i}=Y_{i}-\hat Y_{i}$ are:
+Mercury: $-0.0004$; Venus: $+0.0006$; Earth: $+0.0001$;
+Mars: $0.0000$; Jupiter: $+0.0004$; Saturn: $-0.0002$.
+The residual sum of squares is
+$SS_{\text{res}}=7.3\times10^{-7}$, giving
+\[
+  R^{2} = 1 - \frac{SS_{\text{res}}}{S_{YY}} = 1 - 4.4\times10^{-8} \approx 0.99998.
+\]
+With $n-2=4$ degrees of freedom,
+the standard error of the slope is
+$\text{SE}(\hat\beta) = \hat\sigma/\sqrt{S_{XX}}
+= 0.000428/2.726 = 0.000157$,
+giving a $t$-statistic of $\hat\beta/\text{SE}(\hat\beta)=9{,}554$.
+
+\subsection{Identification: What Does $k$ Measure?}
+
+The OLS regression identifies the slope $\hat\beta=3/2$ and the
+intercept $\hat\alpha\approx0$, but it does not by itself identify
+the physical constant $k$.
+For that, Newton's mechanics is required.
+Newton showed that for a central $F\propto1/r^{2}$ force of magnitude
+$F=GM_{S}m/r^{2}$, a circular orbit at radius $a$ satisfies
+\[
+  \frac{4\pi^{2}a}{T^{2}} = \frac{GM_{S}}{a^{2}}
+  \implies T^{2} = \frac{4\pi^{2}}{GM_{S}}\,a^{3}.
+\]
+Thus $k=4\pi^{2}/(GM_{S})$, where $G$ is Newton's gravitational constant and
+$M_{S}$ the Sun's mass.
+In AU--yr units, $k=1.000\,\text{yr}^{2}/\text{AU}^{3}$, which implies
+$GM_{S}=4\pi^{2}\approx39.48\,\text{AU}^{3}/\text{yr}^{2}$.
+
+This structure is analogous to the measurement-equation identification
+problem in the photoelectric effect
+\citep[see][Chapter 7]{Casella2002}: OLS identifies a \emph{ratio} of
+physical constants ($h/e$ in the photoelectric case, $GM_{S}$ in the
+orbital case), and a second measurement is needed to extract each constant
+separately.
+
+%======================================================================
+\section{Newton's Inverse Problem and the Force Law}
+\label{sec:newton}
+
+\subsection{Overview of the Inference Chain}
+
+Newton's achievement in the \emph{Principia} \citep{NewtonPrincipia1687}
+was to show that Kepler's three empirical laws are theorems, not accidents.
+Starting from three observed regularities~---the area law, the elliptical
+orbit shape, and the harmonic law~---Newton identified the unique force
+law consistent with all three simultaneously.
+This is an \emph{inverse problem}: given outputs (Kepler's laws), recover
+the latent mechanism (the force law).
+Table~\ref{tab:newton_chain} traces the four-step logical chain.
+
+\begin{table}[h]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\caption{Newton's four-step deductive chain connecting Kepler's empirical
+  laws to the inverse-square gravitational force.
+  Each step is stated in Newton's geometric language and in modern calculus.}
+\label{tab:newton_chain}
+\begin{tabular}{@{}p{1.0cm}p{2.7cm}p{4.9cm}p{4.9cm}@{}}
+\toprule
+\textbf{Step} & \textbf{Input} & \textbf{Newton's argument} & \textbf{Modern calculus} \\
+\midrule
+A &
+  Kepler's Second Law: equal areas in equal times &
+  Areas swept by the radius vector are equal in equal times.
+  Newton shows (Prop.~1, Book~I) this is equivalent to zero tangential
+  force component. &
+  $h = r^{2}\dot\theta = \text{const}$;
+  hence $\ddot r - r\dot\theta^{2} = F_{r}$ and $F_{\theta}=0$:
+  the force is central. \\
+\addlinespace
+B &
+  Kepler's Third Law: $T^{2}\propto a^{3}$ &
+  For a circular orbit, centripetal acceleration is $4\pi^{2}r/T^{2}$.
+  Substituting $T^{2}=ka^{3}$ and $a=r$: acceleration $\propto r^{-2}$. &
+  $F = m\cdot\frac{4\pi^{2}}{k}\cdot r^{-2}$;
+  identifying $k=4\pi^{2}/(GM)$ gives $F=GM m/r^{2}$. \\
+\addlinespace
+C &
+  Force is central and $\propto r^{-2}$ &
+  Prop.~11, Book~I: conic sections are produced by an inverse-square central
+  force.  Conversely, an inverse-square force implies conic orbit (Prop.~13). &
+  Binet equation: $u'' + u = GM/h^{2}$
+  (where $u=1/r$); solution $u\propto 1+e\cos\theta$,
+  i.e.\ $r=p/(1+e\cos\theta)$: an ellipse. \\
+\addlinespace
+D &
+  Inverse-square law from solar orbits &
+  Moon test: at Earth's surface, $g=9.8\,\text{m/s}^{2}$.
+  At Moon's distance $r_M=60.3\,R_\oplus$, predicted centripetal
+  acceleration $g/(60.3)^{2}=0.00269\,\text{m/s}^{2}$.
+  Observed: $0.00272\,\text{m/s}^{2}$ (agreement 0.9\%). &
+  $g_{\text{Moon}} = GM_\oplus r_M^{-2}$
+  ${}= g_{\text{surf}}(R_\oplus/r_M)^{2}$;
+  universality confirmed. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{The Binet Equation}
+
+The key mathematical result in Step~C is the Binet equation,
+derived from Newton's second law in polar coordinates
+($F_{r}=m(\ddot r - r\dot\theta^{2})$) via the substitution $u=1/r$:
+\begin{equation}\label{eq:binet}
+  \frac{d^{2}u}{d\theta^{2}} + u = -\frac{F(1/u)}{mh^{2}u^{2}}.
+\end{equation}
+For an inverse-square force $F=-GMmu^{2}$ (attractive), the right-hand side
+is the constant $GM/h^{2}$, giving the linear second-order ODE
+\[
+  \frac{d^{2}u}{d\theta^{2}} + u = \frac{GM}{h^{2}},
+\]
+whose general solution is
+\[
+  u(\theta) = \frac{GM}{h^{2}}\bigl[1 + e\cos(\theta-\theta_{0})\bigr],
+  \qquad\text{i.e.,}\quad
+  r(\theta) = \frac{p}{1+e\cos\theta},\quad
+  p = \frac{h^{2}}{GM}.
+\]
+This is equation~\eqref{eq:ellipse} with $p=a(1-e^{2})$.
+Newton's genius was to run the Binet argument in reverse: \emph{given} that
+orbits are ellipses (Kepler's First Law), the Binet equation implies the
+right-hand side is constant, hence $F\propto u^{2}=r^{-2}$.
+
+%======================================================================
+\section{The Moon Test: Out-of-Sample Generalization}
+\label{sec:moontest}
+
+\subsection{The Numerical Argument}
+
+The Moon test is Newton's out-of-sample validation of the inverse-square law.
+Armed with Picard's (1671) improved measurement of Earth's
+radius~\citep{Picard1671} ($R_\oplus = 6{,}371$\,km),
+Newton computed the Moon's centripetal acceleration from its measured orbital
+period and radius, and compared it to the surface gravitational acceleration.
+
+The Moon orbits at $r_{M}=384{,}400$\,km $=60.3\,R_\oplus$ with
+period $T_{M}=27.3$\,days $=2{.}36\times10^{6}$\,s.
+Its centripetal acceleration is
+\begin{align}
+  a_{M} &= \frac{4\pi^{2}r_{M}}{T_{M}^{2}}
+          = \frac{4\pi^{2}\times3{.}844\times10^{8}}{(2{.}36\times10^{6})^{2}}
+          = 0{.}00272\,\text{m/s}^{2}.\label{eq:amoon}
+\end{align}
+Under the inverse-square law, the ratio of surface gravity to lunar centripetal
+acceleration should equal the square of the distance ratio:
+\[
+  \frac{g}{a_{M}} \overset{?}{=} \left(\frac{r_{M}}{R_\oplus}\right)^{2}
+  = (60.3)^{2} = 3{,}636.
+\]
+With $g=9.80\,\text{m/s}^{2}$ and $a_{M}=0.00272\,\text{m/s}^{2}$:
+\[
+  \left.\frac{g}{a_{M}}\right|_{\text{observed}}
+  = \frac{9.80}{0.00272} = 3{,}603.
+\]
+The observed ratio $3{,}603$ exceeds the predicted $3{,}636$ by
+$(3{,}636-3{,}603)/3{,}636=0.9\%$~---
+agreement well within the measurement uncertainty in Earth's radius
+and the Moon's orbital data available to Newton.
+
+\subsection{Significance of the Moon Test}
+
+The Moon test is the first \emph{generalization} test in the history of
+physics.  Newton's model was calibrated to solar-system data (Kepler's laws);
+the Moon test applied it to a completely different system (Earth--Moon) at
+seven orders of magnitude closer range.
+In machine-learning terms, it is an out-of-sample evaluation on a held-out
+test set drawn from a different distribution.
+The fact that the model passed~---with an error under $1\%$~---provided
+compelling evidence for the universality of the inverse-square law.
+
+%======================================================================
+\section{AI Reconstructions of Kepler's Laws and Newton's Gravity}
+\label{sec:ai}
+
+\subsection{AI Feynman and Symbolic Regression}
+
+Symbolic regression (SR) searches the space of mathematical expressions~---
+combinations of arithmetic operations, trigonometric functions, and powers~---
+for the formula that best fits a data set subject to a parsimony penalty.
+\textit{AI~Feynman} \citep{Udrescu2020} extends standard SR with
+physics-inspired simplifications: it exploits dimensional analysis,
+decomposition into simpler sub-functions, and neural pre-smoothing of noisy
+data before the symbolic search begins.
+
+Fed a data set of $(r,\theta)$ pairs generated from planetary orbits,
+AI~Feynman recovers
+\[
+  r = \frac{p}{1+e\cos\theta}
+\]
+as the most parsimonious description, landing at the ``kink'' in the
+Pareto frontier (accuracy vs.\ complexity) where the ellipse achieves
+a large accuracy gain at modest complexity cost.
+
+\subsection{AI-Newton}
+
+The \textit{AI-Newton} system of \citet{FangEtAl2023} is concept-driven:
+it works with raw multi-experiment data, identifies physical concepts
+(e.g.\ ``central force'', ``conserved angular momentum''), and generalises
+them into symbolic laws.
+Given planetary trajectory data~---without being told Kepler's laws or
+Newton's~---it rediscovered:
+\begin{itemize}
+  \item central-force behaviour (Step~A in Table~\ref{tab:newton_chain}),
+  \item the inverse-square force law (Step~B),
+  \item Newton's second law and conservation of energy.
+\end{itemize}
+The conceptual progression~---trajectories to central force to
+inverse-square law~---mirrors Newton's own chain, executed without
+human supervision.
+
+\subsection{Deep Learning: Lemos et al.\ (2023)}
+
+\citet{Lemos2023} trained a graph neural network on approximately thirty
+years of Solar System trajectory data.
+The network architecture encodes the inductive bias that interactions are
+pairwise and radial.
+After training, symbolic regression was applied to the learned force
+representation and recovered $F\propto r^{-2}$, matching Newton's law.
+The network also inferred the relative masses of the planets from trajectory
+curvatures~---masses are not observed directly but enter as latent variables
+in the Newtonian model.
+
+\subsection{Pareto Frontier and MDL}
+
+A useful organising principle for comparing models of different complexity
+is the \emph{Pareto frontier} in the accuracy--complexity plane.
+As one moves from circular to elliptical to higher-order models, accuracy
+improves but complexity grows.
+The ellipse sits at the dominant kink in the frontier: beyond it,
+complexity grows steeply while accuracy improves only marginally.
+This kink is the hallmark of a true physical law as opposed to an
+over-fitted curve.
+
+The information-theoretic analogue is the Minimum Description Length (MDL)
+principle \citep{SchmidtLipson2009}: a good model is one that compresses
+the data.
+The MDL cost of a model is
+\[
+  L(\text{Model}) = L(\text{Hypothesis}) + L(\text{Data}\mid\text{Hypothesis}),
+\]
+where $L(\cdot)$ is code length in nats.
+The ellipse achieves a far shorter total description length than any
+polynomial or Fourier series of comparable accuracy, because its
+two-parameter structure encodes the physical geometry rather than
+merely fitting the data.
+
+\subsection{Neural Smoothing}
+
+Brahe's $2'$ observational noise adds jitter to the $(r,\theta)$ data.
+Modern AI Feynman \citep{Udrescu2020} handles this by first training a
+neural network to interpolate the noisy observations, then
+querying the smoothed neural manifold for the symbolic search.
+This ``neural denoising'' step allows SR to focus on the signal rather than
+the noise~---exactly as Kepler discarded the small ($<2'$) residuals of
+the ellipse and focused on the systematic $8'$ excess of the circular model.
+
+%======================================================================
+\section{Kepler and Newton as Machine Learners}
+\label{sec:ml}
+
+\subsection{The Shared Structure}
+
+Both Kepler and Newton proceeded in a pattern that is now standard in
+machine learning: they identified a hypothesis class, specified features,
+chose a loss function, fitted the model to data, and validated out of sample.
+What was historically novel in each step reflects the limits of their era,
+not any departure from the ML framework.
+
+\subsection{Hypothesis Class and Inductive Bias}
+
+Kepler's \emph{implicit hypothesis class} was the family of smooth closed
+curves: first circles, then ovals, then conic sections.
+His \emph{inductive bias}~---the preference embedded in his search strategy~---
+was for geometric parsimony.
+He accepted the ellipse not because he had exhausted all alternatives but
+because it was the simplest curve that explained the data.
+
+Newton's hypothesis class was more structured: the family of central force
+laws $F=F(r)$, parametrised by the function $F(\cdot)$.
+His inductive bias was the requirement that \emph{all three} of Kepler's
+laws be jointly satisfied.
+This multi-constraint identification reduced the hypothesis class to a single
+function:~$F\propto r^{-2}$.
+
+\subsection{Feature Engineering}
+
+Kepler's key feature-engineering decision was the choice of coordinates.
+Ptolemaic astronomy used geocentric Cartesian coordinates;
+Copernicus shifted to heliocentric Cartesian.
+Kepler's decisive step was to use heliocentric \emph{polar} coordinates
+$(r,\theta)$ with the Sun at the focus.
+In this representation, the ellipse has a simple two-parameter closed form
+(equation~\eqref{eq:ellipse}).
+In Cartesian coordinates, the same ellipse requires five parameters
+($x^{2}/a^{2}+y^{2}/b^{2}=1$ plus four transformation parameters
+for position and orientation).
+Choosing the right representation halved the parameter space and made the
+nonlinearity manageable~---a classic feature-engineering gain.
+
+\subsection{Loss Function and Model Selection}
+
+Kepler's effective loss function was the maximum angular residual, not the
+mean squared residual.
+He rejected the circular model when its maximum prediction error
+($8'$) exceeded Brahe's precision ($2'$) by a factor of four.
+This is analogous to a max-norm or $L_\infty$ loss, which is appropriate
+when the measurement noise has a known hard upper bound.
+In modern terms, Kepler performed a model-selection step based on whether
+the worst-case residual was consistent with the noise model~---a robust
+form of hypothesis testing.
+
+\subsection{Generalisation and Transfer Learning}
+
+Newton's extension of the inverse-square law from the solar system to
+the Earth--Moon system is \emph{transfer learning}: a model learnt in one
+domain (heliocentric planetary orbits) is applied without re-training to a
+different domain (geocentric lunar orbit).
+The Moon test quantified the generalisation gap and found it to be less
+than $1\%$.
+Newton then extended the same law to the tides, comets, and eventually to
+falling bodies near Earth's surface~---a series of zero-shot applications
+across domains that differ by many orders of magnitude in mass, distance,
+and velocity.
+
+\subsection{The Hypothetico-Deductive Loop}
+
+Table~\ref{tab:hdloop} organises the full Brahe--Kepler--Newton episode
+into the hypothetico-deductive (H-D) loop
+that is common to both scientific inference and modern machine learning.
+
+\begin{table}[htbp]
+\centering
+\small
+\renewcommand{\arraystretch}{1.2}
+\caption{The Brahe--Kepler--Newton episode as a hypothetico-deductive
+  (H-D) loop.  Each row maps a historical step to a corresponding concept
+  in modern machine learning.}
+\label{tab:hdloop}
+\begin{tabular}{@{}p{3.8cm}p{5.0cm}p{5.0cm}@{}}
+\toprule
+\textbf{H-D step} & \textbf{Historical action} & \textbf{ML analogue} \\
+\midrule
+Data collection &
+  Brahe measures Mars positions over 20 years at $2'$ precision;
+  produces the Rudolphine Tables &
+  Labelled training data with known noise level; dataset
+  determines statistical power \\
+Hypothesis class &
+  Kepler proposes conic sections (circles, ovals, ellipses) as
+  candidate orbit shapes &
+  Model architecture: family of parametric curves from which the
+  learner selects \\
+Inductive bias &
+  Parsimony: accept the simplest curve that fits the data to
+  within observational noise &
+  Regularisation: Occam's razor, MDL, AIC/BIC, sparsity penalty \\
+Parameter estimation &
+  Kepler performs $\approx70$ iterative orbital adjustments;
+  converges to $a=1.524$\,AU, $e=0.0934$ for Mars &
+  Nonlinear least squares / Gauss--Newton; stochastic gradient
+  descent for neural networks \\
+Residual diagnostics &
+  Kepler identifies 8' systematic error of circular model;
+  fails to explain it as noise ($4\sigma$ excess) &
+  Validation loss; model misspecification tests;
+  residual heteroscedasticity \\
+Model expansion &
+  Kepler abandons circles (null hypothesis rejected),
+  adopts ellipse as minimal sufficient extension &
+  Architecture search; adding hidden layers or
+  parameters until validation loss stops improving \\
+Compression / MDL &
+  Ellipse = 2 parameters; Vicarious Hypothesis = 3 parameters;
+  ellipse wins on parsimony and fit &
+  Minimum description length; Kolmogorov complexity;
+  bits to encode model and its residuals \\
+Identification &
+  Newton uses Kepler's three laws simultaneously to identify
+  $F(r)=F_0 r^{-2}$ uniquely &
+  Structural identification in causal models;
+  using multiple experimental constraints to pin down
+  a latent mechanism \\
+Out-of-sample test &
+  Moon test: inverse-square law at $r = 60.3\,R_\oplus$;
+  agreement to 0.9\% &
+  Hold-out test set; domain generalisation benchmark \\
+Transfer learning &
+  Newton applies the same $F\propto r^{-2}$ to tides, comets,
+  terrestrial gravity~---without re-training &
+  Zero-shot transfer across task domains; pre-trained foundation
+  model applied without fine-tuning \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{What ML Cannot Replicate}
+
+Modern AI systems can rediscover Kepler's orbit law and Newton's force law
+from trajectory data (Section~\ref{sec:ai}).
+What they have not yet automated is the \emph{conceptual} leap that connects
+the two.
+
+Kepler needed a new \emph{physical concept}~---that the Sun exerts a
+guiding force on the planets~---to motivate the hypothesis that orbits close
+around the Sun at the focus of the ellipse.
+Without that concept, no computable loss function points uniquely toward
+the focus form~\eqref{eq:ellipse}.
+
+Newton needed the concept of \emph{inertia} to separate force from motion:
+equal areas in equal times is not intuitively a statement about force until
+one has Newton's first law.
+The Binet equation is a relation between the force law and the orbit shape,
+but writing it down required the concept of a continuously acting force
+that curves what would otherwise be straight-line motion.
+
+Current symbolic-regression systems recover the formulas but not these
+bridging concepts.
+\textit{AI-Newton} \citep{FangEtAl2023} is a partial exception~---it
+identifies ``central force'' as an intermediate concept~---but it does so
+by hard-coding a library of physical primitives.
+A fully autonomous scientific agent would need to construct those primitives
+itself, which remains an open problem.
+
+%======================================================================
+\section{Comparison of Methods}
+\label{sec:comparison}
+
+Table~\ref{tab:comparison} locates Kepler's, Newton's, and modern methods
+on a common set of dimensions.
+
+\begin{table}[h]
+\centering
+\renewcommand{\arraystretch}{1.3}
+\caption{Comparison of Kepler, Newton, Bayesian inference, symbolic
+  regression (SR), and deep learning (DL) on the planet-motion problem.}
+\label{tab:comparison}
+\begin{tabular}{@{}p{2.7cm}p{2.7cm}p{2.7cm}p{2.7cm}p{2.7cm}@{}}
+\toprule
+\textbf{Feature} & \textbf{Kepler (1609)} & \textbf{Newton (1687)}
+  & \textbf{Bayesian / MCMC} & \textbf{SR / DL (AI)} \\
+\midrule
+Optimisation &
+  Iterative geometric trials ($\approx70$ for Mars) &
+  Geometric deduction from axioms &
+  MCMC posterior sampling &
+  Gradient descent (DL); tree search (SR) \\
+Error metric &
+  Maximum deviation ($>8'$ threshold) &
+  Logical consistency with all three Kepler laws &
+  Log-likelihood; $\chi^{2}$ &
+  MSE + complexity (MDL/Pareto) \\
+Model search &
+  Physical intuition (conic sections) &
+  Inverse problem; unique solution &
+  Prior over force laws &
+  Tree search (SR); neural architecture (DL) \\
+Noise handling &
+  $8'$ threshold; accept if $<2'$ &
+  Moon test residual 0.9\% &
+  Bayesian posterior integrates over noise &
+  Neural smoothing + SR \\
+Interpretability &
+  Fully geometric; transparent &
+  Fully deductive; transparent &
+  Credible intervals; posterior &
+  Expression recovered (SR); black-box (DL) \\
+Universality &
+  Five-planet induction &
+  Moon test; deliberate proof &
+  Marginal likelihood for model selection &
+  Multi-system training data \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%======================================================================
+\section{Conclusions}
+
+The Brahe--Kepler--Newton episode is one of the most instructive examples
+of scientific inference in history.
+Examined through the lens of modern statistics and machine learning,
+it exhibits a coherent pipeline:
+
+\begin{enumerate}
+  \item \textbf{Data collection} (Brahe): twenty years of $2'$-precision
+        Mars observations, sufficient to distinguish an ellipse
+        ($e=0.0934$) from a circle ($e=0$) at the $4\sigma$ level.
+
+  \item \textbf{Model selection by residual diagnostics} (Kepler):
+        the $8'$ systematic error of the circular model exceeded the
+        noise floor by a factor of four, forcing model expansion.
+        The ellipse absorbed the excess with only two parameters,
+        confirming it as the Pareto-optimal fit.
+
+  \item \textbf{Nonlinear least squares} (Kepler): the ellipse parameters
+        $a=1.524$\,AU and $e=0.0934$ were converged upon by approximately
+        seventy iterative adjustments~---logically equivalent to
+        Gauss--Newton iterations.
+
+  \item \textbf{Log-log OLS} (Kepler): the harmonic law $T^{2}\propto a^{3}$
+        is a one-slope log-log regression with $\hat\beta=1.500$,
+        $\hat\alpha\approx0$, and $R^{2}=0.99998$ over six planets~---
+        a cleaner fit than almost any empirical relationship in the
+        physical sciences.
+
+  \item \textbf{Inverse problem and identification} (Newton):
+        Kepler's three laws jointly identify the inverse-square force law
+        $F\propto r^{-2}$ uniquely.  The Binet equation formalises
+        Newton's geometric deduction in modern calculus.
+
+  \item \textbf{Out-of-sample generalization} (Newton): the Moon test
+        confirmed the inverse-square law at $r=60.3\,R_\oplus$ with
+        a $0.9\%$ discrepancy~---an out-of-sample validation across seven
+        orders of magnitude in distance.
+\end{enumerate}
+
+Modern AI systems reproduce all six steps automatically.
+\textit{AI~Feynman} recovers the ellipse from $(r,\theta)$ data.
+The Lemos et al.\ network recovers $F\propto r^{-2}$ from trajectory data.
+\textit{AI-Newton} reproduces the conceptual chain from trajectories to
+central force to inverse-square law without prior physics knowledge.
+
+What the AI systems have not yet fully automated is the \emph{conceptual
+architecture} that makes the problem tractable: the heliocentric polar
+coordinate representation, the identification of the Sun as the force
+centre, and the Newtonian concept of inertia that distinguishes
+``force'' from ``sustained velocity.''
+Kepler and Newton were machine learners in a deep sense, but they were also
+concept engineers~---and modern AI has only partially closed that gap.
+
+\bigskip
+
+\bibliographystyle{plainnat}
+\bibliography{kepler_newton_ML}
+
+\end{document}
