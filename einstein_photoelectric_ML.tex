@@ -69,6 +69,25 @@ discovery.
 %======================================================================
 \section{Introduction}
 
+In December 1900, Max Planck introduced the energy quantum $h\nu$ as ``an act
+of desperation'' to fit the blackbody spectrum.  Five years later, Einstein
+borrowed that quantum and applied it to a second phenomenon---the photoelectric
+effect---in a paper that would earn him the 1921 Nobel Prize.  The photoelectric
+paper achieved two things whose connection took twenty more years to become
+clear.  First, it supplied a falsifiable linear equation relating the stopping
+potential of emitted electrons to the incident frequency, with slope $h/e$---a
+prediction that Millikan confirmed to 0.5\% in 1916.  Second, it implicitly
+introduced \emph{probability} into physics: if light consists of discrete quanta
+whose average spatial density tracks the classical wave intensity $|E|^2$, then
+$|E|^2$ functions as a probability density---not merely a classical energy
+density.  Max Born made this logic the cornerstone of quantum mechanics in 1926
+\citep{Born1926}: his rule $|\psi|^2 = \text{probability density}$, now called
+Born's rule, was---as Born stated explicitly---an extension of Einstein's photon
+reasoning to the general Schr\"odinger wave function.  Thus the same paper that
+launched the precision measurement effort documented here also planted the seed
+of Born's rule---an interpretation that Einstein, with characteristic irony,
+spent the rest of his life opposing.
+
 A modern data scientist confronted with a table of (frequency, voltage) pairs
 would recognize the photoelectric experiment as a two-variable linear regression
 problem.  The interesting history is that the regression came \emph{after}
@@ -118,7 +137,32 @@ The episode is a microcosm of scientific inference:
     interpretation---a striking illustration that a statistician can
     confirm a regression model without endorsing the economic or physical
     theory that generated it.
+  \item \textbf{Unintended conceptual consequences.}  The light-quantum
+    hypothesis carried an implication Einstein did not fully embrace: the
+    classical wave intensity $|E|^2$, reinterpreted as a photon density,
+    is a \emph{probability density}.  Max Born (1926) explicitly traced
+    his probabilistic interpretation of the Schr\"odinger wave
+    function---$|\psi|^2$ as probability density, now called Born's
+    rule---to this Einsteinian precedent \citep{Born1926}.  Einstein won
+    the 1921 Nobel Prize for a paper whose logic seeded Born's rule, which
+    Einstein himself rejected as a complete description of reality; Born
+    won the 1954 Nobel Prize for the interpretation that built on
+    Einstein's own reasoning.
 \end{enumerate}
+
+Beyond the precision measurement, the episode carries a broader lesson about
+theoretical priors and their unintended reach.  Einstein's quantum
+hypothesis---proposed to explain Lenard's qualitative findings---committed him
+to a view in which the wave intensity $|E|^2$ governs the \emph{statistical}
+behavior of photons, not the energy of a continuous wave.  In private
+correspondence Einstein called this a \emph{Gespensterfeld} (ghost field): a
+wave that guides probabilities without itself being physically real in the
+classical sense.  Born's 1926 paper \citep{Born1926} formalised exactly this
+idea for the Schr\"odinger wave function, giving quantum mechanics its
+probabilistic backbone.  Millikan's meticulous regression---confirming the
+slope $h/e$ to 0.5\%---thus sits at the pivot between two Nobel Prize stories:
+the 1921 prize that rewarded the equation, and the 1954 prize that rewarded the
+probabilistic interpretation the equation made inevitable.
 
 Section~\ref{sec:history} sketches the experimental history.
 Section~\ref{sec:equation} develops the regression framework.
@@ -133,6 +177,9 @@ Section~\ref{sec:millikan_reluctance} reflects on inference versus
 interpretation.
 Section~\ref{sec:ml} reinterprets the episode in the language of machine
 learning and AI.
+Section~\ref{sec:dnn} contrasts Einstein's theory-driven regression with
+what a deep neural network would learn from the historical data at each
+epoch from 1902 to the modern era.
 Section~\ref{sec:conclusions} concludes.
 
 %======================================================================
@@ -1091,6 +1138,202 @@ exhaustive search over a combinatorially large space of functional forms,
 requiring far more data and computation than Einstein's one-paragraph
 derivation.  The human contribution --- theory construction --- remains
 indispensable.
+
+%======================================================================
+\section{A Deep Neural Network on the Photoelectric Data}
+\label{sec:dnn}
+
+\subsection{Two Hypothesis Classes Compared}
+
+Einstein's model and a deep neural network (DNN) represent opposite
+extremes of the bias-variance spectrum for the photoelectric regression.
+Einstein's hypothesis class is equation~\eqref{eq:hyp_class}: a
+one-parameter family of parallel lines with VC dimension equal to~2.
+The Gauss--Markov theorem and the Cram\'er--Rao bound together guarantee
+that OLS achieves minimum variance among all unbiased estimators;
+five training points are more than sufficient.
+
+A DNN with $L$ hidden layers and $N$ neurons per layer is a universal
+function approximator: for any continuous target function on a compact
+interval, there exists a network that approximates it to arbitrary
+precision \citep{Hornik1989}.  For a one-dimensional input ($\nu$) and
+one-dimensional output ($V_0$), even a modest architecture---three
+hidden layers with 16 ReLU neurons each---has approximately
+\[
+  p = (1\cdot16+16)+(16\cdot16+16)+(16\cdot16+16)+(16\cdot1+1)
+    = 593
+\]
+free parameters.  The VC dimension of this network is of order $p\log p
+\approx 5{,}700$ \citep{Vapnik1998}, meaning that reliable generalisation
+to unseen frequencies requires on the order of $n\gtrsim 5{,}700$
+labeled training examples for 1\% accuracy with high probability.  The
+five points Millikan assembled in 1916 fall short by three orders of
+magnitude.
+
+\subsection{Epoch I---Lenard's Qualitative Findings (1902)}
+
+Lenard established two qualitative facts: stopping potential rises with
+frequency and is independent of intensity.  There are no numerical
+$(\nu_i,\,V_{0i})$ pairs.  A DNN requires labeled numerical examples;
+with none, it cannot begin training.  Einstein required zero labeled
+examples: the quantum hypothesis plus energy conservation yielded
+equation~\eqref{eq:einstein} as a deduction.  The asymmetry is stark---
+Einstein's ``model fitting'' was a one-paragraph derivation;
+the DNN's fitting cannot start.
+
+\subsection{Epoch II---Hughes and Richardson \& Compton (1907--1914)}
+
+The intermediate experiments produced roughly 25--40 numerical
+$(\nu_i,\,V_{0i})$ pairs, clustered in a narrow 60\,nm UV range with
+uncontrolled contact EMFs and stray scattered light.
+Three problems foreclose reliable DNN learning.
+
+\paragraph{Underdetermination.}
+With $n \approx 30$ and $p = 593$, the DNN is massively overparameterised.
+Gradient descent finds a minimum-norm interpolant that passes through
+all 30 training points exactly (zero training loss), but is effectively
+unconstrained between them.  Applying $\ell_2$ weight decay suppresses
+oscillations, but the optimal regularisation strength cannot be selected
+without a held-out validation set; with $n=30$ this is statistically
+isolated.
+
+\paragraph{Restricted frequency range.}
+Over a 60\,nm UV band ($\Delta\nu \approx 0.7\times10^{14}$\,Hz), any
+smooth function is locally indistinguishable from a polynomial of any
+degree.  The DNN has no mechanism to infer that the global functional
+form is linear rather than quadratic or square-root; all three fit
+equally well on so narrow an interval.
+
+\paragraph{Systematic label contamination.}
+Uncontrolled contact EMFs imply that the effective label for observation
+$i$ is $V_{0i} + \delta_i$, where $\delta_i$ is unknown and
+observation-specific.  The DNN receives contaminated targets and,
+lacking any physical model of the contaminant, cannot separate the
+linear physical trend from the systematic noise.  The learned function
+absorbs both, producing a biased and uninterpretable output.
+
+\subsection{Epoch III---Millikan's Data (1916)}
+
+Millikan's five-point sodium dataset is the cleanest photoelectric
+dataset of the era.  What does a DNN find?
+
+\paragraph{The interpolation regime.}
+With $n=5$ and any DNN with $p>5$ (which includes every
+useful architecture), the network operates in the interpolation
+regime: it memorises all five training points exactly,
+producing zero training loss \citep{Belkin2019}.  The resulting
+function is unconstrained everywhere between the training points.
+Even the best-case minimum-norm interpolant---``well-behaved'' in the
+double-descent sense---provides no basis for slope inference: there
+are no residual degrees of freedom with which to estimate the noise
+variance or a standard error on the slope.
+
+\paragraph{Loss of inferential machinery.}
+OLS with $n=5$ and $p=2$ free parameters uses $n-2=3$ residual
+degrees of freedom to estimate $\hat\sigma^2$ and hence
+$\mathrm{SE}(\hat\beta)$.  Any DNN with more than three parameters
+exhausts those degrees of freedom entirely.  The DNN cannot report
+a confidence interval for $h/e$, cannot test whether the slope
+differs from zero, and cannot quantify the 0.1\% relative precision
+that OLS achieves at the Cram\'er--Rao bound.
+
+\paragraph{No basis for universality.}
+The universality of the slope $\beta = h/e$ across metals is a
+theoretical prediction of the quantum hypothesis, not an empirical
+feature discoverable from sodium data alone.  A DNN trained on
+sodium would need to be retrained from scratch on lithium.  The
+only mechanism by which the slope could transfer automatically from
+Na to Li is an explicit architectural constraint that encodes the
+universality---which is equivalent to importing the physics into
+the model.
+
+\subsection{The Modern Era: Large Datasets}
+
+By the mid-twentieth century, photoelectric measurements spanned
+decades of metals, surface preparations, and photon energies.
+Pooling even a modest subset---say $n=5{,}000$ clean observations
+over two octaves of frequency for a single metal---places a DNN
+firmly in the classical regime ($n\gg p$).
+
+With smooth activations and appropriate regularisation, the
+DNN would converge, as $n\to\infty$, to the
+minimum-population-risk function in its hypothesis class.  Because
+the true function is exactly linear, the minimum-risk function in
+any sufficiently rich class \emph{is} the linear function.  The
+DNN would eventually recover the line.  What it still could not do:
+\begin{itemize}
+  \item Identify the learned slope $\hat{w} \approx
+    4.129\times10^{-15}$\,V$\cdot$s as the ratio $h/e$ of two
+    independently measured constants.  The slope appears as a
+    numerical weight, not as a ratio of fundamental quantities.
+  \item Impose the cross-metal constraint $\beta_{\mathrm{Na}} =
+    \beta_{\mathrm{Li}} = \cdots$ from first principles.  Universality
+    would appear as an empirical pattern to be confirmed, not a
+    structural prior to be imposed.
+  \item Decompose the intercept into a physical work function $W/e$
+    and an apparatus nuisance $v_c$ without independent
+    measurements of $v_c$.
+  \item Reduce the required sample from $O(10^3)$ examples to five.
+    A correctly specified two-parameter linear model needs five points;
+    no architectural innovation can replicate this compression without
+    importing the physics.
+\end{itemize}
+
+Modern symbolic regression systems such as AI Feynman \citep{Udrescu2020}
+can, in principle, rediscover the linear form and even match $\hat{w}$ to
+$h/e$ if given units and physical constants as hardcoded inputs.  But
+that hardcoding is itself a form of prior physical knowledge---the quantum
+hypothesis in disguise---not something extracted from the $(\nu,V_0)$
+data.
+
+\subsection{Summary: Sample Complexity and the Value of Theory}
+
+Table~\ref{tab:sample_complexity} quantifies the contrast.
+
+\begin{table}[ht]
+\centering
+\caption{Sample-complexity comparison between Einstein's two-parameter
+linear model (VC dimension $= 2$, derived from the quantum hypothesis) and
+a three-layer DNN with 16 neurons per layer ($p=593$ parameters,
+VC dim $\approx 5{,}700$).  The ``sufficient $n$'' for a 1\% generalisation
+error at 95\% confidence is $O(\text{VC dim}/\epsilon^2)$.}
+\label{tab:sample_complexity}
+\begin{tabular}{p{2.8cm}rp{2.4cm}p{2.4cm}p{4.0cm}}
+\toprule
+Epoch & $n$ available & Einstein model & DNN (VC$\approx$5700) & DNN outcome \\
+\midrule
+Lenard 1902   & $\approx 0$  & Sufficient$^\dagger$ & Insufficient
+  & Cannot train (no labels) \\
+Hughes 1912   & $\sim 30$    & Sufficient
+  & Insufficient ($\times$190) & Memorises; no generalisation \\
+Millikan 1916 & 5            & Sufficient
+  & Catastrophically insufficient & Interpolates; no inference \\
+Modern era    & $\sim 5000$  & Sufficient
+  & Sufficient & Recovers linear shape;
+  cannot identify $h/e$ \\
+\bottomrule
+\multicolumn{5}{p{14cm}}{$^\dagger$ The functional form is derived from
+  theory; only two free parameters remain to be estimated from data.}
+\end{tabular}
+\end{table}
+
+The lesson is not that DNNs are poor learners in general.  For
+high-dimensional problems where no parsimonious parametric family is
+known---image recognition, protein structure prediction, language
+modelling---the DNN's universal-approximation capacity is an enormous
+advantage.  The photoelectric problem sits at the opposite extreme: a
+one-dimensional input, a one-dimensional output, and five to thirty
+training examples.  In this setting the DNN's flexibility is a liability,
+not an asset.
+
+Einstein's theoretical act---proposing $E=h\nu$---reduced the effective
+hypothesis space from the infinite-dimensional function class of a DNN to
+a two-dimensional manifold of parallel lines.  This compression reduced
+the required number of training examples by three orders of magnitude.
+No architectural innovation or training algorithm can replicate that
+compression without importing the physics; it was achieved entirely in the
+mind of a 26-year-old patent clerk, before a single labeled example was
+available.
 
 %======================================================================
 \section{Conclusions}
