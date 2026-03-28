@@ -1,0 +1,439 @@
+\documentclass[12pt]{article}
+
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{natbib}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{mathrsfs}
+
+\geometry{margin=1.25in}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\newtheorem{corollary}{Corollary}
+\newtheorem{remark}{Remark}
+
+\title{Blackwell's Theorem on the Comparison of Experiments:\\
+       A Bayesian Exposition}
+\author{Analytical Summary of \citet{kihlstrom1984}}
+\date{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\bigskip
+
+%----------------------------------------------------------------------
+\section{Introduction and Motivation}
+%----------------------------------------------------------------------
+
+Consider two random variables, $\tilde{x}_\mu$ and $\tilde{x}_\nu$, each correlated
+with an unknown state $\tilde{s}$.  A decision maker wishes to know which observation
+conveys more information about $\tilde{s}$.  \citet{blackwell1951,blackwell1953}
+identified a clean answer: $\tilde{x}_\mu$ is at least as informative as
+$\tilde{x}_\nu$ if and only if the conditional distribution of $\tilde{s}$ given
+$\tilde{x}_\mu$ is a \emph{mean-preserving spread} of the conditional distribution
+of $\tilde{s}$ given $\tilde{x}_\nu$---or, equivalently, if $\tilde{x}_\mu$ is
+\emph{sufficient} for $\tilde{x}_\nu$.
+
+\citet{kihlstrom1984} provides a Bayesian restatement of Blackwell's result and
+its equivalence with the economic criterion of \citet{bonnenblust1949}, the
+sufficiency criterion of Blackwell, and the uncertainty-function criterion of
+\citet{degroot1962}.  The exposition proceeds in three steps: (i)~set up notation
+and define the experiments; (ii)~state the three equivalent criteria in a unified
+Bayesian language; (iii)~prove their equivalence by establishing the central role
+of \emph{stochastic transformations} (Markov kernels).
+
+%----------------------------------------------------------------------
+\section{Setup and Notation}
+%----------------------------------------------------------------------
+
+\subsection{Experiments and Markov matrices}
+
+Let $S = \{s_1, \ldots, s_N\}$ be the finite set of possible values of the
+unknown state $\tilde{s}$.  An \textbf{experiment} is described by the
+conditional probability distribution of an observed signal $\tilde{x}$ over
+a measurable space $(X, \mathscr{F})$, given the state.  When $X$ is also
+finite, say $X = \{x_1, \ldots, x_M\}$, an experiment reduces to an
+$N \times M$ \textbf{Markov matrix}
+\[
+\mu = [\mu_{ij}], \qquad
+\mu_{ij} = \Pr(\tilde{x}_\mu = x_j \mid \tilde{s} = s_i) \geq 0,
+\quad \sum_{j=1}^{M} \mu_{ij} = 1 \;\forall\, i.
+\]
+Two experiments $\mu$ (the ``more informative'' candidate) and $\nu$ are
+then completely characterised by their Markov matrices.
+
+\subsection{Stochastic transformations}
+
+\begin{definition}[Markov Kernel / Stochastic Transformation]
+A \textbf{stochastic transformation} is a function $Q: X \times \mathscr{F}
+\to [0,1]$ such that, for fixed $E \in \mathscr{F}$, $Q(\cdot, E)$ is
+measurable, and for fixed $x \in X$, $Q(x, \cdot)$ is a probability measure.
+\end{definition}
+
+In the discrete case $Q$ is an $M \times K$ Markov matrix with
+$q_{lk} \geq 0$ and $\sum_{k} q_{lk} = 1$ for every row $l$.
+
+\begin{definition}[Sufficiency]
+$\mu$ is \textbf{sufficient for} $\nu$ if there exists a stochastic
+transformation $Q$ such that
+\[
+\nu(\mu) = Q\,\mu,
+\]
+meaning the experiment $\nu$ can be replicated from $\mu$ by passing the
+signal $\tilde{x}_\mu$ through the randomisation $Q$.
+\end{definition}
+
+Sufficiency captures the idea that an observer of $\tilde{x}_\mu$ can
+always \emph{generate} the distribution of $\tilde{x}_\nu$ by a further
+randomisation, but not vice versa.
+
+%----------------------------------------------------------------------
+\section{Three Equivalent Criteria for ``More Informative''}
+%----------------------------------------------------------------------
+
+\subsection{The economic criterion (Bonnenblust--Shapley--Sherman)}
+
+Let $A$ be a compact convex set of actions and $u: A \times S \to \mathbb{R}$
+a utility function.  An information user observes a signal $x \in X$, updates
+beliefs about $\tilde{s}$, and chooses an action $d(x) \in A$ to maximise
+expected utility.
+
+\medskip
+\noindent\textbf{Posterior vectors.}  Let $p = (p_1, \ldots, p_N)$ be the
+\emph{a priori} distribution over $S$ with $\sum_i p_i = 1$ and $p_i \geq 0$.
+Define the simplex
+\[
+P = \bigl\{(p_1, \ldots, p_N) : p_i \geq 0,\; \textstyle\sum_i p_i = 1\bigr\}.
+\]
+When experiment $\mu$ is conducted and $\tilde{x}_\mu = x$ is observed, Bayes'
+rule gives the posterior
+\[
+\Pr(\tilde{s} = s_i \mid \tilde{x}_\mu = x)
+= \frac{\Pr(\tilde{x}_\mu = x \mid \tilde{s} = s_i)\, p_i}
+       {\sum_j \Pr(\tilde{x}_\mu = x \mid \tilde{s} = s_j)\, p_j}.
+\]
+The experiment $\mu$ therefore maps $P$ into a \emph{random posterior}
+$p^{\mu}(x) \in P$ whose expectation equals the prior:
+$\mathbb{E}[p^{\mu}] = p$.
+
+\medskip
+\noindent\textbf{The value of information.}  The set of possible expected
+utility vectors achievable under experiment $\mu$ given prior $p$ is
+\[
+B(\mu, A) = \bigl\{v \in \mathbb{R}^N :
+  v = \bigl(v_1(f), \ldots, v_N(f)\bigr) \text{ for some }
+  \mathscr{F}\text{-measurable } f: X \to A \bigr\},
+\]
+where $v_i(f) = \int_X u(f(x), s_i)\,\mu_i(dx)$.
+The highest expected utility available to any user who observes $\tilde{x}_\mu$
+is $\max_{v \in B(\mu,A)} c \cdot v$ for any direction $c \in \mathbb{R}^N$.
+
+\begin{definition}[Economic Criterion]
+$\mu$ is at least as informative as $\nu$ (written $\mu \geq \nu$) in the sense
+of Bonnenblust--Shapley--Sherman if, for every compact convex $A$ and every
+$p \in P$,
+\[
+B(\mu, A) \supseteq B(\nu, A),
+\]
+i.e., every expected-utility vector achievable under $\nu$ is also achievable
+under $\mu$.
+\end{definition}
+
+Equivalently, every potential information user prefers to observe $\tilde{x}_\mu$
+rather than $\tilde{x}_\nu$.
+
+\subsection{The sufficiency criterion (Blackwell)}
+
+\begin{definition}[Blackwell Sufficiency Criterion]
+$\mu \geq \nu$ in Blackwell's sense if there exists a stochastic transformation
+$Q: X \to Y$ such that $\nu = Q \circ \mu$; that is,
+\[
+\nu_i(E) = Q(\mu_i)(E)
+\quad \forall\, E \in \mathscr{G},\; i = 1, \ldots, N,
+\]
+where $\mathscr{G}$ is the $\sigma$-algebra on $Y$.
+\end{definition}
+
+\subsection{The uncertainty-function criterion (DeGroot)}
+
+\citet{degroot1962} defines an \textbf{uncertainty function} $U: P \to \mathbb{R}$
+to be any concave function on the simplex $P$.  The prototypical example is the
+Shannon entropy
+\[
+U(p) = -\sum_{i=1}^{N} p_i \log p_i.
+\]
+
+\begin{definition}[DeGroot Uncertainty Criterion]
+$\mu$ \textbf{reduces expected uncertainty more than} $\nu$ if, for every concave
+$U: P \to \mathbb{R}$,
+\[
+\int_P U(p)\,\hat\mu^c(dp)
+\;\leq\;
+\int_P U(p)\,\hat\nu^c(dp),
+\]
+where $\hat\mu^c$ is the distribution of the posterior $p^\mu$ induced by
+experiment $\mu$ given prior $c = (1/N, \ldots, 1/N)$.
+\end{definition}
+
+Because $U$ is concave, Jensen's inequality guarantees
+$\int U(p)\,\hat\mu^c(dp) \leq U(p)$ for any experiment, so conducting an
+experiment weakly reduces expected uncertainty.  The criterion asks whether
+$\mu$ \emph{always} reduces it at least as much as $\nu$.
+
+%----------------------------------------------------------------------
+\section{The Main Theorem}
+%----------------------------------------------------------------------
+
+\begin{theorem}[Blackwell, 1951b; Bonnenblust et al., 1949; DeGroot, 1962]
+\label{thm:blackwell}
+The following three conditions are equivalent:
+\begin{enumerate}[label=(\roman*)]
+\item $B(\mu, A) \supseteq B(\nu, A)$ for every compact convex action set $A$
+      and every prior $p \in P$ \emph{(economic criterion)};
+\item there exists a stochastic transformation $Q$ from $X$ to $Y$ such that
+      $\nu = Q \circ \mu$ \emph{(sufficiency criterion)};
+\item $\int_P U(p)\,\hat\mu^c(dp) \leq \int_P U(p)\,\hat\nu^c(dp)$ for every
+      concave $U$ and the uniform prior $c$ \emph{(uncertainty criterion)}.
+\end{enumerate}
+\end{theorem}
+
+\noindent Kihlstrom's paper provides a unified Bayesian proof of all three
+equivalences; we sketch the key ideas below.
+
+%----------------------------------------------------------------------
+\section{Bayesian Interpretation: Posterior Distributions and Standard Experiments}
+%----------------------------------------------------------------------
+
+\subsection{The posterior as a sufficient statistic}
+
+A central object in Kihlstrom's analysis is the \textbf{standard experiment}
+${}^c\mu^*$ associated with experiment $\mu$ and prior $c$.  When signal $x$
+is observed, form the posterior
+\[
+p^\mu(x) = \bigl(\Pr(s_1 \mid x),\, \ldots,\, \Pr(s_N \mid x)\bigr) \in P.
+\]
+The standard experiment simply records this posterior: it maps the prior $c$
+to the random variable $p^\mu(x) \in P$.  Its distribution $\hat\mu^c$ on $P$
+satisfies the \emph{mean-preservation} property
+\[
+\int_P p\;\hat\mu^c(dp) = c.
+\]
+Two experiments that produce the same distribution of posteriors are
+informationally equivalent.  The standard experiment is the minimal sufficient
+statistic, capturing everything the data reveal about $\tilde{s}$.
+
+\subsection{The Blackwell--Bayesian comparison}
+
+Using standard-experiment language, \citet{kihlstrom1984} restates the key
+comparison as follows.  Let $\hat\mu$ and $\hat\nu$ denote the distributions
+of $p^\mu$ and $p^\nu$ on $P$ (the distributions of posterior vectors under
+experiments $\mu$ and $\nu$ respectively).
+
+\begin{theorem}[Kihlstrom's Reformulation]
+$\mu \geq \nu$ if and only if $\hat\mu$ is a \textbf{mean-preserving spread}
+of $\hat\nu$; that is, $\hat\mu$ second-order stochastically dominates
+$\hat\nu$ in the sense that
+\[
+\int_P g(p)\,\hat\mu(dp) \;\geq\; \int_P g(p)\,\hat\nu(dp)
+\]
+for every convex function $g: P \to \mathbb{R}$.
+\end{theorem}
+
+The intuition is direct: a more informative experiment pushes posterior
+beliefs further from the prior on average.  Posteriors are more dispersed,
+reflecting a greater ``resolution'' of uncertainty.  Because every concave
+$U$ is the negative of a convex function, the uncertainty criterion (iii) of
+Theorem~\ref{thm:blackwell} is immediately implied.
+
+\subsection{The stochastic transformation as a mean-preserving randomisation}
+
+Kihlstrom proves the equivalence (i)$\Leftrightarrow$(ii) by explicit
+construction.  Given $\mu \geq \nu$ in the economic sense, define $p^0 = p$
+(the prior).  The key observation is that
+\[
+p_i^0 = \Pr(\tilde{s} = s_i) = \int_Y \Pr(\tilde{s} = s_i \mid \tilde{x}_\nu = y)\,
+\Pr(\tilde{x}_\nu \in dy)
+\]
+and likewise for $\mu$.  Because $\mu$ achieves at least the value of $\nu$
+for every user, there must exist a stochastic transformation $D(p^0, \cdot)$
+on $P$ such that observing $\tilde{x}_\mu$ has the same distribution as
+observing $p^\nu$ and then applying $D$.  Formally, $D$ is mean-preserving:
+\[
+\int_P p\,D(p^0, dp) = p^0.
+\]
+Setting $Q = D$ explicitly constructs the required Markov kernel, establishing
+(ii).
+
+%----------------------------------------------------------------------
+\section{DeGroot's Uncertainty Function: Extensions}
+%----------------------------------------------------------------------
+
+\subsection{Concavity and the value of information}
+
+\citet{degroot1962} formalises the notion that information has value by
+introducing a general \textbf{uncertainty function} $U: P \to \mathbb{R}$.
+He requires $U$ to be:
+\begin{itemize}
+\item \emph{Concave}: by Jensen's inequality, observing any signal weakly
+      reduces expected uncertainty, $\mathbb{E}[U(p^\mu)] \leq U(p)$.
+\item \emph{Symmetric}: $U$ depends on the components of $p$ but not their
+      labelling.
+\item \emph{Normalised}: $U$ attains its maximum at $p = (1/N, \ldots, 1/N)$
+      (maximum uncertainty) and its minimum at the vertices of $P$ (certainty).
+\end{itemize}
+The \textbf{value of experiment $\mu$ given prior $p$} is then
+\[
+I(\tilde{x}_\mu;\, \tilde{s};\, U)
+= U(p) - \mathbb{E}[U(p^\mu)],
+\]
+the expected reduction in $U$.  A key property proved by DeGroot and invoked
+by Kihlstrom is that $\mu \geq \nu$ \emph{iff} $I(\tilde{x}_\mu; \tilde{s}; U)
+\geq I(\tilde{x}_\nu; \tilde{s}; U)$ for every concave $U$ (Theorem 3 in
+Kihlstrom).
+
+\subsection{Entropy as a special case}
+
+\citet{kihlstrom1984} notes that the canonical example of an uncertainty function
+is Shannon entropy,
+\[
+U(p) = -\sum_{i=1}^{N} p_i \log p_i.
+\]
+Kihlstrom does not expand this special case further in his exposition.  One can
+verify, however, that when $U$ is entropy and the prior is the uniform
+$c = (1/N, \ldots, 1/N)$, DeGroot's value-of-information formula becomes
+\[
+I(\tilde{x}_\mu, c;\, U)
+= U(c) - \int_P U(p)\,\hat\mu^c(dp)
+= \log N - \int_P \Bigl(-{\textstyle\sum_i} p_i \log p_i\Bigr)\hat\mu^c(dp),
+\]
+since $U(c) = -\sum_i \tfrac{1}{N}\log\tfrac{1}{N} = \log N$.  The integral
+$\int_P \bigl(-\sum_i p_i \log p_i\bigr)\hat\mu^c(dp)$ equals the expected
+posterior entropy $H(\tilde{s} \mid \tilde{x}_\mu)$, so the expression reduces
+to $\log N - H(\tilde{s} \mid \tilde{x}_\mu)$, the information gain
+(mutual information between $\tilde{x}_\mu$ and $\tilde{s}$ under the uniform
+prior).  This identification is a consequence of the framework, not something
+stated explicitly by Kihlstrom.
+
+The Blackwell ordering implies $I(\tilde{x}_\mu, c; U) \geq I(\tilde{x}_\nu, c; U)$
+when $U$ is entropy.  The converse fails: entropy-valued information gain alone
+does not determine the full Blackwell ordering, since the ordering requires the
+inequality for \emph{every} concave $U$.
+
+\subsection{Connection to second-order stochastic dominance}
+
+The uncertainty-function representation makes explicit the connection between
+Blackwell's theorem and second-order stochastic dominance (SOSD) of posterior
+distributions.  Because $U$ is concave, $-U$ is convex, and the condition
+\[
+\mathbb{E}[U(p^\mu)] \;\leq\; \mathbb{E}[U(p^\nu)]
+\quad \text{for all concave } U
+\]
+is precisely the statement that $\hat\mu$ dominates $\hat\nu$ in the SOSD
+sense on $P$.  The Blackwell ordering on experiments is therefore isomorphic
+to the SOSD ordering on distributions of posteriors.
+
+%----------------------------------------------------------------------
+\section{The Proof Architecture}
+%----------------------------------------------------------------------
+
+Kihlstrom's proof establishes the chain
+\[
+\text{(i) Economic} \;\Longleftrightarrow\; \text{(ii) Sufficiency}
+\;\Longleftrightarrow\; \text{(iii) Uncertainty}.
+\]
+
+\paragraph{(ii) $\Rightarrow$ (i).}
+If $Q \circ \mu = \nu$, any decision rule $f$ based on $\tilde{x}_\nu$ can
+be replicated by randomising: first observe $\tilde{x}_\mu$, then draw
+$\tilde{x}_\nu \sim Q(\tilde{x}_\mu, \cdot)$, and apply $f$.  Hence
+$B(\nu, A) \subseteq B(\mu, A)$.
+
+\paragraph{(i) $\Rightarrow$ (ii).}
+This is the difficult direction.  Kihlstrom uses a separating-hyperplane
+argument on the set of achievable utility vectors.  Since
+$B(\mu, A) \supseteq B(\nu, A)$ for all compact convex $A$, standard duality
+(``for every $c \in \mathbb{R}^N$, $\max_{v \in B(\mu,A)} c \cdot v \geq
+\max_{v \in B(\nu,A)} c \cdot v$'') implies the existence of a stochastic
+transformation $D$ mapping posteriors of $\nu$ to posteriors of $\mu$ in a
+mean-preserving way.  Constructing $Q$ from $D$ completes the argument.
+
+\paragraph{(ii) $\Leftrightarrow$ (iii).}
+Given $Q$, Jensen's inequality applied to any concave $U$ directly gives
+$\mathbb{E}[U(p^\mu)] \leq \mathbb{E}[U(p^\nu)]$.  Conversely, \citet{blackwell1953}
+proves that the condition on all concave $U$ forces the existence of $Q$.
+
+\paragraph{Standard experiments and the proof.}
+A key simplification in Kihlstrom's exposition is the use of the standard
+experiment ${}^c\mu^*$: since ${}^c\mu^*$ is a sufficient statistic for $\mu$,
+it suffices to verify the conditions for standard experiments.  Theorem 5 in
+\citet{kihlstrom1984} asserts that $\mu^* \geq \nu^*$ if and only if there
+exists a mean-preserving stochastic transformation $D$ from $P \times \mathscr{P}$
+into $P$ such that, for almost all $(p^0, R)$, the random variable
+$\tilde{p}_\mu$ (posterior under $\mu$) and $\tilde{p}_\nu$ (posterior under $\nu$)
+have the same joint distribution as $(\tilde{p}_\mu, D(\tilde{p}_\nu, \cdot))$.
+The fact that $D$ is mean-preserving—i.e., $D(p^0, \cdot)$ has mean $p^0$
+for all $p^0$—guarantees no information is added by the randomisation, only destroyed.
+
+%----------------------------------------------------------------------
+\section{Applications}
+%----------------------------------------------------------------------
+
+\subsection{Product quality information (Kihlstrom, 1974)}
+
+\citet{kihlstrom1974a} applies Blackwell's theorem to consumer demand for
+information about product quality.  The unknown state $\tilde{s}$ is a
+product parameter $\theta$.  A consumer can observe $\theta$ units of
+information at cost proportional to $\theta$.  As $\theta$ rises, the
+experiment becomes more informative in the Blackwell sense.  The consumer's
+demand for information is determined by weighing the marginal utility of the
+standard experiment against its cost.  The Blackwell ordering certifies that
+``more information is always better off'' for every expected-utility maximiser,
+provided information is free.
+
+\subsection{Sequential experimental design (DeGroot, 1962)}
+
+\citet{degroot1962} applies the uncertainty function framework to sequential
+design.  In this context $\tilde{x}_\theta$ is a normal random variable with
+mean $\theta$ and variance $1/\theta$.  The standard experiment reduces to
+observing sample averages.  The choice criterion is the minimisation of
+expected uncertainty across all $n$ experiments.  \citeauthor{degroot1962}
+proves, using Blackwell's Theorem, that the optimal sequential strategy is to
+use the experiment $E$ that minimises expected uncertainty regardless of the
+outcomes of earlier experiments.
+
+%----------------------------------------------------------------------
+\section{Summary}
+%----------------------------------------------------------------------
+
+Blackwell's theorem identifies a \emph{partial order} on statistical
+experiments that has three equivalent characterisations: economic dominance
+(every decision maker is at least as well off), sufficiency (the more
+informative signal can replicate the less informative one by randomisation),
+and uncertainty reduction (every concave measure of uncertainty is reduced
+more in expectation).
+
+Kihlstrom's Bayesian exposition clarifies the structure of the theorem
+by placing the posterior distribution at the centre.  The more informative
+experiment generates a distribution of posterior beliefs that is a
+mean-preserving spread of the less informative one.  This geometric insight
+connects Blackwell's ordering to second-order stochastic dominance and gives
+the uncertainty-function criterion a transparent interpretation: because $U$
+is concave, mean-preserving spreads of posteriors correspond to higher expected
+$U$, i.e., lower expected uncertainty.
+
+DeGroot's extension broadens the criterion from specific utility functions to
+the entire class of concave uncertainty functions, reinforcing the generality
+of the result.  Together, these formulations provide an analytically powerful
+toolkit for ranking information structures in macroeconomics, mechanism design,
+and statistical decision theory.
+
+\bigskip
+\bibliographystyle{plainnat}
+\bibliography{blackwell_kihlstrom}
+
+\end{document}
