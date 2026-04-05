@@ -1,0 +1,864 @@
+% einstein_photoelectric_ML_slides_v2.tex
+% Beamer presentation: "Einstein Was Doing Machine Learning"
+% Thomas J. Sargent, 2026
+% ~30 minutes, ~22 slides
+% Style: default theme, matching block_chain_jones.tex
+
+\documentclass[aspectratio=169, 12pt]{beamer}
+\usetheme{default}
+\usecolortheme{default}
+
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{microtype}
+\usepackage{hyperref}
+
+\hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue}
+
+\title{How Einstein Induced the Photoelectric Effect: \\ Machine Learning}
+
+\author{Thomas J.\ Sargent}
+\date{May 15, 2026}
+
+%----------------------------------------------------------------------
+\begin{document}
+%----------------------------------------------------------------------
+
+\titlepage
+
+%----------------------------------------------------------------------
+\begin{frame}{The Central Claim}
+
+\begin{block}{Thesis}
+When Einstein proposed the light-quantum hypothesis in 1905 to explain
+the photoelectric effect, he was---in the language we now use---doing
+\textbf{machine learning} and \textbf{statistical inference}.
+\end{block}
+
+\bigskip
+\textbf{Three acts:}
+\begin{enumerate}
+  \item \textbf{Theory} (1905): Einstein proposes the model that
+    defines the hypothesis class
+  \item \textbf{Data quality} (1887--1916): experimenters spend
+    29 years collecting clean training data
+  \item \textbf{Estimation} (1916): Millikan runs the regression
+    and recovers Planck's constant to 0.5\%
+\end{enumerate}
+
+\bigskip
+\small The episode illustrates \emph{both} the power of theory-guided
+learning \emph{and} the limits of purely data-driven AI for scientific
+discovery.
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}{Background: The Photoelectric Effect}
+
+\begin{columns}[T]
+\begin{column}{0.55\textwidth}
+\textbf{The phenomenon (Hertz, 1887; Hallwachs, 1888):}
+\begin{itemize}
+  \item Shine light on a metal surface
+  \item Electrons are ejected
+  \item Apply a \emph{stopping potential} $V_0$ to just halt the
+    fastest electrons
+\end{itemize}
+
+\bigskip
+\textbf{The puzzle (Lenard, 1902):}
+\begin{itemize}
+  \item $V_0$ rises with light \emph{frequency} $\nu$
+  \item $V_0$ is \textbf{independent} of light \emph{intensity} $I$
+  \item Classical wave theory predicted the opposite
+\end{itemize}
+\end{column}
+\begin{column}{0.42\textwidth}
+\begin{block}{Classical Prediction (Wrong)}
+Wave amplitude $A \propto \sqrt{I}$ delivers energy\\
+$\Rightarrow$ $V_0$ should rise with $I$\\
+$\Rightarrow$ $V_0$ should be independent of $\nu$
+\end{block}
+
+\bigskip
+\begin{alertblock}{What Lenard Found}
+Exactly the opposite!\\[4pt]
+Intensity $I$: \textbf{irrelevant}\\
+Frequency $\nu$: \textbf{everything}
+\end{alertblock}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}[shrink=5]{Lenard's Finding as Feature Engineering}
+
+\begin{columns}[T]
+\begin{column}{0.52\textwidth}
+\textbf{A modern ML framing of Lenard (1902):}
+
+\bigskip
+Lenard ran an ablation experiment.  He measured $V_0$ as a function of
+\emph{both} $\nu$ and $I$.
+
+\bigskip
+\begin{tabular}{lcc}
+\toprule
+Feature & Effect on $V_0$ & Importance \\
+\midrule
+Frequency $\nu$ & Strong $\uparrow$ & \textbf{High} \\
+Intensity $I$  & None             & \textbf{Zero} \\
+Wavelength $\lambda$ & (same as $\nu$) & High \\
+\bottomrule
+\end{tabular}
+
+\bigskip
+\textbf{Conclusion:} drop $I$ from the feature set; keep $\nu$.
+\end{column}
+\begin{column}{0.45\textwidth}
+\begin{block}{ML Translation}
+\textbf{Input features:} $\nu$, $I$, $\lambda$, \ldots\\[4pt]
+\textbf{Label:} stopping potential $V_0$\\[4pt]
+\textbf{Lenard's result:} feature-importance
+analysis eliminates $I$;
+selects $\nu$ as the
+\emph{sole relevant input}
+\end{block}
+
+\bigskip
+``Lenard \ldots established \textbf{two  qualitative
+facts}: $V_0$ is independent of
+intensity; $V_0$ rises with frequency.''
+
+\smallskip
+\hfill\small{--- Millikan (1916)}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}[shrink=5]{Einstein's 1905 Insight: Model Architecture}
+
+\begin{columns}[T]
+\begin{column}{0.52\textwidth}
+\textbf{The quantum hypothesis:}
+
+\bigskip
+Each light quantum carries energy $E = h\nu$.
+
+\smallskip
+A single quantum is absorbed by a single electron.
+
+\smallskip
+If $h\nu > W$ (work function), the electron escapes.
+
+\bigskip
+\textbf{Energy conservation} gives:
+\[
+  \underbrace{eV_0}_{\text{max KE}}
+  = \underbrace{h\nu}_{\text{photon energy}}
+  - \underbrace{W}_{\text{work function}}
+\]
+\end{column}
+\begin{column}{0.45\textwidth}
+\begin{alertblock}{The Prediction (1905)}
+\[
+  \boxed{V_0 = \frac{h}{e}\,\nu - \frac{W}{e}}
+\]
+Linear in frequency.\\[4pt]
+Slope $= h/e$ is \textbf{universal} across all metals.\\[4pt]
+Intercept $= -W/e$ is metal-specific.
+\end{alertblock}
+
+\bigskip
+\textbf{Written before a single reliable
+$V_0$-vs-$\nu$ measurement existed!}
+\end{column}
+\end{columns}
+
+\bigskip
+\begin{block}{The Inductive Bias}
+The quantum hypothesis restricts the hypothesis class from \emph{all
+functions} of $(\nu, I, \lambda, \ldots)$ to a \textbf{single affine
+function in $\nu$ alone}, with a specific universal slope.
+\end{block}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}[shrink=8]{The Regression Equation}
+
+\textbf{Adding measurement noise and a nuisance parameter:}
+\begin{equation*}
+  V_{0i} = \underbrace{\alpha}_{\text{intercept}} +
+            \underbrace{\beta}_{\displaystyle h/e}\,\nu_i +
+            \underbrace{\varepsilon_i}_{\text{noise}},
+  \qquad
+  \alpha = -\frac{W}{e} + \underbrace{v_c}_{\text{contact EMF}}
+\end{equation*}
+
+\medskip
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\begin{block}{Parameters of Interest}
+\begin{tabular}{ll}
+$\beta = h/e$ & slope $\Rightarrow$ Planck's $h$ \\
+$\alpha$      & intercept (metal-specific) \\
+\end{tabular}
+\end{block}
+
+\medskip
+\begin{block}{Nuisance Parameter}
+$v_c$: EMF (electromotive force) between emitter
+and collector.  Can be as large
+as 3\,V---comparable to $V_0$ itself!
+
+\smallskip
+Shifts intercept; \textbf{does not bias slope}
+if constant within a run.
+\end{block}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{alertblock}{The Supervised Learning Problem}
+\textbf{Training data:} $\{(\nu_i, V_{0i})\}_{i=1}^n$\\[4pt]
+\textbf{Task:} estimate $\beta = h/e$\\[4pt]
+\textbf{Loss:} squared error\\[4pt]
+\textbf{Hypothesis class:} affine functions of $\nu$\\[4pt]
+\textbf{Inductive bias:} $\beta > 0$; universal across metals
+\end{alertblock}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}[shrink=10]{29 Years of Collecting Training Data (1887--1916)}
+
+\begin{center}
+\small
+\begin{tabular}{p{2.8cm}cp{3.8cm}p{4.5cm}}
+\toprule
+Experimenter & Year & Data quality & Problem \\
+\midrule
+Hertz / Hallwachs & 1887--88 & Qualitative only & No labeled $(\nu,V_0)$ pairs \\
+J.\,J.\ Thomson   & 1899     & Identifies electrons & No $V_0$-vs-$\nu$ measurement \\
+Lenard            & 1902     & Qualitative labels & No reliable numerical $V_0$ \\
+Ladenburg         & 1907     & 60\,nm range & Linear $\approx$ square-root \\
+Hughes            & 1912     & 3 UV lines & Contact EMF uncontrolled; 65\% scatter in $h$ \\
+Richardson \& Compton & 1912 & 8 metals  & Same problems; 60\% scatter \\
+\midrule
+\textbf{Millikan} & \textbf{1916} & \textbf{Clean surfaces, wide $\Delta\nu$, controlled $v_c$} & \textbf{$h$ to 0.5\%} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\bigskip
+\begin{block}{Data Quality is the Binding Constraint}
+The regression is trivial once you have clean data.
+The 29-year delay reflects \emph{data engineering}, not statistical
+sophistication.
+\end{block}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}[shrink=5]{Millikan's Experimental Design (1916)}
+
+\textbf{Key data-quality innovations (``a machine shop in vacuo''):}
+
+\begin{itemize}
+  \item[$\checkmark$] \textbf{Fresh surfaces:} electromagnetic knife shaved the alkali-metal cylinder in vacuum---no oxidation, no work-function contamination
+  \item[$\checkmark$] \textbf{Spectrally pure lines:} mercury arc with filters to exclude UV companions---eliminates stray-light bias on $V_0$
+  \item[$\checkmark$] \textbf{Wide frequency range:} 5461\,\AA\ to 2535\,\AA\
+    ($\Delta\nu = 6.3\times10^{14}$\,Hz, nearly a factor of two)
+  \item[$\checkmark$] \textbf{Controlled nuisance:} Kelvin double-balance measured $v_c$ continuously; verified stable to $\pm 0.01$\,V over 9 hours
+\end{itemize}
+
+\bigskip
+\begin{block}{Why the Wide Frequency Range Matters (Cram\'er-Rao)}
+\[
+  \mathrm{SE}(\hat\beta) = \frac{\sigma}{\sqrt{S_{\nu\nu}}},
+  \quad S_{\nu\nu} = \sum_i(\nu_i - \bar\nu)^2
+\]
+Wider $\Delta\nu$ $\Rightarrow$ larger $S_{\nu\nu}$ $\Rightarrow$ smaller SE.
+Hughes's 60\,nm range gives a standard error \textbf{2.2$\times$ larger} than
+Millikan's full range.
+\end{block}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}[shrink=5]{Millikan's Training Data}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{rrcccc}
+\toprule
+$\lambda$ (\AA) & $\nu$ ($10^{14}$\,Hz)
+  & $V_0^{\,\mathrm{Na}}$ (V)
+  & $V_0^{\,\mathrm{Li}}$ (V) \\
+\midrule
+5461.0 &  5.490 & 0.454  & ---   \\
+4339.4 &  6.908 & 1.039  & 0.499 \\
+4046.8 &  7.409 & 1.246  & 0.706 \\
+3650.2 &  8.213 & 1.578  & 1.037 \\
+3125.5 &  9.591 & 2.147  & 1.606 \\
+2534.7 & 11.827 & 3.030  & 2.529 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+True stopping potential $= V_{0,\text{obs}} + v_c$
+\hspace{1em} (Na: $v_c = 2.51$\,V;\; Li: $v_c = 1.52$\,V)
+
+\bigskip
+\begin{itemize}
+  \item 6 labeled training examples per metal
+  \item Two metals (sodium and lithium) available
+  \item Points span nearly a \textbf{factor of two} in frequency
+\end{itemize}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}[shrink=5]{OLS Regression: Estimating Planck's Constant}
+
+\textbf{Primary regression:} sodium, five points (omitting 2535\,\AA\ scattered-light correction)
+
+\medskip
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Standard OLS formula:}
+\[
+  \hat\beta = \frac{S_{\nu V}}{S_{\nu\nu}}
+            = \frac{3.830}{9.277}
+            = \mathbf{4.129\times10^{-15}}\,\text{V$\cdot$s}
+\]
+\[
+  \hat\alpha = \bar V_0 - \hat\beta\,\bar\nu = -1.813\,\text{V}
+\]
+
+\medskip
+\begin{tabular}{lc}
+\toprule
+Statistic & Value \\
+\midrule
+$R^2$ & $\approx 0.99999$ \\
+Residuals & $\leq 2\,\mathrm{mV}$ \\
+SE$(\hat\beta)$ & $4.6\times10^{-18}$\,V$\cdot$s \\
+Rel.\ precision & $\mathbf{0.11\%}$ \\
+\bottomrule
+\end{tabular}
+\end{column}
+\begin{column}{0.48\textwidth}
+\textbf{Implied Planck's constant:}
+
+\medskip
+\begin{tabular}{p{3.2cm}r}
+\toprule
+$e$ used & Implied $h$ \\
+\midrule
+Millikan's $e$ (1916) & $6.573\times10^{-34}$ \\
+Modern NIST $e$ & $6.614\times10^{-34}$ \\
+\midrule
+\textbf{Modern exact} & $\mathbf{6.626\times10^{-34}}$ \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\begin{alertblock}{Result}
+$h$ recovered to \textbf{0.5\%} of its
+modern value from \textbf{5 data points}.
+\end{alertblock}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}[shrink=12]{MLE $=$ OLS Under Gaussian Errors}
+
+\textbf{Parametric model:}
+\[
+  V_{0i} = \alpha + \beta\,\nu_i + \varepsilon_i,
+  \quad
+  \varepsilon_i \overset{\text{iid}}{\sim} \mathcal{N}(0,\sigma^2)
+\]
+
+\textbf{Log-likelihood:}
+\[
+  \ell(\alpha,\beta,\sigma) =
+  -\frac{n}{2}\ln(2\pi) - n\ln\sigma
+  - \frac{1}{2\sigma^2}\,\underbrace{\sum_{i}(V_{0i}-\alpha-\beta\nu_i)^2}_{\text{RSS}(\alpha,\beta)}
+\]
+
+\bigskip
+Maximising $\ell$ over $(\alpha,\beta)$ minimises RSS---exactly OLS.
+
+\[
+  \boxed{(\hat\alpha_{\mathrm{MLE}},\hat\beta_{\mathrm{MLE}}) =
+         (\hat\alpha_{\mathrm{OLS}},\hat\beta_{\mathrm{OLS}})}
+\]
+
+\bigskip
+\begin{block}{Implication}
+Every OLS result carries over to MLE.
+The MSE training loss used in neural-network regression \emph{is} the
+Gaussian log-likelihood---the physics and the ML objective coincide.
+\end{block}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}[shrink=20]{The Cram\'er-Rao Bound and Experimental Design}
+
+\textbf{Fisher information and Cram\'er-Rao bound for $\beta = h/e$:}
+\[
+  \mathcal{I}_{\beta\beta} = \frac{S_{\nu\nu}}{\sigma^2},
+  \qquad
+  \mathrm{Var}(\tilde\beta) \geq \frac{\sigma^2}{S_{\nu\nu}},
+  \quad S_{\nu\nu} = \textstyle\sum_i(\nu_i - \bar\nu)^2
+\]
+OLS achieves this bound (Gauss-Markov + Cram\'er-Rao).
+
+\medskip
+\begin{center}
+\small
+\begin{tabular}{lrrc}
+\toprule
+Dataset & $n$ & $S_{\nu\nu}$ ($10^{28}$ Hz$^2$) & SE($\hat\beta$) ($10^{-18}$\,V$\cdot$s) \\
+\midrule
+Restricted (4047--2535\,\AA, like Hughes) & 3 & 1.96  & 10.0 \\
+Millikan 5-pt (5461--3126\,\AA)           & 5 & 9.28  & 4.6  \\
+Millikan full (5461--2535\,\AA)           & 6 & 28.14 & 2.6  \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\smallskip
+\begin{block}{Design lesson}
+Span frequencies widely.  The CR bound justifies Millikan's choice of
+a nearly 2$\times$ range in $\nu$ over the narrow 60\,nm UV band used by predecessors.
+\end{block}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}[shrink=10]{Universality: Zero-Shot Transfer Across Metals}
+
+\textbf{The quantum hypothesis predicts:} $\beta = h/e$ is the same for
+\emph{all} metals.  This is a strong, falsifiable structural restriction.
+
+\bigskip
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Separate regressions:}
+\begin{align*}
+  \hat\beta_{\mathrm{Na}} &= 4.129\times10^{-15}\;\text{V$\cdot$s} \\
+  \hat\beta_{\mathrm{Li}} &= 4.137\times10^{-15}\;\text{V$\cdot$s} \\
+  \text{difference} &= 0.19\%
+\end{align*}
+Wald test of $H_0: \beta_{\mathrm{Na}} = \beta_{\mathrm{Li}}$:
+\[
+  z \approx 0.87 \quad (\ll 1.96)
+\]
+Cannot reject universality.
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{alertblock}{ML Language}
+\textbf{Pre-training:} fit slope on sodium\\[4pt]
+\textbf{Zero-shot transfer:} apply slope
+to lithium (different intercept only)\\[4pt]
+\textbf{Fine-tuning needed:} only intercept
+$\alpha_{\mathrm{Li}}$ (work function shifts)\\[4pt]
+\textbf{Transfer error:} 0.2\%
+\end{alertblock}
+\end{column}
+\end{columns}
+
+\bigskip
+The pooled estimate $\hat\beta_{\mathrm{pool}} \approx 4.133\times10^{-15}$\,V$\cdot$s
+has SE reduced by $\approx 1/\sqrt{2}$ relative to either single-metal estimate.
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}[shrink=5]{Historical Estimates of Planck's Constant}
+
+\begin{center}
+\begin{tabular}{p{4.4cm}rcr}
+\toprule
+Authors & Year & $h$ ($10^{-27}$\,erg$\cdot$s) & Error \\
+\midrule
+Hughes              & 1912 & 3.55--5.85        & $-12$ to $-46\%$ \\
+Richardson \& Compton & 1912 & 3.5--5.8        & $-12$ to $-47\%$ \\
+Planck (black body) & 1913 & 6.415             & $-3.2\%$         \\
+\midrule
+Millikan (Na, 5-pt) & 1916 & 6.573             & $-0.80\%$        \\
+Millikan (Na, 9-pt) & 1916 & 6.578             & $-0.73\%$        \\
+Millikan (Li)       & 1916 & 6.584             & $-0.64\%$        \\
+\textbf{Millikan mean} & \textbf{1916} & \textbf{6.579} & $\mathbf{-0.72\%}$ \\
+\midrule
+Modern NIST 2022    & 2022 & 6.6261            & 0                \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\bigskip
+\textbf{Pattern:} pre-Millikan estimates biased downward 10--47\%.
+
+\smallskip
+Three causes: stray UV (inflates $V_0$ at long wavelengths $\Rightarrow$ flattens slope),
+narrow $\Delta\nu$ (large SE), uncontrolled $v_c$ (slope bias).
+
+\smallskip
+Millikan solved all three.
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}[shrink=12]{Millikan's Epistemic Reluctance}
+
+\begin{columns}[T]
+\begin{column}{0.52\textwidth}
+Millikan confirmed Einstein's equation to 0.5\%.  \textbf{Then wrote:}
+
+\bigskip
+\begin{quote}
+``Despite then the apparently complete success of the Einstein equation,
+the physical theory of which it was designed to be the symbolic expression
+is found \textbf{so untenable} that Einstein himself, I believe, no longer
+holds to it.''
+\end{quote}
+\hfill\small{--- Millikan (1916), p.\ 388}
+
+\bigskip
+He had hoped the experiment would \textbf{refute} the equation!
+\end{column}
+\begin{column}{0.45\textwidth}
+\begin{block}{Lesson from Kepler and Newton}
+Einstein recovered a first-class "Kepler stage" model in sense
+of Koopmans (1947)
+
+\bigskip
+Millikan confirmed the slope $h/e$ to 0.5\% without accepting that light
+consists of quanta.
+\end{block}
+
+\medskip
+Compton scattering (1923) finally convinced him.
+
+\smallskip
+Nobel acceptance (1923):\\
+``\ldots contrary to my own expectation,
+\textbf{first direct experimental proof}
+\ldots of the complete validity of the
+Einstein equation.''
+\end{column}
+\end{columns}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}[shrink=30]{The ML-to-Physics Dictionary}
+
+\begin{center}
+\footnotesize
+\renewcommand{\arraystretch}{1.10}
+\begin{tabular}{p{4.8cm}p{4.8cm}p{3.5cm}}
+\toprule
+\textbf{Scientific step} & \textbf{ML name} & \textbf{Who} \\
+\midrule
+Propose $E = h\nu$; derive $V_0 = (h/e)\nu - W/e$ & Inductive bias + Hypothesis class & Einstein (1905) \\
+$V_0$ depends on $\nu$ not $I$ & Feature engineering & Lenard (1902) \\
+Measure $(\nu_i, V_{0i})$ pairs & Labeled training data & Millikan (1916) \\
+Control contact EMF $v_c$ & Nuisance-variable identification & Millikan (1916) \\
+Min.\ $\sum(V_{0i} - \hat V_{0i})^2$ & MSE training (OLS/MLE) & Millikan; this paper \\
+$|\hat\beta - h/e| < 1\%$ & Test accuracy / Confirmation & Millikan (1916) \\
+Na and Li give same $\hat\beta$ & Zero-shot transfer learning & Millikan (1916) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}[shrink=12]{The Hypothesis Class: Where Einstein Differs from atheoretical ML}
+
+\begin{columns}[T]
+\begin{column}{0.52\textwidth}
+\textbf{Einstein's hypothesis class:}
+\[
+  \mathcal{H} = \bigl\{f_{\alpha,\beta}: \nu \mapsto \alpha + \beta\nu
+  \bigm| \alpha\in\mathbb{R},\;\beta>0\bigr\}
+\]
+with the \emph{cross-metal restriction} that $\beta$ is universal.
+
+\medskip
+\begin{itemize}
+  \item VC dimension $= 2$
+  \item One-parameter family of parallel lines
+  \item Derived \emph{deductively} from $E = h\nu$
+  \item Five training points are \emph{more than sufficient}
+\end{itemize}
+\end{column}
+\begin{column}{0.45\textwidth}
+\begin{alertblock}{What atheoretical ML Misses}
+A linear regression package gives the
+right numerical answer---but:
+
+\begin{enumerate}
+  \item Cannot identify $\hat\beta = 4.129\times10^{-15}$
+    as $h/e$
+  \item Cannot impose $\beta_{\mathrm{Na}} = \beta_{\mathrm{Li}}$
+    \emph{from first principles}
+  \item Cannot decompose intercept into $W/e$ vs.\ $v_c$
+  \item Cannot reduce data requirement from $O(10^3)$ to~5
+\end{enumerate}
+\end{alertblock}
+\end{column}
+\end{columns}
+
+\bigskip
+\begin{block}{Parameter Space  Reduction Einstein Achieved}
+$E = h\nu$ reduced the hypothesis space from the infinite-dimensional
+function class to a \textbf{two-dimensional manifold of parallel lines}---
+compressing the data requirement by three orders of magnitude.
+\end{block}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}[shrink=12]{Einstein vs.\ a Deep Neural Network: Three Epochs}
+
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{p{2.8cm}rp{2.8cm}p{2.8cm}p{3.5cm}}
+\toprule
+Epoch & $n$ avail. & Einstein model & DNN (VC $\approx$ 5700) & DNN outcome \\
+\midrule
+\textbf{Lenard 1902}   & $\approx 0$  & Sufficient$^\dagger$ & Insufficient
+  & Cannot train (no labels) \\[2pt]
+\textbf{Hughes 1912}   & $\sim 30$    & Sufficient
+  & Insufficient ($\times 190$) & Memorises; no generalisation \\[2pt]
+\textbf{Millikan 1916} & 5            & Sufficient
+  & Very insufficient & Interpolates; no inference \\[2pt]
+\textbf{Modern era}    & $\sim 5000$  & Sufficient
+  & Sufficient & Recovers line; cannot identify $h/e$ \\
+\bottomrule
+\multicolumn{5}{p{14.5cm}}{\small $^\dagger$Functional form derived from theory; only two free parameters remain.}
+\end{tabular}
+\end{center}
+
+\bigskip
+\small A three-layer DNN (16 neurons/layer) has $p \approx 593$ parameters and
+VC dim $\approx 5700$.  Reliable 1\% generalisation requires $n \gtrsim 5700$---short by
+three orders of magnitude at Millikan's epoch.
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}[shrink=8]{The DNN on Millikan's Five Points}
+
+\textbf{What happens if you train any DNN on $n = 5$ data points?}
+
+\bigskip
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Interpolation regime} (any DNN with $p > 5$):
+\begin{itemize}
+  \item Training loss $= 0$ (memorises all points)
+  \item Function is unconstrained \emph{between} points
+  \item Cannot estimate slope uncertainty: zero residual df
+\end{itemize}
+
+\bigskip
+\textbf{OLS with $n=5$, $p=2$:}
+\begin{itemize}
+  \item 3 residual degrees of freedom
+  \item $\mathrm{SE}(\hat\beta) = 4.6\times10^{-18}$\,V$\cdot$s
+  \item 0.11\% relative precision, at the Cram\'er-Rao bound
+\end{itemize}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{alertblock}{The Core Lesson}
+\textbf{Einstein's theory} (not more data,
+not a better algorithm) is what made
+five training points sufficient.
+
+\bigskip
+Specifying the hypothesis class was a
+harder intellectual act than fitting
+the line.
+\end{alertblock}
+
+\bigskip
+\begin{block}{Where DNNs Prevail}
+High-dimensional problems where no
+parsimonious parametric family is known
+(images, proteins, language).
+
+\smallskip
+The photoelectric problem sits at the
+\emph{opposite} extreme.
+\end{block}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}[shrink=5]{A Broader Lesson: The Hypothetis-Deduction Loop}
+
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{p{4.0cm}p{4.0cm}p{4.0cm}}
+\toprule
+\textbf{Step} & \textbf{Science} & \textbf{ML} \\
+\midrule
+Propose $E = h\nu$              & Theoretical hypothesis & Model architecture \\
+Derive $V_0 = (h/e)\nu - W/e$   & Deduction              & Hypothesis class \\
+Choose $\nu$, not $I$           & Experiment design      & Feature engineering \\
+Measure $(\nu_i, V_{0i})$       & Observation            & Training data \\
+Minimise RSS                    & Least squares          & MSE training \\
+$|\hat\beta - h/e| < 1\%$       & Confirmation           & Test accuracy \\
+Na and Li: same $\hat\beta$     & Universality test      & Zero-shot transfer \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\bigskip
+\begin{block}{Modern AI for Science --- the Missing Piece}
+Modern systems (AI Feynman, symbolic regression) can \emph{induce} the
+linear law from data by exhaustive search, but they do so over a
+combinatorially large function space.  Einstein's deductive step
+encoded the result of that search in one paragraph.
+
+\smallskip
+\textbf{\alert{The human contribution---theory construction---remains
+indispensable.}}
+\end{block}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}[shrink=5]{Bonus: Born's Rule and an Unintended Consequence}
+
+\begin{columns}[T]
+\begin{column}{0.52\textwidth}
+Einstein's quantum hypothesis required:
+\[
+  |E|^2 \;\propto\; \text{photon \emph{density}}
+\]
+The classical wave intensity $|E|^2$ becomes a
+\textbf{probability density}, not just an energy density.
+
+\medskip
+Einstein called this the \emph{Gespensterfeld}
+(ghost field)---a wave that guides probabilities.
+
+\bigskip
+\textbf{Max Born (1926)} applied Einstein's insight to interpret  Schr\"odinger's wave function:
+\[
+  \boxed{|\psi|^2 = \text{probability density}}
+\]
+\textbf{Born's rule} ---   quantum mechanics.
+\end{column}
+\begin{column}{0.45\textwidth}
+\begin{alertblock}{Two Nobel Prizes}
+\textbf{1921:} Einstein --- for the equation
+that made the measurement possible
+\\[4pt]
+\textbf{1954:} Born --- for the probabilistic
+interpretation the equation made
+\emph{inevitable}
+\end{alertblock}
+
+\bigskip
+Einstein spent the rest of his life
+rejecting Born's rule as a ``complete
+description of reality.''
+
+\bigskip
+He won the Nobel for a paper whose
+logic seeded the interpretation he
+most opposed.
+\end{column}
+\end{columns}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}[shrink=5]{Summary and Contributions}
+
+\begin{block}{The Thesis, Revisited}
+Einstein was doing statistics with a tightly parameterized model  in 1905.
+ML systems are yet to automate a key step: \textbf{specifying the
+hypothesis class}.
+\end{block}
+
+\bigskip
+\textbf{Three principles illustrated:}
+\begin{enumerate}
+  \item \textbf{Theoretical priors guide design.} Once $E=h\nu$ fixes the
+    functional form, only 5 training points are needed for 0.1\% precision.
+  \item \textbf{Data quality is the binding constraint.} The regression is
+    trivial; cleaning the data took 29 years.
+  \item \textbf{Confirming an equation $\neq$ endorsing the model.}
+    Millikan confirmed the slope to 0.5\% while publicly rejecting the
+    light-quantum interpretation.
+\end{enumerate}
+
+\bigskip
+\begin{alertblock}{The Limit of Pure AI}
+A data-driven system given only $(\nu_i, V_{0i})$ pairs can recover
+$\hat\beta = 4.129\times10^{-15}$\,V$\cdot$s but cannot know it is $h/e$.
+\textbf{Physical meaning requires physical theory.}
+\end{alertblock}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}[allowframebreaks]{References}
+
+\small
+\begin{itemize}
+  \item Einstein, A.\ (1905). ``\"Uber einen die Erzeugung und Verwandlung des
+    Lichtes betreffenden heuristischen Gesichtspunkt.''
+    \textit{Ann.\ Phys.}, 17, 132--148.
+  \item Lenard, P.\ (1902). ``\"Uber die lichtelektrische Wirkung.''
+    \textit{Ann.\ Phys.}, 8, 149--198.
+  \item Millikan, R.\,A.\ (1916). ``A Direct Photoelectric Determination of
+    Planck's $h$.'' \textit{Phys.\ Rev.}, 7(3), 355--388.
+  \item Born, M.\ (1926). ``Zur Quantenmechanik der Sto{\ss}vorg\"ange.''
+    \textit{Z.\ Phys.}, 37, 863--867.
+  \item Hughes, A.\,L.\ (1913). ``On the Emission Velocities of
+    Photo-Electrons.'' \textit{Phil.\ Trans.\ R.\ Soc.\ A}, 212, 205--226.
+  \item Richardson, O.\,W.\ \& Compton, K.\,T.\ (1912). ``The
+    Photoelectric Effect.'' \textit{Phil.\ Mag.}, 24, 575--594.
+  \item Udrescu, S.\,M.\ \& Tegmark, M.\ (2020). ``AI Feynman: A
+    Physics-Inspired Method for Symbolic Regression.''
+    \textit{Sci.\ Adv.}, 6, eaay2631.
+  \item Vapnik, V.\ (1998). \textit{Statistical Learning Theory}.
+    Wiley, New York.
+  \item Hornik, K.\ et al.\ (1989). ``Multilayer Feedforward Networks Are
+    Universal Approximators.'' \textit{Neural Networks}, 2(5), 359--366.
+  \item Belkin, M.\ et al.\ (2019). ``Reconciling Modern Machine-Learning
+    Practice and the Classical Bias-Variance Trade-Off.''
+    \textit{PNAS}, 116(32), 15849--15854.
+  \item Koopmans, T.\,C.\ (1947). ``Measurement without Theory.''
+    \textit{The Review of Economics and Statistics}, 29(3), 161--172.
+\end{itemize}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\end{document}

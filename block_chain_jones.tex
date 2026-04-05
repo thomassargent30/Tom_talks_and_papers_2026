@@ -1,0 +1,323 @@
+\documentclass[aspectratio=169, 12pt]{beamer}
+%\usetheme{Madrid}
+\usetheme{default}
+\usecolortheme{default}
+
+\title{Achieving Consensus on a Blockchain}
+
+\author{Thomas Sargent \\
+World Laureates Association \\
+Dubai, UAE}
+\date{February 2026}
+%\institute{World Laureates Association}
+
+\begin{document}
+\titlepage
+%% Title slide
+%\begin{frame}
+%    \titlepage
+%    \centering
+%    \small Game-theoretic analysis of blockchain consensus, \\
+%    checkpoint strategies, and the efficiency-consensus trade-off.
+%\end{frame}
+
+\begin{frame}{Important Paper}
+
+
+\textbf{\em Game-theoretic analysis of blockchain consensus,
+    checkpoint strategies, and  efficiency-consensus trade-off,
+         Zetlin-Jones et al. (2025)}
+         
+\end{frame}
+
+\begin{frame}{Game-theoretic model of blockchain consensus with rational miners }
+  %  \textbf{Key contributions}:
+    \begin{enumerate}
+        %\item Game-theoretic model of blockchain consensus with rational miners.
+        \item Recognizes three attack types under longest-chain rule.
+        \item \textbf{Checkpoint strategies} as history-dependent solution:
+        \begin{itemize}
+            \item Prevent double-spending.
+            \item Enhance consensus robustness.
+        \end{itemize}
+        \item Parent-block checkpoints can be used to manage latency.
+        \item There is a  \textbf{Grossman-Stiglitz-like trade-off}  between informational efficiency and consensus.
+            \end{enumerate}
+    
+    \vspace{0.3cm}
+    \textbf{Implications}: Presence of vulnerabilities is endogenous and  depends on equilibrium strategies. Modifications of protocols (some already in use) can significantly improve security.
+\end{frame}
+
+
+
+\begin{frame}{Object in Play}        
+
+\begin{itemize}
+        \item \textbf{Blockchain}: a decentralized ledger managed  without trusted third parties.
+        \begin{itemize}
+        \item a directed graph (arborescence); each path = possible ledger.
+        \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+
+
+% Slide 1: Introduction and Motivation
+\begin{frame}{The Difficulty}
+    \begin{itemize}
+        \item \textbf{Blockchains}: decentralized ledgers managed communally by selfish transaction verifiers, e.g.., Bitcoin``miners''.
+        \item \textbf{Key challenge}: achieving \textbf{consensus} among self-interested users.
+        \item Bitcoin’s \textbf{longest-chain rule} treats miners as rational agents.
+        \item Prior work shows it fails under certain conditions:
+        \begin{itemize}
+            \item Biais et al. (2019), Budish (2025): double-spending possible.
+            \item Vulnerable when miners are heterogeneous in several senses.
+        \end{itemize}
+        \item \textbf{ Zetlin-Jones et al. (2026)}: construct  a \textbf{dynamic game-theoretic model} to:
+        \begin{itemize}
+            \item Study consensus as an equilibrium outcome.
+            \item Propose \textbf{checkpoint strategies} to improve robustness.
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+% Slide 2: Model Overview
+\begin{frame}{Model Environment}
+    \begin{itemize}
+        \item \textbf{Miners}: \(N\) infinite-lived, discount factor \(\delta\), mining power \(p_i\).
+        \item \textbf{Time}: discrete periods, miners choose block location.
+        \item \textbf{Blockchain}: directed graph (arborescence); each path = possible ledger.
+        \item \textbf{Sources of Utility}:
+        \begin{itemize}
+            \item Coin balances (more valuable if more miners agree).
+            \item Consumption goods (via spend transactions, settled with delay).
+        \end{itemize}
+        \item \textbf{Equilibrium concept}: Perfect Public Equilibrium (public strategies).
+        \item \textbf{Ultimate Source of Consensus}:  balances can be  spent only if miners agree. %d upon, miners value consensus.
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Dimensions of Miners' Heterogeneity}
+
+\textbf{Authors' Innovation:} Specify miners' preferences \textbf{directly} over information recorded on different ledger versions
+
+\vspace{0.5em}
+
+\begin{enumerate}
+    \item \textbf{Mining Power} $(p_i)$
+    \begin{itemize}
+        \item Probability miner $i$ successfully appends a block
+        \item $\{p_i\}$'s are  exogenous;  $\sum_{i=1}^N p_i = 1$
+        \item Can be highly concentrated in practice
+    \end{itemize}
+
+    \vspace{0.5em}
+
+    \item \textbf{Coin Balances} $(Y_{i,b} + R_{i,b})$
+    \begin{itemize}
+        \item $R_{i,b} = \bar{R}$ if miner $i$ solved block $b$; zero otherwise
+        \item $Y_{i,b} \in \mathbb{R}$: transaction data (positive = received, negative = spent)
+        \item Balances vary across blocks and chains
+    \end{itemize}
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Heterogeneous Preferences Over Chains}
+
+\textbf{Flow utility for miner $i$:}
+\[
+u^i(q_{i,t}; H_t) = \sum_{b \in \mathcal{B}(G_t)} \left[ (1-\delta) q_{i,b,t}(Y_{i,b} + R_{i,b}) + \frac{Y_{i,b}^-}{\delta} \cdot \lambda_t(b, H_t) \right]
+\]
+
+\vspace{0.5em}
+
+\textbf{Key elements:}
+\begin{itemize}
+    \item $q_{i,b,t}$: weight on block $b$ = share of \emph{other} miners' power on chains containing $b$
+    \item Balances more valuable when more miners ``agree'' (work on same chain)
+    \item Spend transactions $(Y_{i,b}^-)$ yield consumption once settled
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Implication:} Miners prefer \emph{different} chains
+\[
+b^*_{i,t} = \arg\max_{b \in \mathcal{B}^{LC}(G_t)} \sum_{b' \in \mathcal{C}(b, G_t)} \left( Y_{i,b'} + R_{i,b'} + \frac{Y_{i,b'}^-}{\delta} \cdot \Lambda_t(b', H_t) \right)
+\]
+
+\end{frame}
+% Slide 3: Longest-Chain Rule – The Problem
+\begin{frame}{Longest-Chain Rule has a Problem}
+    The Rule: extend chain with most blocks.
+    
+    \vspace{0.3cm}
+    \textbf{Fails under three profitable choices (deviations)}:
+    \begin{enumerate}
+        \item \textbf{Double-Spending Attacks}
+        \begin{itemize}
+            \item Fork to omit large spend transaction.
+            \item Profitable if spend \(\gg\) block rewards (Budish 2025).
+        \end{itemize}
+        \item \textbf{Consensus Redirection Attacks}
+        \begin{itemize}
+            \item Fork to include favorable balances not on longest chain.
+            \item Profitable with concentrated mining power.
+        \end{itemize}
+        \item \textbf{Saving-on-Consensus Attacks}
+        \begin{itemize}
+            \item Fork to delay spend inclusion, reduce flow disutility.
+            \item Profitable for high-power miners.
+        \end{itemize}
+    \end{enumerate}
+    
+  \textbf{  \alert{With heterogeneous miners, longest-chain rule fails}}
+\end{frame}
+
+\begin{frame}
+\frametitle{Heterogeneity Matters}
+
+When miners are \textbf{sufficiently heterogeneous}, the longest chain rule fails:
+
+\vspace{0.5em}
+
+\begin{enumerate}
+    \item \textbf{Double-Spending Attacks}
+    \begin{itemize}
+        \item Miner with large spend transaction $(Y_{i,b} < 0)$ on longest chain
+       \begin{itemize} \item Incentive to fork and omit the spend $\Rightarrow$ ``undo'' the payment
+        \item Profitable when: $(1 + p_i \delta)\bar{R} < p_i^2 \delta^2 |Y_{i,b}|$
+        \end{itemize}
+    \end{itemize}
+
+    \vspace{0.3em}
+
+    \item \textbf{Consensus Redirection Attacks}
+    \begin{itemize}
+        \item Miner with high $p_i$ and large balances on a shorter fork
+        \begin{itemize}
+        \item Incentive to extend fork rather than longest chain
+        \end{itemize}
+    \end{itemize}
+
+    \vspace{0.3em}
+
+    \item \textbf{Saving on Consensus Attacks}
+    \begin{itemize}
+        \item Miner with pending spend transaction in current block
+        \begin{itemize}
+        \item Incentive to delay consensus to reduce flow disutility
+        \end{itemize}
+    \end{itemize}
+\end{enumerate}
+
+\vspace{0.5em}
+
+\textbf{Resolution:} Checkpoint strategies introduce history-dependence that aligns incentives
+
+\end{frame}
+
+
+
+% Slide 4: Checkpoint Strategies – A Solution
+\begin{frame}{Possible Solution: Checkpoint Strategies }
+    \textbf{Idea}: History-dependent rule – ignore forks that omit blocks behind a \textbf{checkpoint}.
+    \begin{itemize}
+        \item Checkpoint = reference block updated periodically.
+        \item Miners consider only  chains containing the checkpoint.
+        \item \textbf{Key property}: After a block is checkpointed, earlier transactions cannot be removed.
+        \item Eliminates double-spending for checkpointed blocks (Proposition 3).
+        \item Can sustain consensus even with:
+        \begin{itemize}
+            \item Large transactions.
+            \item Concentrated mining power (Proposition 4).
+        \end{itemize}
+        \item \textbf{Practical use}: Ethereum, Polkadot  use checkpoint-like finality gadgets.
+    \end{itemize}
+\end{frame}
+
+% Slide 5: Latency and Checkpoint Robustness
+\begin{frame}{Latency and Checkpoint Robustness}
+    \textbf{Network latency}: miners see different blocks temporarily.
+    \begin{itemize}
+        \item Can cause \textbf{checkpoint disagreement}.
+        \item If checkpoint = terminal block → persistent disagreement (breaks consensus).
+        \item If checkpoint = \textbf{parent of terminal block} → miners stay coordinated after latency (Lemma 4, Proposition 5).
+        \item \textbf{Implication}: Delayed settlement (e.g., Bitcoin’s 6-block confirmation) aligns with checkpoint lags.
+        \item Checkpoint strategies must be designed to absorb latency shocks.
+    \end{itemize}
+\end{frame}
+
+% Slide 6: Trade-off: Consensus vs. Informational Efficiency
+\begin{frame}{Trade-off: Consensus vs. Informational Efficiency}
+    \begin{itemize}
+        \item \textbf{Full-information checkpoint rules}:
+        \begin{itemize}
+            \item Use all recent data (e.g., choose chain with highest total balances).
+            \item Maximize welfare but fail to achieve consensus (Proposition 6).
+            \item Small updates cause large chain shifts → forking incentives.
+        \end{itemize}
+        \item \textbf{Partial-information checkpoint rules}:
+        \begin{itemize}
+            \item Ignore some recent info → can sustain consensus.
+            \item This may not maximize welfare (Proposition 7).
+        \end{itemize}
+        \item \textbf{\alert{Fundamental trade-off}}: Cannot have both full informational efficiency and decentralized consensus.
+        \item \textbf{Analogous to Grossman-Stiglitz paradox}: fully efficient consensus impossible with strategic agents.
+    \end{itemize}
+\end{frame}
+
+% Slide 7: Conclusion and Contributions
+\begin{frame}{Game-theoretic model of blockchain consensus with rational miners }
+  %  \textbf{Key contributions}:
+    \begin{enumerate}
+        %\item Game-theoretic model of blockchain consensus with rational miners.
+        \item Recognizes three attack types under longest-chain rule.
+        \item \textbf{Checkpoint strategies} as history-dependent solution:
+        \begin{itemize}
+            \item Prevent double-spending.
+            \item Enhance consensus robustness.
+        \end{itemize}
+        \item Parent-block checkpoints can be used to manage latency.
+        \item There is a  \textbf{Grossman-Stiglitz like trade-off}  between informational efficiency and consensus.
+            \end{enumerate}
+    
+    \vspace{0.3cm}
+    \textbf{Implications}: Presence of vulnerabilities is endogenous and  depends on equilibrium strategies. Modifications of protocols (some already in use) can significantly improve security.
+\end{frame}
+
+% Slide 8: References
+\begin{frame}{References}
+    \small
+    \begin{itemize}
+        \item Biais, B., et al. (2019). \emph{The Blockchain Folk Theorem}. Review of Financial Studies.
+        \item Budish, E. (2025). \emph{Trust at Scale: Economic Limits of Cryptocurrencies}. QJE (forthcoming).
+        \item Buterin, V., et al. (2020). Ethereum 2.0 finality gadgets.
+        \item Leshno, J., et al. (2024). Community-response protocols.
+        \item Stewart, A., \& Kokoris-Kogia, E. (2020). GRANDPA: a Byzantine finality gadget.
+        \item Garratt, R., \& van Oordt, M. (2023). Double-spending costs.
+        \item Chiu, J., \& Koeppl, T. (2022). Miner competition and settlement lags.
+        \item {Zetlin-Jones, A., Ebrahimi, Z., Guennewig, M., \& Routledge, B. (2025).} 
+\emph{Achieving Consensus on Blockchains}. 
+Working paper, November 7, 2025.
+    \end{itemize}
+\end{frame}
+
+\end{document}
+
+% End slide
+\begin{frame}
+    \centering
+    \Large \textbf{Thank You}
+    
+    \vspace{0.5cm}
+    \small Summary of:\\
+    \textbf{Achieving Consensus on Blockchains}\\
+    Zetlin-Jones et al., November 2025
+\end{frame}
+
+\end{document}

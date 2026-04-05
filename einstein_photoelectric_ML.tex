@@ -1369,6 +1369,186 @@ sophistication---is the binding constraint for precision; and (iii) confirming
 a regression equation is not the same as confirming the theoretical model
 that produced it.
 
+%======================================================================
+\appendix
+
+\section{Einstein's Equation in Modern Physics}
+\label{app:modern}
+
+\subsection{The Equation Remains Exact}
+
+Einstein's photoelectric equation~\eqref{eq:einstein} is not an
+approximation to a deeper expression---it is an exact consequence of
+quantum electrodynamics (QED).  In QED the photoelectric effect is
+described as the absorption of a single photon by an electron near
+the Fermi level of a metal; energy conservation yields
+equation~\eqref{eq:einstein} directly.  The work function $W$ is the
+electrochemical potential required to remove an electron from the Fermi
+level to the vacuum level; modern density-functional theory computes $W$
+to within a few percent for clean surfaces.  Millikan's regression
+therefore tests an exact result of QED, not an empirical approximation.
+
+The equation is exploited continuously in surface science.  Ultraviolet
+Photoelectron Spectroscopy (UPS) and Kelvin probe instruments apply
+equation~\eqref{eq:einstein} to measure work functions
+of semiconductor films, organic photovoltaic layers, and heterogeneous
+catalysts with sub-meV resolution.
+
+\subsection{X-ray Photoelectron Spectroscopy}
+\label{app:xps}
+
+When the incident photon energy $h\nu$ is drawn from the X-ray range
+(100\,eV--10\,keV), the emitted electron's kinetic energy $eV_0$
+identifies the \emph{binding energy} $E_B$ of the core electron level
+from which it was ejected \citep{Siegbahn1967}:
+\begin{equation}\label{eq:xps}
+  E_B = h\nu - eV_0 - \phi_{\mathrm{spec}},
+\end{equation}
+where $\phi_{\mathrm{spec}}$ is the spectrometer work function, a
+calibration constant.  Equation~\eqref{eq:xps} is
+equation~\eqref{eq:einstein} rearranged: the unknown is now the binding
+energy rather than $h/e$.  Because each element has a unique set of
+core-level binding energies, X-ray Photoelectron Spectroscopy (XPS/ESCA)
+provides quantitative, element-specific chemical analysis of surfaces.
+Kai Siegbahn received the 1981 Nobel Prize in Physics for this technique,
+which is now one of the most widely used methods in materials science,
+semiconductor device fabrication, and surface catalysis.
+
+In statistical terms, XPS is a multivariate extension of Millikan's
+regression: dozens of binding energies are estimated simultaneously by
+inverting Einstein's linear equation at multiple photon energies.
+
+\subsection{Multi-Photon Photoelectric Effect}
+\label{app:multiphoton}
+
+Einstein's equation assumes each emitted electron absorbs exactly one
+photon.  At the peak intensities of pulsed lasers
+($I \gtrsim 10^{10}$\,W/cm$^2$), an electron can sequentially absorb
+$n > 1$ photons before escaping the surface.  The $n$-photon
+generalisation of equation~\eqref{eq:einstein} is
+\begin{equation}\label{eq:multiphoton}
+  eV_0 = n\,h\nu - W, \qquad n = 1, 2, 3, \ldots
+\end{equation}
+Above-threshold ionisation (ATI)---photoelectron emission at kinetic
+energies exceeding the single-photon threshold by integer multiples of
+$h\nu$---was first observed by \citet{Agostini1979}.  The resulting
+photoelectron spectrum displays a comb of peaks separated by $h\nu$,
+each satisfying equation~\eqref{eq:multiphoton} for the corresponding
+$n$.  In the language of Section~\ref{sec:ml}, ATI extends Einstein's
+hypothesis class to allow non-unit photon multiplicity; the slope remains
+$h/e$ and the universal structure is preserved across metals.
+
+\subsection{Does the Photoelectric Effect Prove the Quantisation of Light?}
+\label{app:lamb_scully}
+
+Section~\ref{sec:millikan_reluctance} noted Millikan's epistemic reluctance
+to accept the light-quantum hypothesis despite confirming its equation.
+Modern physics provides a more precise statement of what Millikan's
+regression actually proves.
+
+\citet{Lamb1969} showed that the photoelectric stopping-potential equation
+can be derived from a \emph{semiclassical model}: the electromagnetic
+field is treated as a classical wave while only the atom (electron) is
+quantised.  In this model a classical wave drives transitions between
+quantised atomic energy levels, and the ejected-electron kinetic energy
+still satisfies equation~\eqref{eq:einstein}.  The reason is that
+equation~\eqref{eq:einstein} follows from energy conservation and the
+quantised \emph{atomic} level structure alone; it does not require the
+radiation field itself to be quantised.
+
+This observation does not diminish Einstein's achievement.  He identified
+the correct hypothesis class~\eqref{eq:hyp_class} and the correct
+functional form, and the slope $h/e$ encodes Planck's constant whether
+or not the field is ``really'' composed of quanta.  But the
+Lamb--Scully result clarifies what Millikan's regression \emph{proves}:
+it confirms the functional form $V_0 \propto \nu$ and measures $h/e$
+to 0.5\%, and it is consistent with the photon hypothesis---but it does
+not distinguish the quantised-field hypothesis from semiclassical
+alternatives.  Millikan's epistemic reluctance was, ironically, more
+defensible than the standard narrative suggests.
+
+\subsection{Photon Antibunching: Definitive Evidence for Field Quantisation}
+\label{app:antibunching}
+
+The genuine experimental proof that the radiation field must be quantised
+came not from the photoelectric effect but from photon-counting
+experiments in quantum optics.  The relevant observable is the
+statistical regularity---or irregularity---with which successive photons
+are emitted.
+
+\citet{HanburyBrown1956} observed \emph{photon bunching} in thermal
+(chaotic) light: photon pairs from a thermal source arrive at two
+detectors with a coincidence rate exceeding a Poisson benchmark, reflecting
+the Bose-Einstein statistics of thermal photons.  \citet{Glauber1963}
+developed the quantum theory of optical coherence, introducing coherent
+states of the radiation field (the states most closely resembling classical
+waves) and deriving the photon-number statistics that separate classical,
+coherent, and thermal light.  Glauber received the 2005 Nobel Prize in
+Physics for this framework.
+
+The decisive evidence for field quantisation is photon
+\emph{antibunching}: the observation that successive photons from a
+single quantum emitter are \emph{less} likely to arrive together than
+Poisson statistics predict.  \citet{Kimble1977} first observed
+sub-Poissonian photon-number statistics in the resonance fluorescence of
+individual sodium atoms.  Antibunching is impossible in any classical or
+semiclassical model of the electromagnetic field: a classical field,
+however modulated or noisy, always produces at minimum Poissonian
+coincidences.  The antibunching experiment is therefore the decisive
+model-selection test---in the language of Section~\ref{sec:ml}---that
+rules out the semiclassical hypothesis of \citeauthor{Lamb1969} and
+establishes that the radiation field must be quantised.
+
+The historical sequence is instructive.  Einstein's 1905 paper introduced
+the photon as a \emph{heuristic}---his own word in the title---and
+Millikan confirmed its equation to 0.5\% in 1916.  Definitive experimental
+evidence that the radiation field is itself quantised arrived only in 1977,
+by a route---photon-number statistics in resonance fluorescence---that
+Einstein's equation neither anticipated nor directly implied.  The
+regression confirmed the equation; quantum optics experiments seventy
+years later confirmed the physical interpretation.
+
+\subsection{Implications for the Machine Learning Reinterpretation}
+\label{app:ml_implications}
+
+The modern results above sharpen several points from Section~\ref{sec:ml}.
+
+\paragraph{Depth of the hypothesis class.}
+Einstein chose hypothesis class~\eqref{eq:hyp_class} by a heuristic
+argument whose full justification---QED, Fermi's golden rule, the
+Fermi-Dirac distribution of electrons in a metal---emerged over the
+following three decades.  The class proved correct for reasons deeper
+than those available in 1905, and it extends over a five-order-of-magnitude
+range of photon energies (visible UV to hard X-rays) without modification.
+The ``inductive bias'' encoded in the two-parameter linear model is even
+more powerful than Section~\ref{sec:ml} indicates.
+
+\paragraph{What the regression tests.}
+Millikan's regression tests the \emph{functional form} $V_0 \propto \nu$
+and estimates the slope $h/e$.  The Lamb--Scully result shows that this
+functional form and this slope are consistent with both quantised-field
+and semiclassical models of radiation.  Distinguishing these model
+classes requires a different observation---photon-number variance---and a
+different experimental design.  In the language of Section~\ref{sec:ml}:
+the regression identifies the best-fitting model \emph{within} a given
+hypothesis class, but selecting \emph{between} hypothesis classes (quantised
+vs.\ semiclassical field) requires a different objective function and a
+different experiment.
+
+\paragraph{Theory specificity in experimental design.}
+The antibunching experiments of \citet{Kimble1977} were designed
+specifically to test the quantised-field hypothesis; the relevant
+observable (photon-number variance) follows directly from
+Glauber's coherence theory.  Without the quantised-field hypothesis and
+its prediction of sub-Poissonian statistics, there was no reason to
+measure photon-number correlations at all.  This repeats the lesson of
+Millikan's experiment: theory specifies the hypothesis class and, from
+it, the decisive test.  The progression from Millikan (1916) to
+\citeauthor{Kimble1977} (1977) illustrates how each theoretical
+refinement generates a new, more discriminating experimental test---a
+chain of hypothetico-deductive loops (Table~\ref{tab:loop}) whose links
+are forged by theory, not by data alone.
+
 \bigskip
 \bibliographystyle{plainnat}
 \bibliography{einstein_photoelectric_ML}
