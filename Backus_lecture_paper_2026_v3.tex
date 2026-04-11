@@ -77,17 +77,17 @@ prices that can explain hitherto puzzling movements in the term structure of int
 
 
 
-This paper tries  to think hard about   long-standing puzzles about the term structure of interest rates that  preoccupied David Backus. By ``puzzle'' I mean a feature of a joint distribution of macroeconomic variables and asset returns, implied by a ``standard'' benchmark model, that is contradicted by U.S.\ time series data.  Under this definition, three patterns qualify as puzzles: 1) the nominal yield curve usually slopes upward; 2) the long-minus-short yield spread narrows before recessions and widens after them; and 3) long-term bond yields are nearly as volatile as short-term yields even though, under a rational expectations version of the expectations theory of the term structure, they should be much smoother averages of expected future short rates---this is what \citet{Shiller1979} called the \emph{volatility puzzle}.\footnote{For influential research about the expectations theory of the term structure of interest rates before rational expectations was imposed, see \citet{bierwag1967model} and \citet{meiselman1961term}.}
+This paper studies some    long-standing puzzles about the term structure of interest rates. By ``puzzle'' I mean a feature of a joint distribution of macroeconomic variables and asset returns that is  implied by a ``standard'' benchmark model but  that is contradicted by U.S.\ time series data.\footnote{Thus, a ''puzzle'' is always relative to a baseline model.}  Relative to a ''standard'' asset pricing model like \citet{Lucas1978} or \citet{cox1985theory}, three patterns qualify as puzzles: 1) the nominal yield curve usually slopes upward; 2) the long-minus-short yield spread narrows before recessions and widens after them; and 3) long-term bond yields are nearly as volatile as short-term yields even though, under a rational expectations version of the expectations theory of the term structure, they should be much smoother averages of expected future short rates---this is what \citet{Shiller1979} called the \emph{volatility puzzle}.\footnote{For influential research about the expectations theory of the term structure of interest rates before rational expectations was imposed, see \citet{bierwag1967model} and \citet{meiselman1961term}.}
 
 \citet{hansen1981exact} tested cross-equation restrictions on vector autoregressions implied by the rational expectations theory of the term structure.\footnote{Also see \citet{Sargent1972,Sargent1979} and \citet{HansenSargent1991}, which
 reprinted \citet{hansen1981exact}.} They found some support for the theory's implications for conditional means, but also evidence of the difficulties with conditional second moments that Shiller emphasized. To resolve the volatility puzzle, risk prices---or something observationally equivalent---must be large, volatile, and state-dependent. What generates those state-dependent risk prices? Risk aversion? Wrong beliefs? Fears of model misspecification? Disentangling these possible sources is the topic of this paper.
 
-To avoid misunderstandings, it is important to say what I mean by 'model', 'rational expectations model', 'rational expectations econometrics',  and 'wrong beliefs'.  By a 'model' I mean a joint probability distribution over a sequence indexed by a known vector of parameters. A 'rational expectations model' is one in which all of the agents inside the model share the model with the economic theorist who created it.  By `rational expectations econometrics' I mean that the econometrician shares the shares the model with the economic theorist.  By `wrong beliefs' I mean that some of the people  inside a model uses a different model that do the theorist and  the econometrician. Thus, 'wrong beliefs' are relative to a baseline model that an econometrician has somehow inferred from historical data via a process of induction that I won't describe in this paper.   
+To set the stage, I say what I mean by 'model', 'rational expectations model', 'rational expectations econometrics',  and 'wrong beliefs'.  A (statistical)  'model' is  a joint probability distribution over a sequence of random variables indexed by a  vector of known parameters. In a  'rational expectations model', all of the agents inside the model share the model with the economic theorist who created it.   `Rational expectations econometrics'  means that the econometrician shares the shares the model with the economic theorist.   `Wrong beliefs'  means that some of the people  inside the  model  don't use  the econometrician's model. Thus, 'wrong beliefs' are relative to a  model that an econometrician has somehow inferred from historical data via a process of induction that I won't describe in this paper.  Below we'll sometimes refer to the econometrician's model  as the ``baseline model'' or the econometrician's ``approximating model''.
 
 In asset pricing data, consequences  of investors' \emph{risk aversion} and \emph{wrong beliefs} are
 confounded.  In a rational expectations model with a
 risk-averse representative investor, higher mean returns compensate for
-higher risks.  But if the representative investor holds wrong beliefs, belying the  rational expectations communism-of-beliefs assumption,
+higher risks.  But if the representative investor holds wrong beliefs, belying the  rational expectations ``communism-of-beliefs ''assumption,
 observed average returns depend on \emph{both} risk aversion \emph{and}
 misunderstood return distributions.  Wrong beliefs can generate what, from the perspective of an econometrician's approximating model, look
 like ``stochastic discount factor shocks.'' Can such ``shocks'' explain the observed countercyclical behavior of risk prices?
@@ -456,7 +456,7 @@ they are answering when they respond to surveys. Are they reporting their best g
 that rationalizes their portfolio decisions?  If the latter, their
 ``mistakes'' may not be mistakes at all but instead reflect a
 pessimistic model that they use precisely because they fear
-misspecification.\footnote{\textbf{Tom: add cite to Ellison paper.}}  Section~\ref{sec:robust} develops a theory in which
+misspecification.\footnote{\citet{ellison2012defense} applied this idea to interpreting responses of  Federal Reserve officials to  questions about the forecasts of macroeconomic outcomes that rationalize their decisions.}  Section~\ref{sec:robust} develops a theory in which
 this distinction is formalized: the robust control agent's worst-case
 model generates forecasts that look like the experts' distorted beliefs,
 but arise from an optimizing response to model uncertainty rather than
@@ -563,8 +563,9 @@ But those are precisely the models that are hardest to distinguish with
 finite data and that matter most for long-lived asset prices.
 Discounted entropy, by treating future divergences less severely, admits
 these statistically elusive but economically important alternatives into
-the set of models that the dubious agent contemplates.
-\footnote{\textbf{Tom: add reference to IEEE paper.}}
+the set of models that the dubious agent contemplates.\footnote{This property of
+ discounted entropy 
+is what motivated \citet{hansen1995discounted} to introduce it.}
 
 \subsection{Valuation under the econometrician's model}
 
@@ -1027,7 +1028,7 @@ The question posed in my  title matters because the same empirical regularities 
       aversion.  But if the representative agent fears model
       misspecification in the sense formalized above, that cost can rise
       by one or two orders of magnitude (see \citep{HST1999}), because the agent evaluates fluctuations under a
-      pessimistic probability model that amplifies downside risk.\footnote{\textbf{Tom: also add reference to BHS.}}
+      pessimistic probability model that amplifies downside risk.\footnote{ See \citet{barillas2009doubts} for a  quantitive exploration of this idea.}
 \item \textbf{Consumption Euler equations.}  The ``New Keynesian IS
       curve'' is a log-linearized consumption Euler equation whose risk
       adjustments are controlled by the stochastic discount factor.
