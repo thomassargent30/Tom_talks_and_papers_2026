@@ -1,0 +1,1180 @@
+\documentclass[12pt]{article}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%GGsection
+%
+\usepackage{amsmath,amssymb,amsthm,enumerate,graphicx}
+\usepackage{ifthen,latexsym,syntonly}
+\usepackage{setspace}
+\usepackage{subcaption,caption}
+\usepackage{mathabx}
+%\usepackage[showrefs]{refcheck}  %use this to show equation and section labels
+\usepackage{color}
+\usepackage[round,comma,authoryear]{natbib}   % for natbib
+%\usepackage{subfigure}
+ %\usepackage{graphics}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{epstopdf}
+\usepackage{mathabx}
+%\bibliographystyle{mynat}
+%\bibliographystyle{ormsv080}
+
+\usepackage{psfrag}
+\usepackage{tikz}
+\usetikzlibrary{decorations.pathreplacing}
+
+%\usepackage{mathtools}
+\usepackage{multirow}
+%\usepackage{soul}
+
+
+\onehalfspacing
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\setlength{\textwidth}{6.5in}
+\setlength{\textheight}{8.5in}
+\usepackage{color}
+\allowdisplaybreaks[3]
+\usepackage{calc,xspace}
+\definecolor{wacky}{rgb}{1,0,1}
+\onehalfspacing
+
+\newcommand{\wacky}[1]{{\large\textcolor{wacky}{#1}} }
+
+\definecolor{ForestGreen}{RGB}{34, 139, 34}
+
+
+\newtheorem{theorem}{Theorem}%[section]
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{assumption}{Assumption}
+\newtheorem{case}[theorem]{Case}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}{Corollary}
+\newtheorem{condition}{Condition}
+\newtheorem{criterion}[theorem]{Criterion}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{bound}[theorem]{Bound}
+\newtheorem{proposition}{Proposition}
+%\newtheorem{solution}[theorem]{Solution}
+\newtheorem{thm}[theorem]{Theorem}
+\newtheorem{restructure}{Debt Restructure}
+
+\providecommand{\keywords}[1]{\textbf{\textit{Keywords---}} #1}
+
+
+\setlength{\oddsidemargin}{.05in} \setlength{\topmargin}{-.45in}
+\setlength{\textwidth}{6.4in} \setlength{\textheight}{8.5in}
+
+
+
+\newcommand{\NW}[1]{{\textcolor{blue}{#1}}}
+\newcommand{\nw}[1]{{\textcolor{cyan}{#1}}}
+\newcommand{\WJ}[1]{{\textcolor{red}{#1}}}
+\newcommand{\TS}[1]{{\textcolor{magenta}{#1}}}
+%\newcommand{\JQ}[1]{{\textcolor{cyan}{#1}}}
+
+
+
+\begin{document}
+
+\date{%December 2009, revised
+%TCIMACRO{\TeXButton{Today}{\today}}%
+%BeginExpansion
+\today%
+%EndExpansion
+}
+\title{A Dynamic Program and Debt Management Policy for Implementing a Ramsey Tax Plan\thanks{We thank $\ldots$  
+% Fernando Alvarez, Marco Bassetto, Lars Peter Hansen, Ben Moll, Robert Shimer, Nancy Stokey, Pierre Yared, and seminar participants at London School of Economics, Princeton University, and the University of Chicago for helpful comments.  
+Wei Jiang acknowledges support from the Hong Kong Research Grants Council (Grant No. ).}}  % Commitment Continuous-Time
+%} %Deterministic Model} % A 
+%\NW{scratch note: Let's discuss the paper's title. Power laws and Pareto distributions? Permanent Earnings Shocks }}
+%\\ % and Liquidity Constraints
+%\bigskip Preliminary and Incomplete \\ Do not quote
+%} % \maketitle
+\date{\today}
+\author{	 Wei Jiang\thanks{%
+Department of Industrial Engineering and Decision Analytics, Hong Kong University of Science and Technology. E-mail: weijiang@ust.hk } \and Thomas J. Sargent\thanks{New York University. E-mail: thomas.sargent@nyu.edu} \and Neng Wang\thanks{Cheung Kong Graduate School of Business (CKGSB). E-mail: {newang@gmail.com}} }
+
+\maketitle
+%
+%\NW{Tom: Is the title reflecting both our recursive formulation of a Ramsey plan and recursive implementation of the Ramsey plan? Can we make the title more accessible to general audience? 
+%	} 
+
+\newpage 
+
+	\begin{abstract}
+		This paper formulates a  continuous-time version of \citeauthor{LucasStokey1983}'s (1983) optimal tax problem as   a dynamic program that we  cast in terms of a state variable $X_t = \Pi_t U_{C,t}$, where $\Pi_t$ denotes the government's cumulative liability {in the absence of debt rescheduling} and $U_{C,t}$ denotes the marginal utility of consumption. A Ramsey planner's value function satisfies a Hamilton-Jacobi-Bellman equation that takes an additively separable form $V(X_t,t) = -\Phi_0 X_t + H(t;\Phi_0)$. 
+		%While \citeauthor{LucasStokey1983}'s Lagrangian and our dynamic program yield identical tax plans and allocations, 
+		{The  dynamic program tells how to   implement  the Ramsey tax  plan with a sequence of continuation planners who  simply automatically %use a    debt-management policy that always implements. While  Lucas and Stokey’s consol-based debt management plan sometimes fails to work, %Unlike  Lucas and Stokey's implementation strategy, this instantaneous-debt based strategy always works provided that a Ramsey plan exists.} %than  
+%		our dynamic program points toward an implementation that features a better debt-management policy than Lucas and Stokey’s. 
+	%	our  policy always works.   %abstains from rescheduling term debt and
+		 %With our policy, continuation planners
+		  issue the  instantaneous debt that  is required to avoid rescheduling the tail of the initial term-debt structure.} {Under a timing protocol that allows a time-$t$ government to set a time-$(t +dt)$'s government's tax rate,} 
+		  our implementation supports a Ramsey tax plan. % as a stream  of optimal decisions by continuation Ramsey planners. 
+		  Our implementation avoids all of the  % Lucas and Stokey's 
+recurrent  rescheduling of term debt that \cite*{debortoli2021optimal} showed can  imperil \citeauthor{LucasStokey1983}'s implementation. We provide quantitative examples featuring exponential and cyclical debt-service processes, as well as cyclical government spending processes. %We provide quantitative examples with exponential and cyclical debt service processes and cyclical government spending processes.
+%	
+%	\NW{Tom: For the 2nd blue edit above, for your convenience, we paste your original text in magenta below.} 
+%	
+%		  \TS{Under a timing protocol that grants an infinitesimal increment of tax-rate pre-commitment to continuation governments,} 
+%
+
+		\medskip
+		
+		\noindent\textbf{Keywords:} Ramsey planner, continuation Ramsey planner, implementability, instantaneous debt, local commitment, dynamic programming.
+		
+		\medskip
+		\noindent\textbf{JEL Classification:} E3, E6, C7
+	\end{abstract}
+
+
+
+
+
+\clearpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\newpage
+
+\begin{quote}
+``Finding the state is an art.''
+
+\quad \quad Fernando Alvarez, 1999, 2000, $\ldots$
+
+\end{quote}
+
+
+\section{Introduction}\label{sec:intro}
+
+%{[To be written.]}
+%\ref{sec:intro}, Sections  \ref{sec_environ}, \ref{sec:Lagrange}, \ref{sec:DP}, \ref{sec:examples}, \ref{sec:implement} \ref{sec:conclude},
+%Appendix \ref{sec:discrete_cts}
+
+%\citet{stokey1989recursive} has long been a bible for economists interested in taking advantage of the power of dynamic programming for building equilibrium Markov models of the type that Robert E.Lucas used so effecdtively.
+%
+% \citet[Sec.~6]{lucas1982optimal}
+% 
+% the role of ``partial commitment''  in arranging a framework
+
+This paper reformulates  \citeauthor{LucasStokey1983}'s (1983) Ramsey tax problem %originally  posed by
+% in a continuous-time economy with a representative household, a benevolent government, and complete markets. We %extend \cite{LucasStokey1983} to continuous time and 
+%formulate it 
+as a dynamic program that invites   %. Formulating the problem recursively
+ us to think about implementing the Ramsey plan sequentially  from a perspective that was not available to \citeauthor{LucasStokey1983}.  To focus on essential aspects of the problem, we 
+ %gnore risk by 
+ assume that all economic fundamentals are not random.\footnote{As we note in Section \ref{sec:conclude},  it is possible to extend our results to settings in which fundamentals are described by autonomous stochastic differential equations.} 
+
+%
+%\NW{Shall we mention Chari JME 2020 and a few other papers, as these papers  also worked with ``partial commitment''? Another option is to only refer to \citet[Sec.~6]{lucas1982optimal}.} 
+%\TS{Neng and Wei: if you want to draft a short sentence or two on the Chari et al JME paper, please do so. We could put it here or in the appendix. We don't want it to be a distraction from the flow though.} 
+%\NW{Tom: we fully agree. We propose putting \cite{chari2020optimal} and \citet{clymo2020fiscal} in the footnote here. We suggest treating \citet{clymo2020fiscal} in the same way as we  treat  Chari . There are two reasons. First,  \citet{clymo2020fiscal} is not clearly written and does similar analysis as Chari's paper. %So citing  \citet{clymo2020fiscal} next to LS without citing Chari seems a bit unfair. 
+%Second, as you pointed out, we don't want our reference to these papers  to be a distraction from the flow here though. As it is  LS that launched this agenda including the ``partial commitment'' perspective, we are grouping \citet{clymo2020fiscal} and \cite{chari2020optimal} together in the footnote.} 
+
+ {Our paper is  a practical  exercise in  the ``partial commitment'' tradition of \citet[Sec.~6]{lucas1982optimal},  a topic that strains  the  adage
+ that ``finding the state is an art." ``Partial commitments'' appear in our problem   because of how the term structure of government debt influences the state vector  that faces continuation Ramsey planners and  the timing protocols required  to support  implementation of a Ramsey plan by a sequence of government decision makers.  The difficult relationship between dynamic programming and partial commitment problems dates back at least to 
+  \cite{LucasStokey1983}, whose model of an optimal term structure of government debt rested on a timing protocol that imparted ``partial commitments'' to a sequence of policy makers. (For an enlightening  discussion of partial commitments that  referees and editors of \cite{LucasStokey1983} insisted be removed from the published version, see  the discussion of Alexander Hamilton's 1795  second report on public credit\footnote{That report is available here: \citet{hamilton_1795}.} in   \citet[Sec.~6]{lucas1982optimal}).\footnote{{For recent work on  ``partial commitment'', see, e.g., \citet{clymo2020fiscal} and \cite{chari2020optimal}.}
+%  \NW{Happy to add one line for each paper if you deem it necessary. But it may distract readers as you noted. So maybe `less is more' here -- a footnote is sufficient?} }
+}  
+ To construct their theory of debt management, \citeauthor{LucasStokey1983} used a Lagrangian formulation of a Ramsey planner's problem instead of 
+ the dynamic programming machinery that in the previous 15 years Lucas had used in a string of pioneering papers.\footnote{For example, see \citet{LucasPrescott1971}
+ and \citet{Lucas1978} and \citet{stokey1989recursive}.}  
+
+
+
+
+%A closely related paper is \cite{JiangSargentWang2025} that studies the implementation of Ramsey plan in \cite{LucasStokey1983}.  There are three fundamental differences between the this paper and \cite{JiangSargentWang2025}.
+%
+%First, this paper contributes a key state variable and a recursive formulation of the Lucas-Stokey problem. While \cite{JiangSargentWang2025} establishes that short-term debt can implement the Ramsey allocation under a modified timing protocol, but its analysis remains essentially sequential: implementability is shown through an intertemporal argument rather than through a recursive characterization of the continuation problem. This paper instead shows that the policy problem can be summarized by a sufficient one-dimensional state variable, \(X_t = \Pi_t U_{C,t}\), and therefore written as a dynamic program. This contribution is important because recursion changes the nature of the analysis. It converts what previously appeared to be a delicate, history-dependent implementation problem into a tractable policy problem with a well-defined continuation value. In doing so, the paper opens a new line of analysis of the Lucas-Stokey environment: it not only characterizes Ramsey allocations, but also clarifies the structure of continuation policy under limited commitment. From the standpoint of the literature, that is a substantial step forward, because recursive formulations are what make a theory portable, extensible, and quantitatively usable.
+%
+%Second, this paper bridges the recursive formulation and implementation by identifying the key economic condition for implementation: the continuation planner must inherit the correct state variable. This insight substantially sharpens the implementation logic relative to the first paper. In \cite{JiangSargentWang2025}, short-term debt works, but the deeper reason is not fully isolated. This paper shows that implementation succeeds precisely when debt management preserves the inherited value of the state variable that summarizes the planner's trade-off. Once this is recognized, the economic content of implementation becomes much clearer. A short-term-debt-only strategy is effective not because short maturities are intrinsically special, but because such a strategy can be designed to ensure exact inheritance of the relevant state by the continuation government. Conversely, other implementation schemes fail not simply because they are badly chosen, but because they disturb the inherited state and therefore alter the continuation planner's optimization problem. When that inheritance property is lost, the recursive structure breaks down and the Ramsey allocation ceases to be time-consistent. %This is an important conceptual differentiation between the two papers. The first paper demonstrates implementability; the second paper isolates the mechanism that governs implementability and thereby provides a general criterion for evaluating debt-management strategies.
+%
+%Third, this paper reformulates the model in continuous time and enlarges the relevant asset space by introducing instantaneous debt, which materially broadens the scope of the implementation result. This move is not a matter of analytical convenience alone. It is what allows us to construct a genuinely new implementation strategy and to obtain stronger generality. In discrete time, the shortest available maturity is one period, so the government lacks a true instantaneous instrument with which to adjust inherited liabilities at the margin. As a result, the debt market is incomplete relative to the needs of the implementation problem: there are too few financial instruments to guarantee that continuation planners inherit the state variable exactly in general environments. This incompleteness is why \cite{JiangSargentWang2025}'s result is restricted to particular utility specifications. By contrast, the continuous-time framework extends the contractible subspace by introducing instantaneous debt, and that additional asset is exactly what is needed to replicate the correct inheritance structure. It permits a novel instantaneous-debt-only strategy that leaves the continuation planner with the same state variable as the initial planner, thereby preserving recursion and implementability. Thus, our implementation result applies to general household utility functions, rather than to a narrow class of preferences. The gain in generality is economically meaningful: it comes from a richer asset structure that resolves a genuine limitation of the discrete-time environment.
+
+
+
+%\WJ{
+%A closely related paper is \cite{JiangSargentWang2025}, which studies the implementation of Ramsey plans in the \cite{LucasStokey1983} economy. Our paper differs from \cite{JiangSargentWang2025} along three main dimensions.
+%First, we identify a key state variable and provide a recursive formulation of the Lucas-Stokey problem. While \cite{JiangSargentWang2025} shows that short-term debt can implement the Ramsey allocation under a modified timing protocol, its analysis is fundamentally sequential: implementability is established through an intertemporal argument rather than through a recursive characterization of continuation values. By contrast, we show that the policy problem can be summarized by a one-dimensional state variable, \(X_t = \Pi_t U_{C,t}\), which allows the Ramsey problem to be written as a dynamic program. This recursive representation turns a seemingly history-dependent implementation problem into a tractable continuation problem and provides a foundation for both theoretical and quantitative analysis.
+%}
+%
+%\WJ{
+%Second, the recursive formulation clarifies the economic mechanism behind implementation. The key requirement is that the continuation planner inherit the correct value of the state variable and its law of evolution. This perspective sharpens the logic of implementation relative to \cite{JiangSargentWang2025}. In our framework, a short-term-debt-only strategy works not because short maturities are inherently special, but because it preserves the inherited state exactly. By contrast, alternative debt-management strategies break this inheritance property, alter the continuation planner's problem, and thereby destroy recursion and time consistency. Thus, our contribution is not only to show that implementation is possible, but also to isolate the condition under which it is possible.
+%}
+%
+%\WJ{
+%Third, we reformulate the model in continuous time and enlarge the contractible asset space by introducing instantaneous debt. This extension is economically substantive, not merely technical. In discrete time, the shortest available maturity is one period, so the government lacks an instrument that can adjust inherited liabilities at the margin. The resulting debt market is incomplete for the implementation problem, which is why \cite{JiangSargentWang2025} obtains results only for a restricted class of utility functions. In continuous time, instantaneous debt fills this gap. It supports a novel instantaneous-debt-only implementation strategy that ensures the continuation planner inherits the same state variable as the initial planner, thereby preserving recursion. As a result, our implementation theorem applies to general household preferences. This broader applicability reflects a genuine economic gain from the richer asset structure available in continuous time.
+%}
+
+
+
+
+
+
+
+Section 2 describes the environment. A representative household supplies labor and consumes a nonstorable good. The government finances an exogenous stream of expenditures $\{G_t; t \geq 0\}$ and services an exogenous initial debt structure $\{b_{0-,t}; t \geq 0\}$ by levying flat taxes on labor income. We define competitive equilibrium and derive an implementability constraint that restricts competitive equilibrium allocations. This constraint follows from combining the household's first-order conditions with the government's budget constraint.
+
+Section 3 formulates the Ramsey problem using a Lagrangian. We attach a Lagrange multiplier $\Lambda_0$ to the implementability constraint and derive the first-order condition for optimal consumption $C(\Lambda_0; b_{0-,t}, G_t)$. The Lagrange multiplier $\Lambda_0^*$ minimizes the Lagrangian while satisfying the implementability constraint. This section establishes existence of a Ramsey plan. % under regularity conditions.
+
+Section 4 formulates the Ramsey problem as a dynamic program {that we cast in terms of   a state variable $X_t = \Pi_t U_{C,t}$, where $U_{C,t}$ is the household's marginal utility and  $\Pi_t$ equals the government's  cumulative liability if it never reschedules the tail of an initial term debt stream $\{b_{0-,s}; s \geq t\}$.} We show that $X_t$ evolves according to a differential equation and that the planner's value function satisfies a Hamilton-Jacobi-Bellman equation that takes an additively separable form $V(X_t,t) = -\Phi_0 X_t + H(t;\Phi_0)$. The scalar $\Phi_0$ is chosen to satisfy the single implementability constraint that restricts competitive equilibrium allocations in Lucas and Stokey's model,  with initial condition $X_0 = 0$. Proposition 5 establishes that the Lagrangian method and the Bellman equation generate identical Ramsey tax plans.
+
+{Section 5 presents quantitative examples under additively separable utility in consumption and labor.} We compute Ramsey plans for three specifications: exponential debt service, cyclical debt service, and cyclical government spending. The examples illustrate how tax rates, interest rates, primary surpluses, and the state variable evolve over time.
+
+%\WJ{\bf Do we need to discuss the quantitative example where initial debt is too high such that Ramsey interest rate is negative, a case that explains negative interest in Europe and Japan.}
+
+Section 6 uses our section \ref{sec:DP} dynamic programming formulation to revisit the heart of \citeauthor{LucasStokey1983}'s (1983) paper in which they derived a theory of optimal debt management from their  sequential  implementation of the Ramsey plan under partial commitment. \cite{LucasStokey1983} proposed a debt-management strategy that entailed continuous rescheduling of term debt. \cite*{debortoli2021optimal} show that this strategy may not implement the Ramsey plan in discrete time. We propose an alternative implementation that uses instantaneous debt and does not reschedule term debt. At each date $t$, the government inherits the tail of the initial debt service stream $\{b_{0-,s}; s \geq t\}$ and adjusts the balance of instantaneous debt to equal the cumulative liability $\Pi_t^*$. We introduce a timing protocol under which the government at time $t-dt$ sets the tax rate at time $t$. This timing protocol grants an infinitesimal increment of commitment. Theorem 1 establishes that under this protocol, continuation Ramsey planners confirm the Ramsey plan. The  formulation in Section 4 enables this recursive characterization of implementation.
+
+
+%\NW{
+%Our work is related to \cite{JiangSargentWang2025}, who also provide a short-term-debt-based implementation strategy in response to \citeauthor{debortoli2021optimal}'s counterexample, which may invalidate term-debt-based implementation of a Ramsey plan proposed in \cite{LucasStokey1983}. 
+This paper extends the work of \cite{JiangSargentWang2025} in three interacting ways. 
+First, we construct a state variable in terms of which we cast \citeauthor{LucasStokey1983}'s problem as a dynamic program. The dynamic program can be formulated 
+%characterizes a well-defined history-dependent Ramsey plan as a tractable recursive problem 
+for any admissible term debt structure and  government spending process. %, and additively time-separable preferences. %By contrast, \cite{JiangSargentWang2025}'s implementation result holds only for a restricted class of \citeauthor{LucasStokey1983}'s economy. For example, they derive the implementation result for a subclass of household preferences. 
+Second, the dynamic program reveals that to implement a Ramsey plan, it is essential to motivate a continuation planner to preserve the `purchasing power' of the representative household's net worth. This can be accomplished by confronting a continuation Ramsey planner with the state variable 
+$X_t$, which encodes the purchasing power of the household's net financial claims on the government.  
+%,  short-term-debt-based implementation strategy always works  provided that a Ramsey plan exists, because it preserves this purchasing power by enabling continuation planners to inherit the state variable $X_t$. 
+Third, 
+relative to \cite{LucasStokey1983}, we add instantaneous debt to the government's portfolio --- an instrument that our continuous-time formulation sharply distinguishes from longer-term debts with very short maturities.
+An instantaneous-debt-only policy appropriately manages continuation Ramsey planners' incentives to manipulate government debt prices and eliminates equilibrium debt overhang. 
+These three innovations interact: the addition of instantaneous debt to the government's portfolio
+%Third, . Expanding the contractible asset space to include instantaneous debt is crucial, as it allows us to always implement a Ramsey plan whenever one exists. This addition of instantaneous debt significantly expands our tool boxes, 
+makes it possible to implement a Ramsey plan even when alternative implementations, such as \citeauthor{LucasStokey1983}'s, fail because of the debt overhang problem underlying \citeauthor{debortoli2021optimal}'s counterexample. %}
+
+%
+%%under a slightly modified timing protocol
+%% the Ramsey plan may not be implementable with 
+%\NW{Our work is related to  \cite{JiangSargentWang2025}, who also provides a short-term-debt-based implementation strategy  in response to \citeauthor{debortoli2021optimal}'s counterexample that may invalidate term-debt-based implementation of a Ramsey plan, proposed in \cite{LucasStokey1983}. Our work differs from \cite{JiangSargentWang2025} in the following three aspects. First, we identify a  state variable and provide a recursive formulation of the original \citeauthor{LucasStokey1983}'s problem. %While \cite{JiangSargentWang2025} shows that short-term debt can implement the Ramsey allocation under a modified timing protocol, its analysis is fundamentally sequential: implementability is established through an intertemporal argument rather than through a recursive characterization of continuation values. By contrast, we show that the policy problem can be summarized by a one-dimensional state variable, \( X_t = \Pi_t U_{C,t} \), which allows the Ramsey problem to be written as a dynamic program.  
+%Our work characterizes a well defined history-dependent Ramsey plan as a tractable recursive problem for any admissible term debts, government spending processes, and  time-additive separable preferences. Second, our recursive formulation of a Ramsey plan %sharpens the economic mechanism underlying implementation. In our framework, 
+%reveals that a key for a successful implementation of a Ramsey plan is the preservation of the `purchasing power' of the household's net worth. A short-term-debt-based implementation strategy always works provided that a Ramsey plan exists, %not because short maturities are intrinsically special, but 
+% because this strategy always preserves this  purchasing power by enabling  continuation planers  to inherit  %requires that the continuation planner inherit a state variable that
+%% requires that the continuation planner inherit 
+%the state variable $X_t$. Economically, short-term debts effectively addresses %the  `debt overhang' that endogenously arises from 
+%the continuation planners' incentives to manipulate the prices of  government debts, thus removing equilibrium debt overhang. %ZZdisrupt the inherited state and its law of motion, alter the continuation planner’s problem, and thereby break recursion and time consistency. 
+%% Thus, our contribution is not merely to demonstrate that implementation is feasible, but to isolate the precise condition under which it is feasible. 
+% Third, %our continuous-time formulation not only allows us to derive closed-form solution via an ordinary differential equation for the welfare function under a Ramsey plan, but also  sharpens  our model's economic mechanism. %by revealing that % rather than technical.  Specifically, 
+%our continuous-time formulation clearly distinguishes instantaneous debt, which matures instantly, from debts with very short term maturity. Our expanding the contractible asset space to include instantaneous debt is key that allows us to alway implements a Ramsey plan provided that it exists. 
+%By contrast,   
+%% In discrete time, the shortest maturity is one period, leaving the government without an instrument to adjust inherited liabilities at the margin; the resulting asset structure is incomplete for the implementation problem, which is why 
+% \cite{JiangSargentWang2025}'s implementation result only holds for a restricted class of household preferences.} % In continuous time, instantaneous debt fills this gap and supports a novel instantaneous-debt-only implementation strategy that preserves the inherited state variable and hence recursion. As a result, our implementation theorem applies to general household preferences, reflecting a genuine economic gain from the richer asset structure available in continuous time.}
+%
+
+Appendix A provides technical details and proofs. Appendix B derives analytical properties of the cyclical Ramsey plans in Section 5. Appendix C shows that discrete-time Ramsey plans converge to the continuous-time Ramsey plan as the time increment shrinks to zero.
+
+
+%% ==================================================================
+\section{Environment}\label{sec_environ}
+%% ==================================================================
+
+Time $t \in [0,\infty)$ is continuous. {A representative household and a benevolent government} participate in a complete set of perfectly competitive markets. The government finances an exogenous stream of expenditures with a stream of distorting flat tax rates. There is no uncertainty. 
+
+
+{A first subscript denotes the time at which a variable is chosen and a second subscript denotes the time at which it is realized.}
+The representative household supplies a labor process $\{N_{0,t};\, t \ge 0\}$ that produces a flow of a single nonstorable good that can be divided between a consumption flow $\{C_{0,t};\, t \ge 0\}$ and a government expenditure flow $\{G_t;\, t \ge 0\}$:
+\begin{equation}\label{eq:resource}
+C_{0,t} + G_t = N_{0,t}, \quad \text{for all } t \ge 0.
+\end{equation}
+
+\begin{assumption}
+	Exogenous flows of government expenditures $\{G_t;\, t \ge 0\}$ and initial  debt-service payouts $\{b_{0-,t};\, t \ge 0\}$ are continuous functions of time.
+\end{assumption}
+
+At time~0, the representative household orders consumption and labor supply streams $\{C_{0,t};\, t \ge 0\}$ and $\{N_{0,t};\, t \ge 0\}$ according to
+\begin{equation}\label{eq:utility}
+E_0 \int_0^\infty e^{-\rho t} U(C_{0,t}, N_{0,t})\, dt,
+\end{equation}
+where $\rho > 0$ and $U(\cdot,\cdot)$ is strictly increasing in consumption~$C$, strictly decreasing in labor supply~$N$, globally concave, and continuously differentiable. Consumption and labor decisions are convex controls and the household derives utility $U(C_{0,t}, N_{0,t})\,dt$ over a small time interval~$dt$, so we focus on {policies that we call \emph{admissible}, meaning that} $\{C_{0,t};\, t \ge 0\}$ and $\{N_{0,t};\, t \ge 0\}$ are continuous processes. As in \cite*{debortoli2021optimal}, we assume that labor supply $N_{0,t}$ has no upper bound.
+
+Let $\tau_{0,t}$ denote a tax rate at~$t$ chosen at time~0 and $q_{0,t}$ be the time-0 value of a zero-coupon bond with a unit payoff at~$t$. 
+The representative household faces a single intertemporal budget constraint:
+\begin{equation}\label{eq:hh_budget}
+\int_0^\infty C_{0,t}\, q_{0,t}\, dt \le \int_0^\infty b_{0-,t}\, q_{0,t}\, dt + \int_0^\infty (1-\tau_{0,t}) N_{0,t}\, q_{0,t}\, dt.
+\end{equation}
+The left side of~\eqref{eq:hh_budget} is the present value of the household's consumption stream $\{C_{0,t};\, t \ge 0\}$ and the right side is the sum of the household's financial wealth and its human wealth in the form of the present value of after-tax labor income. Given tax rate process $\{\tau_{0,t};\, t \ge 0\}$ and bond price process $\{q_{0,t};\, t \ge 0\}$, the household chooses $\{C_{0,t}, N_{0,t};\, t \ge 0\}$ to maximize~\eqref{eq:utility} subject to constraint~\eqref{eq:hh_budget}, an optimization problem brings the following first-order necessary conditions:
+\begin{equation}\label{eq:foc}
+1-\tau_{0,t} = -\frac{U_{N,t}}{U_{C,t}} \quad \text{and} \quad q_{0,t} = e^{-\rho t}\frac{U_{C,t}}{U_{C,0}}.
+\end{equation}
+
+The time-0 government finances an initial debt and its exogenous spending stream by taxing labor income:
+\begin{equation}\label{eq:gov_budget}
+\int_0^\infty b_{0-,t}\, q_{0,t}\, dt \le \int_0^\infty S_{0,t}\, q_{0,t}\, dt,
+\end{equation}
+where
+\begin{equation}\label{eq:surplus}
+S_{0,t} = \tau_{0,t} N_{0,t} - G_t
+\end{equation}
+is the primary surplus. The left side of~\eqref{eq:gov_budget} is time-0 value of payouts on government debt $\{b_{0-,t};\, t \ge 0\}$ and the right side of~\eqref{eq:gov_budget} is time-0 value of $\{S_{0,t};\, t \ge 0\}$.
+
+
+%
+%\NW{Tom: Below in blue is our  definition of competitive equilibrium.
+%We think it needs  a bit tightening. \WJ{We propose using the new definition in red to replace the definition in blue.}  
+%\begin{definition}\label{def:CE}
+%	Given the government's initial debt term structure $\{b_{0-,t};\, t \ge 0\}$ and spending flow process $\{G_t;\, t \ge 0\}$, a competitive equilibrium is a feasible allocation $\{C_{0,t}, N_{0,t};\, t \ge 0\}$, a flat rate tax process $\{\tau_{0,t};\, t \ge 0\}$, and a bond price process $\{q_{0,t};\, t \ge 0\}$ for which
+%	\begin{itemize}
+%		\item the government's budget constraint~\eqref{eq:gov_budget} is satisfied and
+%		\item given the government spending, tax, and bond price process, the allocation solves the household's optimization problem.
+%	\end{itemize}
+%\end{definition}
+%}
+{\begin{definition}\label{def:CE}
+	Given the government's initial debt term structure $\{b_{0-,t};\, t \ge 0\}$, spending flow process $\{G_t;\, t \ge 0\}$, and  flat-rate tax process $\{\tau_{0,t};\, t \ge 0\}$, a competitive equilibrium is a feasible allocation $\{C_{0,t}, N_{0,t};\, t \ge 0\}$ and a bond price process $\{q_{0,t};\, t \ge 0\}$ for which
+	\begin{itemize}
+		\item the government's budget constraint~\eqref{eq:gov_budget} is satisfied, and
+		\item the allocation $\{C_{0,t}, N_{0,t};\, t \ge 0\}$ solves the household's optimization problem.
+	\end{itemize}
+\end{definition}
+}
+We follow \cite{LucasStokey1983} and use first-order conditions~\eqref{eq:foc} together with feasibility constraint~\eqref{eq:resource} to eliminate tax rates and bond prices from the government budget constraint. We thereby obtain the following %implementability 
+constraint on competitive equilibrium allocations $\{C_{0,t}, N_{0,t}\}_{t=0}^\infty$:
+\begin{equation}\label{eq:implement}
+\int_0^\infty e^{-\rho t} b_{0-,t}\, U_{C,t}\, dt \le \int_0^\infty e^{-\rho t}\bigl(C_{0,t}\, U_{C,t} + (C_{0,t}+G_t)\, U_{N,t}\bigr)\, dt.
+\end{equation}
+
+\begin{proposition}\label{prop:CE_characterize}
+	Given an initial term-debt structure $\{b_{0-,t};\, t \ge 0\}$ and government spending path $\{G_t;\, t \ge 0\}$, an allocation $\{C_{0,t}, N_{0,t};\, t \ge 0\}$ is a competitive equilibrium allocation if and only if it satisfies~\eqref{eq:resource} for all $t \ge 0$ and~{\eqref{eq:implement}} at $t=0$.
+\end{proposition}
+%% CHANGE NOTE: The original had a cross-reference to equation (45), the discrete-time
+%% implementability constraint from Section 7. This has been corrected to (7).
+
+\subsection{A Ramsey problem}\label{subsec:Ramsey_prob}
+
+%\noindent \changed
+{At time~0, a Ramsey planner selects the best competitive equilibrium.} According to the first-order approach used by Lucas and Stokey and many others,
+the Ramsey planner can compute the allocation associated with the best competitive equilibrium by %Thus, we formulate:  % with distorting taxes.}
+%
+%\medskip
+%\noindent\textbf{Ramsey problem.}\quad A Ramsey planner 
+finding  a continuous process $\{C_{0,t};\, t \ge 0\}$ that maximizes
+\begin{equation}\label{eq:ramsey_obj}
+\int_0^\infty e^{-\rho t} U(C_{0,t}, C_{0,t}+G_t)\, dt
+\end{equation}
+subject to  constraint~\eqref{eq:implement}.\footnote{In the spirit of \cite{LucasStokey1983}, this is the single ``implementability constraint'' that a competitive equilibrium places on a Ramsey allocation.} With the maximizing  process $\{C_{0,t};\, t \ge 0\}$ in hand, we can then use first-order conditions~\eqref{eq:foc} to  compute a tax rate process and bond price system that supports it, meaning that when it confronts this   tax plan and  price system, the representative agent's best responses confirm the associated competitive equilibrium allocation.
+
+
+%% ==================================================================
+\section{A Lagrangian}\label{sec:Lagrange}
+%% ==================================================================
+
+Attach a multiplier $\Lambda_0$ to implementability constraint~{\eqref{eq:implement}} and form % a Lagrangian:
+%% CHANGE NOTE: Original referenced equation (45); corrected to (7).
+\begin{multline}\label{eq:lagrangian}
+L_0 = \int_0^\infty e^{-\rho t}\Big[U(C_{0,t}, C_{0,t}+G_t) 
++ \Lambda_0\bigl(C_{0,t}\, U_{C,t} + (C_{0,t}+G_t)\, U_{N,t} - b_{0-,t}\, U_{C,t}\bigr)\Big]\, dt.
+\end{multline}
+The Ramsey planner maximizes the right side of~\eqref{eq:lagrangian} over consumption plans $\{C_{0,t}\}_{t=0}^\infty$ and minimizes over the nonnegative multiplier~$\Lambda_0$. Call  extremizing values $\{C_{0,t}^*\}_{t=0}^\infty$ and~$\Lambda_0^*$. For a given~$\Lambda_0$, the optimal consumption plan satisfies\footnote{We impose  a regularity condition that implies that,  for a given~$\Lambda_0$, the optimal consumption plan for  problem~\eqref{eq:C_given_Lambda} is unique.}
+\begin{equation}\label{eq:C_given_Lambda}
+C(\Lambda_0;\, b_{0-,t}, G_t) := \arg\max_{C_{0,t}} \bigl[U(C_{0,t},C_{0,t}+G_t) + \Lambda_0(C_{0,t}\, U_C + (C_{0,t}+G_t)\, U_N - b_{0-,t}\, U_C)\bigr].
+\end{equation}
+Substituting~\eqref{eq:C_given_Lambda} into implementability condition~\eqref{eq:implement}, we deduce that~$\Lambda_0$ satisfies:
+\begin{equation}\label{eq:Lambda_eqn}
+\int_0^\infty e^{-\rho t}\bigl[C(\Lambda_0;\, b_{0-,t}, G_t)\, U_C + (C(\Lambda_0;\, b_{0-,t}, G_t)+G_t)\, U_N\bigr]\, dt = \int_0^\infty e^{-\rho t} b_{0-,t}\, U_C\, dt.
+\end{equation}
+Substituting $C(\Lambda_0;\, b_{0-,t}, G_t)$ into the right side of~\eqref{eq:lagrangian} lets us express~$L_0$ as a function~$L_0(\Lambda_0)$.
+The non-negative root of equation~\eqref{eq:Lambda_eqn} that {minimizes}~$L_0(\Lambda_0)$ is the optimal~$\Lambda_0^*$.
+%% CHANGE NOTE: Original said "maximizes"; corrected to "minimizes" to match the
+%% saddle-point structure (max over C, min over multiplier) and Proposition 2.
+%
+Thus, the Ramsey allocation is $C_{0,t}^* = C(\Lambda_0^*;\, b_{0-,t}, G_t)$ and $N_{0,t}^* = C_{0,t}^* + G_t = N(\Lambda_0^*;\, b_{0-,t}, G_t)$.
+
+\begin{proposition}\label{prop:ramsey_lagrangian}
+	Under regularity conditions provided in Appendix~\ref{app:technical}, there exists a non-negative root $\Lambda_0^*$ of equation~\eqref{eq:Lambda_eqn} that solves
+	\[
+	\Lambda_0^* = \arg\min_{\Lambda_0} L_0(\Lambda_0),
+	\]
+	where the Ramsey allocation, tax rate, and bond price process satisfy
+	\begin{align*}
+	C_{0,t}^* &= C(\Lambda_0^*;\, b_{0-,t}, G_t), \qquad N_{0,t}^* = C_{0,t}^* + G_t, \\
+	\tau_{0,t}^* &= 1 + \frac{U_{N,t}(C_{0,t}^*,N_{0,t}^*)}{U_{C,t}(C_{0,t}^*,N_{0,t}^*)}, \qquad q_{0,t}^* = e^{-\rho t}\frac{U_{C,t}(C_{0,t}^*,N_{0,t}^*)}{U_{C,0}(C_{0,0}^*,N_{0,0}^*)}.
+	\end{align*}
+	The value of the Ramsey plan is $L_0^* =  \int_0^\infty e^{-\rho t} U(C_{0,t}^*, C_{0,t}^*+G_t)\, dt$.
+\end{proposition}
+
+
+%% ==================================================================
+\section{A Dynamic Program}\label{sec:DP}
+%% ==================================================================
+
+{To formulate the Ramsey problem recursively, %representation of a Ramsey plan. First,
+we proceed in four steps. 1. For a given consumption process, we define  a process, $\{\Pi_t;\, t \ge 0\}$ that tracks the government's cumulative liabilities in the absence of any debt restructuring. 2. From the  $\{\Pi_t;\, t \ge 0\}$ process, we   construct a state variable process $\{X_t;\, t \ge 0\}$. 3. We frame  a dynamic program with $\{X_t;\, t \ge 0\}$ as a state variable and a  time-$t$ value function, $V(X_t,t)$ that  is additively separable: $V(X_t,t) = -\Phi_0\, X_t + H(t;\, \Phi_0),$ ans  $\Phi_0$ is a scalar that must be computed.  4. We compute $\Phi_0$. 
+} %starts from  a prescribed initial condition~$X_0$   at time $t=0$ 
+
+\subsection{{Cumulative Liabilities with no Debt Restructuring}}
+
+%A key object in our analysis is . That is, 
+Given initial debt service flow $\{b_{0-,s},\, s \ge 0\}$, in the absence of any debt restructuring the government's time $t$ liabilities are
+\begin{equation}\label{eq:Pi_def}
+\Pi_t = \int_0^t \frac{q_{0,s}}{q_{0,t}}\bigl(b_{0-,s}+G_s - \tau_{0,s}\, N_{0,s}\bigr)\, ds, \qquad \Pi_0 = 0.
+\end{equation} Here $(b_{0-,s}+G_s-\tau_{0,s}\, N_{0,s})\, ds$ is the (flow) increase of the government's liability over a small time interval~$ds$;
+% without touching the initial term debt at all; 
+the ratio $q_{0,s}/q_{0,t}$ compounds this flow's contribution to the government's time-$t$ liability stock.\footnote{When the interest rate is a constant~$r$ over $(s,t)$, $q_{0,s}/q_{0,t} = e^{r(t-s)} > 1$.} 
+%\NW{It is worth pointing out that leaving all existing term debts untouched is an idea that underpins our analysis, unlike in \citeauthor{LucasStokey1983}'s and \citeauthor*{debortoli2021optimal}'s  analyses.} 
+
+We have assumed that $\{G_t\}$ and $\{b_{0-,t}\}$ are continuous processes, so optimal allocations $\{C_{0,t}, N_{0,t};\, t \ge 0\}$ are also continuous. That implies that the zero-coupon bond price~$q_{0,t}$ is continuous in~$t$ and %. We thus can write the $\{q_{0,t}\}$ process as:
+that  $dq_{0,t} = -r_{0,t}\, q_{0,t}\, dt$, where $\{r_{0,t}\}$ is the continuously compounded risk-free interest-rate process. Differentiating~\eqref{eq:Pi_def} with respect to~$t$, we obtain:
+\begin{equation}\label{eq:dPi}
+d\Pi_t = r_{0,t}\, \Pi_t\, dt + (b_{0-,t}+G_t - \tau_{0,t}\, N_{0,t})\, dt.
+\end{equation}
+%
+%\NW{Next, we use this $\{\Pi_t;\, t \ge 0\}$ process to construct a state variable to make the Ramsey planner's problem recursive. 
+%} 
+
+\subsection{A State Variable $X_t$}
+
+Define a scalar state variable
+\begin{equation}\label{eq:Xt_def}
+X_t = \Pi_t\, U_{C,t}. 
+\end{equation}
+{Evidently, $X_t$ encodes information about both the household's wealth~$\Pi_t$ and its marginal utility of consumption~$U_{C,t}$.} Because~$\Pi_t$ and~$U_{C,t}$ are both continuous, $X_t$ is continuous as a function of $t$.
+Differentiating both sides of~\eqref{eq:Xt_def} with respect to~$t$ and using~\eqref{eq:dPi} together with FOCs given in~\eqref{eq:foc}, we obtain:
+\begin{align}
+dX_t &= U_{C,t}\, d\Pi_t + \Pi_t\, d\bigl(e^{\rho t} q_{0,t}\, U_{C,0}\bigr) \notag\\
+&= U_{C,t}\biggl[-\Pi_t\frac{dq_{0,t}}{q_{0,t}} + (b_{0-,t}+G_t-\tau_{0,t}\, N_{0,t})\, dt\biggr] + \Pi_t\biggl(q_{0,t}\, U_{C,0}\, \rho\, e^{\rho t}\, dt + e^{\rho t}\, U_{C,0}\, q_{0,t}\frac{dq_{0,t}}{q_{0,t}}\biggr) \notag\\
+&= -X_t\frac{dq_{0,t}}{q_{0,t}} + (b_{0-,t}\, U_{C,t} - C_{0,t}\, U_{C,t} - N_{0,t}\, U_{N,t})\, dt + \rho\, X_t\, dt + X_t\frac{dq_{0,t}}{q_{0,t}} \notag\\
+&= \bigl(\rho\, X_t - C_{0,t}\, U_{C,t} - N_{0,t}\, U_{N,t} + b_{0-,t}\, U_{C,t}\bigr)\, dt. \label{eq:dXt}
+\end{align}
+Thus, we have verified %We have established the following result.
+
+\begin{lemma}\label{lem:Xt_cts}
+	$X_t$ defined in~\eqref{eq:Xt_def} is continuous in~$t$ and  evolves according to~\eqref{eq:dXt}.
+\end{lemma}
+
+In general, the  initial debt structure~$b_{0-,t}$ and government spending process~$G_t$ are  time dependent. Consequently,  the Ramsey problem is time inhomogeneous, which implies that~$t$  appears in the value function along with $X_t$. 
+%Consequently,
+We formulate the Ramsey problem in two steps. First,  in Subsection~\ref{subsec:DP}, %for a given~$X_0$,
+we pose an appropriate  dynamic program~(DP).
+% problem with~$X_t$ and time~$t$ being the state variables
+In Subsection~\ref{subsec:characterize},  we then characterize the  Ramsey plan.
+
+
+\subsection{HJB Equations}% for the Ramsey Plan}
+\label{subsec:DP}
+
+\begin{definition}[DP Problem]\label{def:DP}
+	Let %Confronting~$X_0$ at $t=0$,  solve
+	\begin{equation}\label{eq:DP_obj}
+	V(X_0,0) =\max_{\{C_{0,s};\, s \ge 0\}} \int_0^\infty e^{-\rho s} U(C_{0,s}, C_{0,s}+G_s)\, ds,
+	\end{equation}
+	where maximization is subject to law of motion~\eqref{eq:dXt}.
+\end{definition}
+
+%This can be formulated as a dynamic programming problem See, e.g., Fleming and Soner, 2006).
+% Let $V(X_0,0)$ denote the (optimal) value function for this problem. 
+To compute  $V(X_0,0)$, first pose the  time-$t$ optimization problem on the right side of the following equation:
+\begin{equation}\label{eq:DP_t}
+V(X_t,t) = \max_{\{C_{0,s};\, s \ge t\}} \int_t^\infty e^{-\rho(s-t)} U(C_{0,s}, C_{0,s}+G_s)\, ds
+\end{equation}
+subject to law of motion~\eqref{eq:dXt}. %Let $V(X_t,t)$ denote the (optimal) value function for~\eqref{eq:DP_t}. 
+For all $t \ge 0$,  value function $V(X_t,t)$ % defined in~\eqref{eq:DP_t} 
+satisfies the following HJB equation:
+\begin{equation}\label{eq:HJB}
+\rho\, V = \frac{\partial V}{\partial t} + \max_{C_{0,t}} U(C_{0,t}, C_{0,t}+G_t) + \frac{\partial V}{\partial X_t}\bigl(\rho\, X_t - C_{0,t}\, U_{C,t} - (C_{0,t}+G_t)\, U_{N,t} + b_{0-,t}\, U_{C,t}\bigr).
+\end{equation}
+Guess % guess and verify 
+that $V(X_t,t)$ is additively separable in~$X_t$ and~$t$:
+\begin{equation}\label{eq:V_guess}
+V(X_t,t) = -\Phi_0\, X_t + H(t;\, \Phi_0), \qquad t \ge 0,
+\end{equation}
+where~$\Phi_0$ is an object to be chosen by the Ramsey planner. Substituting~\eqref{eq:V_guess} into~\eqref{eq:HJB}, we obtain the following differential equation for all $t \ge 0$:
+\begin{equation}\label{eq:H_ode}
+\rho\, H(t;\, \Phi_0) = H'(t;\, \Phi_0) + \max_{C_{0,t}} U(C_{0,t}, C_{0,t}+G_t) + \Phi_0\bigl(C_{0,t}\, U_{C,t} + (C_{0,t}+G_t)\, U_{N,t} - b_{0-,t}\, U_{C,t}\bigr).
+\end{equation}
+Let $C(\Phi_0;\, b_{0-,t}, G_t)$  %denote the function for~$C_{0,t}$ that
+be the function that solves the maximum problem on the right side of equation~\eqref{eq:H_ode}:
+\begin{equation}\label{eq:C_given_Phi}
+C(\Phi_0;\, b_{0-,t}, G_t) = \arg\max_{C_{0,t}} U(C_{0,t}, C_{0,t}+G_t) + \Phi_0\bigl(C_{0,t}\, U_{C,t} + (C_{0,t}+G_t)\, U_{N,t} - b_{0-,t}\, U_{C,t}\bigr).
+\end{equation}
+
+\begin{proposition}\label{prop:DP_solution}
+	Optimal choices of $\{C_{0,t}\}$ for the DP Problem indexed by $\Phi_0 \ge 0$ satisfy~\eqref{eq:C_given_Phi} and attain the value function:
+	\begin{equation}\label{eq:V_Phi}
+	V(X_t,t;\, \Phi_0) = -\Phi_0\, X_t + H(t;\, \Phi_0),
+	\end{equation}
+	where $H(t;\, \Phi_0)$ is given by
+	\begin{multline}\label{eq:H_formula}
+	H(t;\, \Phi_0) = \int_t^\infty e^{-\rho(s-t)}\biggl[U\bigl(C(\Phi_0;\, b_{0-,s}, G_s),\, C(\Phi_0;\, b_{0-,s}, G_s)+G_s\bigr) \\
+	+ \Phi_0\bigl(C(\Phi_0;\, b_{0-,s}, G_s)\, U_{C,s} + (C(\Phi_0;\, b_{0-,s}, G_s)+G_s)\, U_{N,s} - b_{0-,s}\, U_{C,s}\bigr)\biggr]\, ds
+	\end{multline}
+	and $N(\Phi_0;\, b_{0-,t}, G_t) = C(\Phi_0;\, b_{0-,t}, G_t) + G_t$.
+\end{proposition}
+
+
+
+%{Tom stopped here, 1:15 on Wednesday}
+
+\subsection{The Ramsey Plan}\label{subsec:characterize}
+We must now determine  the scalar~$\Phi_0$ that appears in  the Ramsey planner's value function defined in equation \eqref{eq:DP_obj}.
+The consumption stream $\{C_{0,t}\}$ is a continuous process: $C_{0,0} = \lim_{s \downarrow 0} C_{0,s} = C(\Phi_0;\, b_{0-,0}, G_0)$, which implies that~$C_{0,0}$ is a function of~$\Phi_0$. Subject to implementability constraint~\eqref{eq:implement}, the Ramsey planner chooses~$\Phi_0$ by solving the problem 
+on the right side of %, or equivalently consumption~$C_{0,0}$, according to
+\begin{equation}\label{eq:Ramsey_choose_Phi}
+W = \max_{\Phi_0} V(X_0, 0;\, \Phi_0),
+\end{equation}
+where $V(X_0, 0;\, \Phi_0)$ is given in~\eqref{eq:V_guess}. %When solving the problem given in~\eqref{eq:Ramsey_choose_Phi}, 
+The Ramsey planner takes the initial debt term structure $\{b_{0-,t};\, t \ge 0\}$   as given. The planner also sets  $X_0 = 0$, which by virtue of definition
+\eqref{eq:Xt_def} imposes that  $\Pi_0 = 0$. Implementability constraint \eqref{eq:implement}
+requires that~$\Phi_0$ satisfies $I_0(\Phi_0) = 0$, where
+\begin{equation}\label{eq:I0}
+I_0(\Phi_0) = \int_0^\infty e^{-\rho t}\bigl(C(\Phi_0;\, b_{0-,t}, G_t)\, U_{C,t} + (C(\Phi_0;\, b_{0-,t}, G_t)+G_t)\, U_{N,t} - b_{0-,t}\, U_{C,t}\bigr)\, dt.
+\end{equation}
+Let $\mathcal{A} = \{\Phi_0 \ge 0 : I_0(\Phi_0) = 0\}$ denote the admissible set for~$\Phi_0$. Using~\eqref{eq:V_Phi}, the representative household's value under a  Ramsey plan is %er's problem is
+\[
+W = \max_{\Phi_0 \in \mathcal{A}} V(0,0) = \max_{\Phi_0 \in \mathcal{A}} \int_0^\infty e^{-\rho t} U\bigl(C(\Phi_0, b_{0-,t}, G_t),\, C(\Phi_0, b_{0-,t}, G_t)+G_t\bigr)\, dt.
+\]
+
+\begin{proposition}\label{prop:ramsey_DP}
+	If one  exists, a Ramsey plan satisfies
+	\begin{align*}
+	C_{0,t}^* &= C(\Phi_0^*;\, b_{0-,t}, G_t), \qquad N_{0,t}^* = C_{0,t}^* + G_t, \\
+	\tau_{0,t}^* &= 1 + \frac{U_{N,t}(C_{0,t}^*,N_{0,t}^*)}{U_{C,t}(C_{0,t}^*,N_{0,t}^*)}, \qquad q_{0,t}^* = e^{-\rho t}\frac{U_{C,t}(C_{0,t}^*,N_{0,t}^*)}{U_{C,0}(C_{0,0}^*,N_{0,0}^*)}
+	\end{align*}
+	where $\Phi_0^* = \arg\max_{\Phi_0 \in \mathcal{A}} V(0,0)$. Under a Ramsey plan, $X_t = X_t^*$ where
+	\begin{equation}\label{eq:Xstar}
+	{X_t^* = \int_t^\infty e^{-\rho(s-t)}\bigl[C_{0,s}^*\, U_{C,s}(C_{0,s}^*, N_{0,s}^*) + N_{0,s}^*\, U_{N,s}(C_{0,s}^*, N_{0,s}^*) - b_{0-,s}\, U_{C,s}(C_{0,s}^*, N_{0,s}^*)\bigr]\, ds}
+	\end{equation}
+	%% CHANGE NOTE: The original had marginal utilities subscripted with $t$ (evaluated at
+	%% time-$t$ allocations) inside an integral over $s \ge t$. Corrected so that $U_{C,s}$
+	%% and $U_{N,s}$ are evaluated at $s$-dated allocations $(C_{0,s}^*, N_{0,s}^*)$.
+	and the representative household's value is
+	\begin{equation}\label{eq:Wstar}
+	W = \int_0^\infty e^{-\rho t} U(C_{0,t}^*, C_{0,t}^*+G_t)\, dt.
+	\end{equation}
+\end{proposition}
+
+\begin{proposition}\label{prop:equivalence}
+	The Lagrangian  in Proposition~\ref{prop:ramsey_lagrangian} and  the Bellman equation in Proposition~\ref{prop:ramsey_DP} generate identical Ramsey plans.
+\end{proposition}
+
+
+\begin{remark}\label{rem:Bellmanmatters}
+	Showing that a Ramsey plan has a value function $V(X_t,t)$ that % is described by the time-in-homogenous Bellman equation that 
+	satisfies HJB  \eqref{eq:HJB}  with state variable $X_t$ paves the way
+	to formulating a debt-management strategy that implementing a Ramsey plan whenever it exists, something that \cite*{debortoli2021optimal} showed is not always
+	possible with Lucas and Stokey's recommended debt-management policy.   
+	%  % defined in~\eqref{eq:DP_t} 
+	%satisfies the following HJB equation:
+	%\begin{equation}\label{eq:HJB}
+\end{remark}
+
+
+%% ==================================================================
+\section{Quantitative Examples }\label{sec:examples}
+%% ==================================================================
+
+%In this section, we analyze several example economies in which both $\{b_{0-,t}\}$ and $\{G_t\}$ are continuous in time.
+
+To construct some quantitative examples,  we assume the same  the instantaneous utility function $U(C, N) = \ln C-N$ utilized by  \cite{debortoli2021optimal}.
+%%	\begin{equation}\label{eq:utility_spec}
+%U(C, N) = \ln C - \frac{N^{\eta}}{\eta}
+%%	\end{equation}
+%	with $\eta = 1$. 
+	Under this specification, the first-order condition~\eqref{eq:foc} implies $\tau_{0,t}^* = 1 - C_{0,t}^*$.
+%% CHANGE NOTE: Added explicit statement of the utility specification used in all
+%% examples. The original deferred this to Appendix B, where the reference was broken.
+
+
+\begin{figure}[h!]
+	\includegraphics[width=\linewidth, height=0.7\textheight]{figure_202405/continuous_b_exp_3.eps}
+	\caption{\label{exp_ramsey_1}{Ramsey plan for exponentially decaying $b_{0, t} = b_0e^{-\theta t}.$} Parameter values: {$b_0=0.2$}, $\theta=0.6$, $G_t=0.2, \rho=0.02.$ % and  $\eta=1$. 
+		% \TS{$C_{0, t}=1-\tau_{0, t}, N_{0, t}=C_{0, t}+G_t$} 
+	}%$\{b_{0, t}\}$ with $b_0=0.2$.} \WJ{$
+\end{figure}
+
+
+
+\subsection{Exponential $\{b_{0-,t}\}$ }
+
+Figure~1 shows a Ramsey plan when 
+%Consider an exponential debt term structure: 
+$b_{0-,t} = b_0 e^{-\theta t}$, where $b_0 = 0.2$ and $\theta = 0.6$, and that  $G_t = 0.2$ for all~$t$. The Ramsey tax rate $\tau_{0,t}^*$ increases over time (panel~B), which implies that consumption $C_{0,t}^* = 1-\tau_{0,t}^*$ and the  labor supply $N_{0,t}^* = C_{0,t}^*+G_t$ both decrease over time. The equilibrium interest rate is $r_{0,t}^* = \rho + g_{0,t}^*$ where $g_{0,t}^* = \dot{C}_{0,t}^*/C_{0,t}^*$ is the equilibrium consumption growth rate,
+which is % Note that the consumption growth rate $g_{0,t}^*$ is 
+negative:\footnote{ $C_{0,t}^* = 2b_0 e^{-\theta t}\Phi_0^*/(\sqrt{1+4b_0 e^{-\theta t}\Phi_0^*(1+\Phi_0^*)}-1)$ and $\Phi_0^* = 0.2652$. Therefore, $g_{0,t}^* = dC_{0,t}^*/dt / C_{0,t}^* < 0$ because $dC_{0,t}^*/dt = -b_0\Phi_0^*\theta e^{-\theta t}/\sqrt{1+4b_0 e^{-\theta t}\Phi_0^*(1+\Phi_0^*)} < 0$.} {it is less than  $-\rho$ at $t=0$, then gradually } increases over time, eventually {approaching} zero. Coincidentally, the interest rate is negative at $t=0$,  increases over time, and eventually approaches $\rho = 0.02$ (see panel~C).
+
+The Ramsey planner {front-loads} consumption so heavily  that increases in output $N_{0,t}^* = C_{0,t}^*+G_t$ dominate decreases in the tax rate $\tau_{0,t}^* = 1-C_{0,t}^*$, making the primary surplus $S_{0,t}^* = \tau_{0,t}^*\, N_{0,t}^* - G_t = (1-C_{0,t}^*)(C_{0,t}^*+G_t) - G_t$ increase over time. Since  $b_{0-,t}$ decreases over time, the wedge $S_{0,t}^*-b_{0-,t}$ is  negative initially, turns positive at $t = 5.8$, and ultimately converges to $0.7\%$ (see panel~D).
+
+By inducing an increasing equilibrium $r_{0,t}^*$ path (panel~C), the planner lowers the time-0 value of its wedge $S_{0,t}^*-b_{0-,t}$ shown in panel~D. As a result, the cumulative liability $\Pi_t^* = \int_0^t e^{\int_0^u r_{0,v}^*\, dv}(S_{0,u}^*-b_{0-,u})\, du$ increases (panel~E). Since   $\Pi_t^*$ and $U_{C,t}^*$ both increase over time,
+the state variable $X_t^* = \Pi_t^*\, U_{C,t}^*$ also increases over time (panel~F). 
+%% [Figure 1 would be included here]
+
+
+
+
+
+
+
+\begin{figure}[h!]
+	\includegraphics[width=\linewidth, height=0.7\textheight]{figure_202405/continuous_b_sin_g_c_3.eps}
+	\caption{ \label{cyclical_ramsey_1}{Ramsey plan for  cyclical $b_{0, t}=b_0+\theta_b \sin \left(\frac{\pi}{2} t\right)$.} Parameter values: $ b_0=0.1, \theta_b=0.01$, $G_t=0.2, \rho=0.02.$% and  $\eta=1$. 
+		%$\Phi_0^*=0.7256$. $C_{0, t}=1-\tau_{0, t}, N_{0, t}=C_{0, t}+G_t$.
+	} 
+\end{figure}
+
+
+\subsection{Cyclical $\{b_{0-,t}\}$ }
+
+%This subsection analyzes an example where the initial debt structure $\{b_{0-,t}\}$ is cyclical. 
+
+Figure~2 shows a Ramsey plan when  $b_{0-,t} = b_0 + \theta_b\sin(\tfrac{\pi}{2}t)$ with $b_0 = 0.1$ and $\theta_b = 0.01$ for $t \ge 0$.
+The tax rate $\tau_{0,t}^*$ is cyclical and  peaks when $\{b_{0-,t}\}$ reaches a trough (see panel~B).  $C_{0,t}^* = 1-\tau_{0,t}^*$, so consumption process shares  peaks and troughs with the $\{b_{0-,t}\}$ process.\footnote{$C_{0,t}^* = \bigl(\sqrt{1+4(b_0+\theta_b\sin(\tfrac{\pi}{2}t))\Phi_0^*(1+\Phi_0^*)}-1\bigr)/(2(1+\Phi_0^*))$, which is cyclical with the same period as~$b_{0-,t}$. Lagrangian multiplier  $\Phi_0^* = 0.7256$.}
+The equilibrium interest rate is $r_{0,t}^* = \rho + g_{0,t}^*$ where $g_{0,t}^* = \dot{C}_{0,t}^*/C_{0,t}^*$ is the equilibrium consumption growth rate. It is also cyclical but attains  different peaks and troughs at different times that do~$b_{0-,t}$ and~$\tau_{0,t}^*$: we mark peaks/troughs for~$r_{0,t}^*$ with triangles.
+%
+They evidently differ from the peaks/troughs in panels~A, B, and~D for~$b_{0-,t}$, $\tau_{0,t}^*$ and with the wedge between primary surplus and~$b_{0-,t}$: $S_{0,t}^*-b_{0-,t}$.\footnote{The wedge shares peaks and troughs with the tax rate $\{\tau_{0,t}^*\}$ process.} Panel~D also shows that the primary surplus exceeds~$b_{0-,t}$ when $b_{0-,t} < 0.1$ and otherwise when $b_{0-,t} > 0.1$.
+
+{The tax rate and the wedge $S_{0,t}^*-b_{0-,t}$ processes move in an opposite direction from  the~$b_{0-,t}$ process because the marginal utility (and hence bond price) is low when $\{b_{0-,t}\}$ is high. Such covariation minimizes  the value of the government's cumulative liability.}
+Panels~E and~F show that the implied cumulative liability~$\Pi_t^*$ and the state variable $X_t = \Pi_t^*\, U_{C,t}^*$ are also cyclical but with different peaks/troughs than the~$b_{0-,t}$ process.
+
+%% [Figure 2 would be included here]
+
+
+
+
+
+\begin{figure}[h!]
+	\includegraphics[width=\linewidth, height=0.7\textheight]{figure_202405/continuous_b_c_g_cos_3n.eps}
+	\caption{ \label{cyclical_ramsey_2}{ Ramsey plan  for cyclical spending $G_t=G_0+\theta_G \cos \left(\frac{\pi}{2} t\right)$.} Parameter values: {$G_0=0.2, \theta_G=0.1$}, $b_{0, t}=0.1, \rho=0.02.$ % and $\eta=1$. 
+		%$\Phi_0^*=0.7248$. $C_{0, t}=1-\tau_{0, t}, N_{0, t}=C_{0, t}+G_t$.
+	}
+\end{figure}
+
+
+\subsection{Cyclical $\{G_t\}$}
+
+In figure~3, the Ramsey planner finances a cyclical government spending process and a constant~$b_{0-,t}$ process. The planner chooses a constant tax rate process {because when $b_{0-,t}$ is constant, the maximand in~\eqref{eq:C_given_Phi} yields an optimal~$C$ that is independent of~$G_t$. Since $C_{0,t}^* = 0.64$, $\tau_{0,t}^* = 1-C_{0,t}^* = 0.36$ for all~$t$. This echoes Barro's~(1979) finding that  intertemporal properties of an optimal tax rate are disconnected from intertemporal properties of the government expenditure process that the Ramsey planner must finance.}
+%% CHANGE NOTE: Added economic explanation for why C* is constant; original just
+%% stated the result.
+Since   consumption~$C_{0,t}^*$ is constant, the equilibrium interest rate process $r_{0,t}^* = \rho + \dot{C}_{0,t}^*/C_{0,t}^* = \rho$ (see panel~C). Panel~D shows that the primary surplus process~$S_{0,t}^*$ is cyclical, reaching a peak (trough) when the~$G_t$ process reaches a trough (peak). Solid dots indicate troughs/peaks in panels~A and~D. Triangles in panel~D indicate points where $S_{0,t}^* = b_{0-,t} = 0.1$.
+Panel~E plots  cumulative liability $\Pi_t^* = \int_0^t e^{\rho u}(S_{0,u}^*-b_{0-,u})\, du$, which reaches a peak (trough) when $S_{0,t}^* = b_{0-,t} = 0.1$.\footnote{This follows from $d\Pi_t^*/dt = e^{\rho t}(S_{0,t}^*-b_{0-,t})$.} The state variable $X_t^* = \Pi_t^*\, U_{C,t}^*$ cyclical and, because constant consumption implies constant~$U_{C,t}^*$,  shares peaks and troughs as~$\Pi_t^*$  (see the triangles in panels~D, E, and~F).
+
+%
+%%% [Figure 3 would be included here]
+%\TS{Tom: move the following paragraph}
+%
+%Our technical machinery also applies when $\{b_{0-,t}, G_t\}$ are discontinuous. In the next two sections, we describe implementations of Ramsey plans in settings with c\`adl\`ag $\{b_{0-,t}\}$ processes. Section~\ref{sec:implement} shows how to use instantaneous debt to finance the cumulative liability~$\Pi_t^*$. {We show that Ramsey plans for discontinuous processes can be approximated by those for the continuous processes studied above.}
+%%% CHANGE NOTE: Reworded the forward reference, which was confusing (referenced
+%
+
+%% ==================================================================
+\section{Implementing a Ramsey Plan}\label{sec:implement}
+%% ==================================================================
+%% "Section 5" from within Section 5).
+We now  answer  the question that concerned \cite{LucasStokey1983} and \cite*{debortoli2021optimal}: how to implement the Ramsey plan sequentially under a timing protocol
+that attributes ``partial commitment'' to a sequence of government decision makers.
+%\footnote{Our work is  related  to   \citet{clymo2020fiscal}  who study how to implement a Ramsey plan  under ``Limited-Time Commitment" (LTC). They show that  $N$ periods of commitment    are required to   implement a Ramsey plan in a 
+%setting with  $N$-period debt. Since we let   the  initial debt structure $\{ b_{-1,i} \}_{i=0}^\infty$ be an arbitrary sequence as in  \cite{LucasStokey1983},  \citeauthor{clymo2020fiscal}'s  LTC  implementation requires the number of periods  of commitment equal  
+%the longest debt maturity. 
+%By way of contrast,  our  implementation of the Ramsey plan using a short-term debt management strategy  works  for any initial term debt  structure.} 
+%\TS{Tom: bring in quote from GGHH LS's unpublished concluding section.}
+We adopt a timing protocol that    adds a speck of  partial commitment to a continuation Ramsey planner's choice of a tax policy.
+%\footnote{This is a continuous time counterpart of a timing protocol used in the discrete-time model of \cite*{JiangSargentWang2025}.} 
+This lets us implement  Ramsey plans
+that Lucas and Stokey can  not.% 
+ %\TS{GGHH {cite the JPE submission paper}}.}  
+%Next, we turn to implementations of Ramsey plans and show that using instantaneous debt only implements a Ramsey plan, provided that it exists.
+
+\subsection{Debt Management}
+
+%\NW{Tom: footnotes 12 and 14 convey the same message -- let's keep one? you decide.}
+
+Under a Ramsey plan, the equilibrium bond price $\{q_{0,t}^*;\, t \ge 0\}$ satisfies $q_{s,t}^* = e^{-\int_s^t r_{0,u}^*\, du}$. 
+%
+%\NW{Recall that \begin{equation}\label{eq:dPi}
+%d\Pi_t = r_{0,t}\, \Pi_t\, dt + (b_{0-,t}+G_t - \tau_{0,t}\, N_{0,t})\, dt.
+%\end{equation}
+%}
+%\eqref{eq:dPi}
+Let $\Pi_t^*$ denote time-$t$ cumulative liabilities in the absence of term-debt adjustments,    defined in equation~\eqref{eq:Pi_def}, evaluated under the Ramsey plan. Let~$B_t$ denote the government's instantaneous debt balance at~$t$. 
+Over an infinitesimal time interval $[t, t+dt)$, %are $r_{0,t}^*\, B_t\, dt$. 
+the government  issues instantaneous debt and term debt to service  its  debts and  to  finance the continuation of its cumulative liabilities.  %$\Pi_t^*$, as follows: %
+Consequently 
+\begin{equation}\label{eq:dPi_star}
+d\Pi_t^* -r_{0, t}^*\Pi_t^*dt = %\underbrace
+{dB_t -r_{0, t}^*B_tdt} %_{\text{net instantaneous debt issuance}}
+ + %\underbrace
+ {\biggl(\int_{s > t} q_{t,s}^*\, \partial_t\, b_{t,s}\, ds\biggr) dt}%_{\text{gross term debt issuance}} 
+ -\, %\underbrace
+ {\biggl( \int_{s<t}\partial_s\, b_{s,t}\, ds\biggr)  \, dt}\, . 
+%_{\text{maturing term debt repayment}} .
+\end{equation}
+%One way to see \eqref{eq:dPi_star} is as follows. 
+%where $b_{t-,t} dt $ is the total term debt due over the small time interval $[t, t+dt)$:
+%\begin{equation}\label{eq:dPi_star} %) dt
+%b_{t-,t} = \underbrace{\biggl(b_{0-,t} +  \int_0^{t-}\partial_u\, b_{u,t}\, du\biggr)}_{\text{term debt due at }t}
+%\end{equation}  the instantaneous government budget constraint~
+Equation \eqref{eq:dPi} implies that the left side of \eqref{eq:dPi_star}, which is the  net change of $\Pi_t^*$, 
+%netting  the associated interest costs $r \Pi_t^* d t$.} \WJ{Equation \eqref{eq:Pi_def} implies that the left side of~\eqref{eq:dPi_star} also 
+equals  $(b_{0-,t} + G_t - \tau^\ast_{0,t} N^\ast_{0,t} ) d t.$ Substituting this into \eqref{eq:dPi_star} and re-arranging  yields: 
+\begin{align}\label{eq:dPi_star2}
+%d\Pi_t^* -r_{0, t}^*\Pi_t^*dt = 
+& \underbrace{(G_t - \tau^\ast_{0,t} N^\ast_{0,t} ) d t}_{\text{primary deficits}} + \, %
+\underbrace{\biggl( b_{0-,t} + \int_{s<t}\partial_s\, b_{s,t}\, ds\biggr)  \, dt}_{\text{maturing term debt repayments}}
+\notag \\
+ &\quad \quad  \quad \quad =   \underbrace{dB_t -r_{0, t}^*B_tdt}_{\text{net instantaneous-debt issuance}}
+ + \quad
+ \underbrace{\biggl(\int_{s > t} q_{t,s}^*\, \partial_t\, b_{t,s}\, ds\biggr) dt}_{\text{gross term-debt issuance}} 
+\, . 
+%_{\text{maturing term debt repayment}} .
+\end{align}
+Relation \eqref{eq:dPi_star2} equates uses and sources  of government funds. 
+%Note that the initial term debt $(b_{0-,t} $ appears in the net change of $\Pi_t^*$. 
+Uses include  primary deficits (the first term) and  repayments for all maturing debts (the second  term), the latter of which  includes  the initial term debt $b_{0-,t}$ as well as all other term debts due at $t$.\footnote{Here  
+{$\partial_s\, b_{s,t}$} denotes the flow rate of coupon obligations issued at time~$u$ and maturing at time~$t$, so $(\int_{s<t} \partial_s\, b_{s,t}\, ds)\, dt$  represents  all outstanding term debts that were issued after $t=0-$ and are due at time~$t$.} 
+Sources include  (net) issuance of instantaneous debt, $dB_t -r_{0, t}^*B_tdt$, and term debts of all possible maturities issued at $t$: $\int_{s > t} q_{t,s}^*\, \partial_t\, b_{t,s}\, ds$. %\NW{Point out LS has no $B$ and the difference between DT and CT formulations?} 
+%The second term in~\eqref{eq:dPi_star} describes net financing from newly issued term debt over the interval~$dt$, while the first term, $dB_t$, represents changes in the instantaneous debt balance that finance residual shortfalls not covered by term-debt adjustments.
+ %, aggregated over issuances from dates~0 through~$t$
+
+%
+%\TS{Neng and Wei: here we need a definition of ''the contractible subspace'' in precise mathematical terms that we can also relate to Lucas and Stokey's possibly different language.}
+
+
+Next, we describe a debt-management strategy that always implement a Ramsey plan, provided that it exists. 
+
+\medskip
+\noindent\textbf{Managing $\Pi_t^*$ with instantaneous debt.}\quad
+%\TS{Neng and Wei: let's discuss how to expand this important paragraph.}
+To implement a Ramsey plan, we show that it is sufficient to restrict a continuation Ramsey planner's  debt restructuring policies to a set in which $\partial_t\, b_{t,s} = 0$ so that $b_{t,s} = b_{0-,s}$ for all $s \ge t$, $t \ge 0$, so that no term debt is issued at any $t \ge 0$. That in turn means that the instantaneous debt balance~$B_t$ equals~$\Pi_t^*$ for all $t \ge 0$. 
+Thus, it is sufficient to only use instantaneous debt to finance the cumulative liabilities that are governed so that: 
+%$d\Pi_t^* = r_{0,t}^*\, \Pi_t^*\, dt + (b_{0-,t}+G_t-\tau_{0,t}^*\, N_{0,t}^*)\, dt$ as given in~\eqref{eq:dPi}. With $B_0 = \Pi_0^*$, we obtain the following instantaneous debt balance dynamics:
+\begin{equation}\label{eq:dBt}
+dB_t = r_{0,t}^*\, B_t\, dt + (b_{0-,t}+G_t-\tau_{0,t}^*\, N_{0,t}^*)\, dt.
+\end{equation}
+
+\begin{remark}\label{rmk:LS_comparison}
+	%The debt rescheduling policies of Lucas and Stokey (1983) use only term debt. 
+\cite{LucasStokey1983} use a coupon flow management policy of $\{\partial_t\, b_{t,s};\, s \ge t,\, t \ge 0\}$ and $\{B_t = 0;\, t \ge 0\}$ that satisfies the dynamic budget constraint:
+	\begin{equation}\label{eq:dPi_LS}
+	d\Pi_t^* -r_{0, t}^*\Pi_t^*dt =  {\biggl(\int_{s > t} q_{t,s}^*\, \partial_t\, b_{t,s}\, ds\biggr) dt}%_{\text{gross term debt issuance}} 
+	-\, %\underbrace
+	{\biggl( \int_{s<t}\partial_s\, b_{s,t}\, ds\biggr)  \, dt}\, . 
+	\end{equation}
+	Their rescheduling policy requires  continuous adjustments to the term debt, a requirement that makes it challenging, if not impossible,  to formulate their government's problem recursively.
+\end{remark}
+
+We propose what we think is  a better way to implement the Ramsey plan. When the government can issue  instantaneous debt, it gains nothing by rescheduling term debt.  Ultimately, this is  because instantaneous debt balance~$B_t$ perfectly tracks the cumulative deficits~$\Pi_t^*$ and adequately  summarizes the key  price and quantity information about the Ramsey plan. Furthermore, being  the shortest maturity debt possible, the value of   instantaneous debt  is least vulnerable to manipulation by future governments' deviating from the Ramsey tax plan.
+% \NW{Next, in  subsection \ref{subsec:timingprot}, we introduce a small alteration in Lucas and Stokey's timing  protocol that, by committing the immediate successor to  the current government's planned  tax an instance ahead, % plan  is sufficient to 
+%induces continuation Ramsey planners to implement the Ramsey plan.%induces continuation Ramsey planners to confirm a Ramsey plan.
+%}%, provided that it exists.
+%\footnote{{ \cite*{JiangSargentWang2025} present a related analysis in a discrete-time setting.}}
+%% CHANGE NOTE: Filled in the "XX" placeholder.
+
+
+\subsection{Slightly More  Commitment}\label{subsec:timingprot}
+In order to  commit an immediate successor government to  the current government's planned  tax, 
+% an instance ahead
+%We now introduce an amendment to Lucas and Stokey's  timing protocol 
+we infinitesimally constrain  Lucas and Stokey's (1983)   governments in the following way.\footnote{\cite*{JiangSargentWang2025} analyze a  discrete-time counterpart of this timing protocol.} %Below we introduce a new timing protocol that is necessary for our new implementation.
+Let  $\tau_{t-,t}$ be a time-$t$ tax rate that is preferred by a time-$t-$ government.
+\begin{assumption}[Instantaneous partial commitment]\label{ass:timing}
+	{A  time-$t-$} government sets a {time-$t$ government's current period tax rate~$\tau_{t,t}$:} % is dictated by its predecessor
+	\begin{equation}\label{eq:timing}
+	\tau_{t,t} = \tau_{t-,t}.
+	\end{equation}
+	
+\end{assumption}
+
+\noindent Thus,  the time~$t$ tax rate  that applies to taxable income  over a short time interval $(t, t+dt)$ is set by the instantaneous predecessor of the time-$t$ government, also known as the continuation  planner at time $t-$. Via  the household's first-order necessary condition, this timing protocol induces
+\begin{equation}\label{eq:Ctt}
+C_{t,t} = C_{t-,t},
+\end{equation}
+where $C_{t-,t}$ is the time-$t$ consumption effectively chosen by the time-$t-$ government.
+To support this outcome,  the government at time~$t-$ hands over  to the time-$t$ government,a debt structure that includes a balance of instantaneous debt  $B_t$ due at~$t$  and a stream of term debt services $\{b_{t-,s};\, s \ge t\}$  that satisfies
+\begin{equation}\label{eq:implement_strategy}
+B_t = \Pi_t^* \quad \text{and} \quad b_{t-,s} = b_{0-,s};\quad s \ge t.
+\end{equation}
+Thus, the term debt service flow inherited by the time-$t$ government equals  the tail  $\{b_{0-,s};\, s \ge t\}$ of the initial term debt services stream
+and %that  the cumulative liabilities under the Ramsey plan up to time~$t$ $\Pi_t^*$ has to be fully absorbed by the balance of the 
+government's instantaneous debt~$B_t$ adjusts accordingly.
+%
+%\medskip
+%\noindent\textbf{Why does the strategy proposed above implement the Ramsey plan?}
+%
+%This is because under the new timing protocol (Assumption~\ref{ass:timing}) our strategy that only adjusts instantaneous debt and leaves term debt untouched 
+Managing government debt in this way 
+ensures that $X_t$ defined  in equation \eqref{eq:Xt_def} is continuous.
+%which allows us to use it as the key state variable in our implementation as we did in solving the Ramsey plan.
+If a Ramsey plan has been implemented until time $t - $, then $C_{s,s} = C_{0,s}^*$ and $N_{s,s} = N_{0,s}^*$ for $0 < s < t$. 
+Under Assumption~\ref{ass:timing} and that the Ramsey plan is implemented up to time~$t-$, i.e., 
+$C_{t-,t} = C_{0,t}^*$, then
+\begin{equation}\label{eq:Xt_implement}
+B_t\, U_{C,t}(C_{t,t}, N_{t,t}) = \Pi_t^*\, U_{C,t}(C_{0,t}^*, N_{0,t}^*) = X_t^*,
+\end{equation}
+where~$X_t^*$ is the value of  state variable $X_t$ under the Ramsey plan. Assumption~\ref{ass:timing} forces a time $t$ continuation planner to preserve the purchasing power of the instantaneous debt it has  inherited. % by a time-$t$ government.
+
+We now state the key implementation result.
+
+\begin{theorem}\label{thm:implement}
+	Under our Assumption~\ref{ass:timing} timing protocol, a Ramsey plan can be implemented by accepting the tail of  initial debt service stream  $\{b_{0-,t}\}$ and adjusting instantaneous debt according to~\eqref{eq:implement_strategy} .
+\end{theorem}
+
+\begin{proof}
+	{We proceed by induction. The key step is to show that if the Ramsey plan has been implemented up to time~$t-$, then the continuation Ramsey planner at time~$t$ will confirm the continuation of the Ramsey plan. This requires showing that  decisions of the time $t$ continuation Ramsey planner imply, %We establish this in two parts: 
+		first, that $X_t = X_t^*$ and, second, that $\Phi_t^* = \Phi_0^*$.}
+	
+	Under the assumption that the Ramsey plan is implemented up to time~$t-$, it is sufficient to prove that the Ramsey plan is also implemented at time~$t$.\footnote{At $t=0$, the Ramsey planner is also a time-0 continuation Ramsey planner.} We can show that,  confronting $B_t = \Pi_t^*$ and $b_{t-,s} = b_{0-,s}$ for all $s \ge t$ at time~$t$, the continuation Ramsey planner will confirm the continuation of the Ramsey plan by choosing $C_{t,s} = C_{0,s}^*$ and $N_{t,s} = N_{0,s}^*$ for all $s \ge t$. We establish this by subdividing the time-$t$ continuation Ramsey planner's problem into two subproblems.
+	
+	First, the time-$t$ continuation Ramsey planner chooses $\{C_{t,s},\, s \ge t\}$ to attain
+	\begin{equation}\label{eq:cont_ramsey}
+	\max_{\{C_{t,s};\, s \ge t\}} \int_t^\infty e^{-\rho(s-t)} U(C_{t,s}, C_{t,s}+G_s)\, ds,
+	\end{equation}
+	where maximization is subject to $X_t = B_t\, U_{C,t}(C_{t,t}, N_{t,t}) = X_t^*$ and the following dynamics for $s \ge t$:
+	\begin{equation}\label{eq:dXs_cont}
+	dX_s = \bigl(\rho\, X_s - C_{t,s}\, U_{C,s} - N_{t,s}\, U_{N,s} + b_{0-,s}\, U_{C,s}\bigr)\, ds.
+	\end{equation}
+	As in  our Section~4 analysis, we can show that the value function for~\eqref{eq:cont_ramsey}, denoted as $\widehat{V}(X_t, t;\, \Phi_t)$, is additively separable: $\widehat{V}(X_t, t;\, \Phi_t) = -\Phi_t\, X_t + \widehat{H}(t;\, \Phi_t)$, where $\widehat{H}(t;\, \Phi_t)$ solves the following differential equation\footnote{See more technical details in Appendix~\ref{app:technical}.}
+	\begin{equation}\label{eq:Hhat_ode}
+	\rho\, \widehat{H}(s;\, \Phi_t) = \widehat{H}'(s;\, \Phi_t) + \max_{C_{t,s}} U(C_{t,s}, C_{t,s}+G_s) + \Phi_t\bigl(C_{t,s}\, U_{C,s} + (C_{t,s}+G_s)\, U_{N,s} - b_{0-,s}\, U_{C,s}\bigr),
+	\end{equation}
+	where $C_{t,s} = C(\Phi_t;\, b_{0-,s}, G_s)$, and $C(\Phi_t;\, b_{0-,s}, G_s)$, the same function presented %is the same as the one given 
+	in~\eqref{eq:C_given_Phi}. 
+	%This is because the initial debt term structure $\{b_{0-,t};\, t \ge 0\}$ is unchanged in our implementation with instantaneous debt only.
+	
+	Under the new timing protocol given in Assumption~\ref{ass:timing}, the time-$t$ continuation Ramsey planner optimally chooses $C_{t,t} = C_{t-,t} = C_{0,t}^*$ to confirm the continuation of the Ramsey plan. Because $B_t = \Pi_t^*$ and $B_{t-} = \Pi_{t-}^*$ under our implementation, we have $X_t = B_t\, U_{C,t}(C_{t,t}, N_{t,t}) = \Pi_t^*\, U_{C,t}(C_{0,t}^*, N_{0,t}^*) = X_t^*$. So we have proved $X_t = X_t^* = \Pi_t^*\, U_{C,t}(C_{0,t}^*, N_{0,t}^*)$.
+	
+	{We now turn to establishing that $\Phi_t^* = \Phi_0^*$.} We start by  proving that the time-$t$ continuation Ramsey planner  chooses $C_{t,s} = C_{0,s}^*$ for all $s > t$. Because the optimal continuation plan $\{C_{t,s}^*;\, s > t\}$ satisfies $C_{t,s}^* = C(\Phi_t^*;\, b_{0-,s}, G_s)$ for some $\Phi_t^* > 0$ and the Ramsey plan satisfies $C_{0,s}^* = C(\Phi_0^*;\, b_{0-,s}, G_s)$, we need to verify that $\Phi_t^* = \Phi_0^*$.
+	This we do by contradiction. Suppose that there exists a $\Phi_t^* \ne \Phi_0^*$ such that the associated  continuation Ramsey plan yields a higher value than the tail of the Ramsey plan, meaning that
+	\begin{equation}\label{eq:contradict_ineq}
+	\int_t^\infty e^{-\rho(s-t)} U(C_{t,s}^*, C_{t,s}^*+G_s)\, ds > \int_t^\infty e^{-\rho(s-t)} U(C_{0,s}^*, C_{0,s}^*+G_s)\, ds,
+	\end{equation}
+	where $C_{t,s}^* = C(\Phi_t^*;\, b_{0-,s}, G_s)$. Recall that the time-$t$ continuation Ramsey planner chooses an  allocation $\{C_{t,s}^*;\, s > t\}$ that satisfies the following continuation implementability condition:
+	\begin{equation}\label{eq:cont_implement}
+	\int_t^\infty e^{-\rho(s-t)}\bigl(C_{t,s}^*\, U_{C,s} + (C_{t,s}^*+G_s)\, U_{N,s}\bigr)\, ds \ge \int_t^\infty e^{-\rho(s-t)} b_{0-,s}\, U_{C,s}\, ds + B_t\, U_{C,t}.
+	\end{equation}
+	Construct a plan $\{\widetilde{C}_{0,s};\, s \ge 0\}$ in which  the allocation from~0 to~$t$ follows the Ramsey plan, $\widetilde{C}_{0,s} = C_{0,s}^*$ for $s \in [0,t]$, but the allocation from time~$t$ onward follows the time-$t$ continuation Ramsey plan: $\widetilde{C}_{0,s} = C_{t,s}^*$ for $s \in (t,\infty)$. Using~\eqref{eq:cont_implement} and $B_t = \Pi_t^*$, we can verify that $\{\widetilde{C}_{0,s};\, s \ge 0\}$ satisfies the implementability condition~\eqref{eq:implement} for the Ramsey plan. Next, using~\eqref{eq:contradict_ineq}, we can show this proposed plan $\{\widetilde{C}_{0,s};\, s \ge 0\}$ yields a value for the household that is higher than the value under the Ramsey plan:
+	\begin{align*}
+	\int_0^\infty e^{-\rho s} U(\widetilde{C}_{0,s}, \widetilde{C}_{0,s}+G_s)\, ds &= \int_0^t e^{-\rho s} U(\widetilde{C}_{0,s}, \widetilde{C}_{0,s}+G_s)\, ds + \int_t^\infty e^{-\rho s} U(\widetilde{C}_{0,s}, \widetilde{C}_{0,s}+G_s)\, ds \\
+	&= \int_0^t e^{-\rho s} U(C_{0,s}^*, C_{0,s}^*+G_s)\, ds + \int_t^\infty e^{-\rho s} U(C_{t,s}^*, C_{t,s}^*+G_s)\, ds \\
+	&> \int_0^t e^{-\rho s} U(C_{0,s}^*, C_{0,s}^*+G_s)\, ds + \int_t^\infty e^{-\rho s} U(C_{0,s}^*, C_{0,s}^*+G_s)\, ds \\
+	&= \int_0^\infty e^{-\rho s} U(C_{0,s}^*, C_{0,s}^*+G_s)\, ds.
+	\end{align*}
+	This contradicts that $\{C_{0,s}^*\}$ is the Ramsey plan. We thus conclude $\Phi_t^* = \Phi_0^*$ and  that $C_{t,s}^* = C(\Phi_t^*;\, b_{0-,s}, G_s) = C(\Phi_0^*;\, b_{0-,s}, G_s) = C_{0,s}^*$ for all $s \ge t$.
+\end{proof}
+
+%% ==================================================================
+\section{Concluding Remarks}\label{sec:conclude}
+%% ==================================================================
+%
+{We have formulated a continuous-time Ramsey taxation problem as a dynamic program with state variable $X_t = \Pi_t U_{C,t}$, where $\Pi_t$ denotes a government's cumulative liability in the absence of debt rescheduling and $U_{C,t}$ denotes a representative household's  marginal utility of consumption. Our recursive formulation yields the same Ramsey allocation as the Lagrangian method that   previous analysts including Lucas and Stokey (1983) have typically used. The value function $V(X_t,t)$ 
+%satisfies a Hamilton-Jacobi-Bellman equation that 
+has additively separable form $  -\Phi_0 X_t + H(t;\Phi_0)$, where the scalar $\Phi_0$ is chosen to satisfy the single implementability constraint that restricts competitive equilibrium allocations in Lucas and Stokey's model, and where the function  $H(t;\Phi_0)$ solves a differential equation that encodes all  history-dependent  information affecting the Ramsey plan. }%primal approach. 
+
+
+%\TS{Where $\Pi_t$ denotes a government's cumulative liability in the absence of debt rescheduling and $U_{C,t}$ denotes a representative household's  marginal utility of consumption, we have formulated a continuous-time Ramsey taxation problem as a dynamic program with state variable $X_t = \Pi_t U_{C,t}$. Our recursive formulation yields the same Ramsey allocation as the Lagrangian method that most  previous analysts including Lucas and Stokey (1983) have used. The value function $V(X_t,t)$ satisfies a Hamilton-Jacobi-Bellman equation. It takes the additively separable form $  -\Phi_0 X_t + H(t;\Phi_0)$. The scalar $\Phi_0$ is chosen to satisfy the single implementability constraint that restricts competitive equilibrium allocations in Lucas and Stokey's model. The function  $H(t;\Phi_0)$ solves a differential equation that codes all  history-dependent  information affecting the Ramsey plan. }%primal approach. 
+
+Our dynamic programming formulation underlies a recursive implementation of the Ramsey plan via a debt-management strategy that differs markedly from \citeauthor{LucasStokey1983}'s. %Lucas and Stokey's. 
+%anagement strategy that differs markedly from Lucas and Stokey's. 
+We show that a government can implement the Ramsey plan by
+never adjusting  the  tail of the initial term-debt structure that it has inherited and simply  setting its  instantaneous debt equal to its cumulative liability $\Pi_t^*$. 
+%This implementation does not require continuous rescheduling of term debt. 
+Under a timing protocol that grants the government infinitesimal commitment, continuation Ramsey planners confirm the Ramsey plan.
+The state variable $X_t$ encodes the purchasing power of government liabilities, which depends on  the government's cumulative liability $\Pi_t$ as well as on  the household's marginal utility of consumption $U_{C,t}$. 
+%The formulation provides a framework for analyzing optimal debt management when government commitment is limited.
+
+Much of our analysis will extend to settings with discontinuous debt service processes. Appendix C establishes that discrete-time Ramsey plans converge to continuous-time Ramsey plans as the time increment vanishes. The results apply immediately  to economies with processes for initial  government debt and spending streams that are right-continuous and possess left limits. 
+%
+
+{In future work, we think we can extend our analysis to settings in which the initial debt service stream and  government expenditures  are stochastic processes.  An HJB equation involving  a martingale and an application of the martingale representation theorem %similar to equation \eqref{eq:HJB} 
+will emerge in this setting, paving the way for deeper appreciation of how the presence of complete markets shapes a Ramsey plan and a good debt-management plan for implementing it. } 
+%
+%\NW{Tom: We like the conclusion and wonder what extent shall we reveal our new results.} 
+%\TS{Neng and Wei: we can figure out how to pitch the concluding section better once we get information from the JPE and have firmer ideas about what will be in continuation papers.}
+%\NW{Tom: Fully agree. Let's wait while we work on the stochastic LS formulation.} 
+%
+%\section*{Old concluding section discrete time}
+%{Tom: this is old conclusion. We leave conclusion to you.}
+%
+%Because our government has access to instantaneous debt while Lucas and Stokey's and Debortoli et al.'s governments don't, our implementation of a Ramsey plan works even when theirs don't. In Debortoli et al.'s counterexample, budget feasible restructurings of government debt from $\{b_{0,t}\}$ to $\{\hat{b}_{0,t}\}$ don't motivate future governments to implement the Ramsey tax plan. But appropriate management of instantaneous debt together with a local (instantaneous) commitment do motivate them to implement the Ramsey tax plan.
+%
+%Along with Aguiar et al.\ (2019), our Ramsey planner assigns short-term government debt a special role. But unlike theirs, ours is a closed economy in which the planner manipulates equilibrium interest rates. Distinct economic forces make short-term debt central in Aguiar et al.'s model and ours. In our model, the Ramsey planner is a Stackelberg leader who manipulates bond prices to its advantage. Instantaneous debt is a powerful tool for the Ramsey planner to constrain continuation Ramsey planners in ways that facilitate implementing the Ramsey plan. The maturity of instantaneous debt is infinitesimal, so its value is least vulnerable to manipulation by future governments. A local commitment condition suffices to prevent continuation governments from diluting the purchasing power of instantaneous debt, inducing them to confirm the plan chosen by the Ramsey planner at time~0.\footnote{Debortoli et al.'s counterexample reveals that Lucas and Stokey's way of restructuring the term structure of government debt is sometimes unable to deter future governments from manipulating bond prices by deviating from the Ramsey tax plan. This outcome is related to incentives to overproduce in the durable goods monopoly problem studied by Coase (1972) and Stokey (1981).}
+%
+%Our analysis of a continuous time version of Debortoli et al.'s model sets the stage for subsequent work that will add shocks and complete markets in state-contingent securities in the spirit of Lucas and Stokey. In future work, we hope to extend our Sections~\ref{sec:implement} analysis to study implementable Ramsey plans in settings with random $\{G_t\}$ processes. That promises to help us connect the presence of instantaneous debt and our local commitment condition to assumptions about contractible spaces adopted in the complete markets formulations of Black and Scholes (1973) and Harrison and Kreps (1979).
+%
+%We close by noting that the US Treasury and the Congressional Budget Office have already gone part-way toward the arrangement that we have used to implement the Ramsey plan. Although the US Treasury doesn't issue a counterpart to instantaneous debt~$B_t$ as the government in our model does, it books and reports accumulated past primary deficits~$\Pi_t^*$.
+%
+
+%% ==================================================================
+%% APPENDICES
+%% ==================================================================
+\bigskip
+
+\bigskip
+
+\bigskip
+
+\noindent\textbf{\Large Appendices}
+\bigskip
+
+
+\appendix
+
+\section{Technical Details}\label{app:technical}
+
+\noindent\textbf{Regularity Conditions for Proposition~\ref{prop:ramsey_lagrangian}.}\quad We provide two regularity conditions that guarantee that a Ramsey plan exists. First, for a given initial debt structure, the admissible allocation set is not empty, so there exist allocations $\{C_{0,t};\, t \ge 0\}$ that satisfy the implementability condition~\eqref{eq:implement}. Second, $(CU_C + (C+G)U_N - bU_C)$ is concave for $G > 0$, $b \ge 0$.
+
+For economies analyzed in Debortoli, Nunes, and Yared (2021) and this paper, these two regularity conditions are satisfied when~$b_0$ is not too high.
+
+\medskip
+\noindent\textbf{Proof of Proposition~\ref{prop:DP_solution}.}\quad Given~$\Phi_0$, consumption at~$t$, $C_{0,t} = C(\Phi_0;\, b_{0-,t}, G_t)$, solves
+\begin{equation}\label{eq:A1}
+\max_{C_{0,t}} U(C_{0,t}, C_{0,t}+G_t) + \Phi_0\bigl(C_{0,t}\, U_{C,t} + (C_{0,t}+G_t)\, U_{N,t} - b_{0-,t}\, U_{C,t}\bigr).
+\end{equation}
+First we can verify that under the preceding regularity conditions a solution $C_{0,t} > 0$ exists for~\eqref{eq:A1}. Second, we can show that $C_{0,t} = C(\Phi_0;\, b_{0-,t}, G_t)$ satisfies the following first-order necessary condition for problem~\eqref{eq:A1}:
+\begin{multline}\label{eq:A2}
+(1+\Phi_0)(U_{C,t}+U_{N,t}) \\
++ \Phi_0\bigl[(C_{0,t}-b_{0-,t})(U_{CC,t}+U_{CN,t}) + (C_{0,t}+G_t)(U_{NC,t}+U_{NN,t})\bigr] = 0.
+\end{multline}
+The associated labor supply is $N(\Phi_0;\, b_{0-,t}, G_t) = C(\Phi_0;\, b_{0-,t}, G_t) + G_t$.
+
+Recall $V(X_t,t) = -\Phi_0\, X_t + H(t;\, \Phi_0)$ (see~\eqref{eq:V_guess} in Subsection~\ref{subsec:DP}). Now solve ODE~\eqref{eq:H_ode} for $H(t;\, \Phi_0)$. Using $C(\Phi_0;\, b_{0-,t}, G_t)$ and $N(\Phi_0;\, b_{0-,t}, G_t)$, we can rewrite~\eqref{eq:H_ode} as
+\begin{multline*}
+d(-e^{-\rho t} H(t;\, \Phi_0)) = e^{-\rho t}\biggl[U\bigl(C(\Phi_0;\, b_{0-,t}, G_t), N(\Phi_0;\, b_{0-,t}, G_t)\bigr) \\
++ \Phi_0\bigl(C(\Phi_0;\, b_{0-,t}, G_t)\, U_{C,t} + N(\Phi_0;\, b_{0-,t}, G_t)\, U_{N,t} - b_{0-,t}\, U_{C,t}\bigr)\biggr]\, dt.
+\end{multline*}
+Integrating the above equation from~$t$ to~$\infty$ and using the transversality condition $\lim_{t \to \infty} e^{-\rho t} H(t;\, \Phi_0) = 0$, we obtain
+\begin{multline*}
+H(t;\, \Phi_0) = \int_t^\infty e^{-\rho(s-t)}\biggl[U\bigl(C(\Phi_0;\, b_{0-,s}, G_s), N(\Phi_0;\, b_{0-,s}, G_s)\bigr) \\
++ \Phi_0\bigl(C(\Phi_0;\, b_{0-,s}, G_s)\, U_{C,s} + N(\Phi_0;\, b_{0-,s}, G_s)\, U_{N,s} - b_{0-,s}\, U_{C,s}\bigr)\biggr]\, ds.
+\end{multline*}
+Therefore, the value function $V(X_t,t)$ defined for the DP problem in Definition~\ref{def:DP} satisfies
+\begin{align}
+V(X_t,t) &= -\Phi_0\, X_t + H(t;\, \Phi_0) \notag\\
+&= -\Phi_0\, \Pi_t\, U_{C,t} + \int_t^\infty e^{-\rho(s-t)} U\bigl(C(\Phi_0;\, b_{0-,s}, G_s), N(\Phi_0;\, b_{0-,s}, G_s)\bigr)\, ds \label{eq:A3}\\
+&\quad + \Phi_0 \int_t^\infty e^{-\rho(s-t)}\bigl(C(\Phi_0;\, b_{0-,s}, G_s)\, U_{C,s} + N(\Phi_0;\, b_{0-,s}, G_s)\, U_{N,s} - b_{0-,s}\, U_{C,s}\bigr)\, ds \notag\\
+&= \int_t^\infty e^{-\rho(s-t)} U\bigl(C(\Phi_0;\, b_{0-,s}, G_s), N(\Phi_0;\, b_{0-,s}, G_s)\bigr)\, ds. \label{eq:A4}
+\end{align}
+Equation~\eqref{eq:A4} follows from equation~\eqref{eq:A3} because the time-0 budget constraint and the definition of~$\Pi_t$ in~\eqref{eq:Pi_def} together imply that the sum of the first and third terms in~\eqref{eq:A3} equals zero. \qed
+
+\medskip
+\noindent\textbf{Technical Details for Theorem~\ref{thm:implement}.}\quad Here we describe some details involved in solving the time-$t$ continuation Ramsey planner's dynamic problem. The value function $\widehat{V}(X_s, s;\, \Phi_t)$ at~$s$ for $s \ge t$ satisfies the Bellman equation:
+\begin{equation}\label{eq:A5}
+\rho\, \widehat{V} = \frac{\partial \widehat{V}}{\partial s} + \max_{C_{t,s}} U(C_{t,s}, C_{t,s}+G_s) + \frac{\partial \widehat{V}}{\partial X_s}\bigl(\rho\, X_s - C_{t,s}\, U_{C,s} - (C_{t,s}+G_t)\, U_{N,s} + b_{0-,s}\, U_{C,s}\bigr).
+\end{equation}
+Note that it is~$\Phi_t$ not~$\Phi_s$ that appears in $\widehat{V}(X_s, s;\, \Phi_t)$. We guess and verify that $\widehat{V}(X_s, s;\, \Phi_t)$ is additively separable in~$X_s$ and~$s$:
+\begin{equation}\label{eq:A6}
+\widehat{V}(X_s, s;\, \Phi_t) = -\Phi_t\, X_s + \widehat{H}(s;\, \Phi_t), \qquad s \ge t.
+\end{equation}
+Substituting~\eqref{eq:A6} into~\eqref{eq:A5}, we obtain the following for $\widehat{H}(s;\, \Phi_t)$ where $s \ge t$:
+\begin{equation}\label{eq:A7}
+\rho\, \widehat{H}(s;\, \Phi_t) = \widehat{H}'(s;\, \Phi_t) + \max_{C_{t,s}} U(C_{t,s}, C_{t,s}+G_s) + \Phi_t\bigl(C_{t,s}\, U_{C,s} + (C_{t,s}+G_s)\, U_{N,s} - b_{0-,s}\, U_{C,s}\bigr).
+\end{equation}
+Integrating~\eqref{eq:A7} from~$t$ to~$\infty$ and using the transversality condition, we obtain:
+\begin{multline}\label{eq:A8}
+\widehat{H}(s;\, \Phi_t) = \int_s^\infty e^{-\rho(u-s)}\biggl[U\bigl(C(\Phi_t;\, b_{0-,u}, G_u),\, C(\Phi_t;\, b_{0-,u}, G_u)+G_u\bigr) \\
++ \Phi_t\bigl(C(\Phi_t;\, b_{0-,u}, G_u)\, U_{C,u} + (C(\Phi_t;\, b_{0-,u}, G_u)+G_u)\, U_{N,u} - b_{0-,u}\, U_{C,u}\bigr)\biggr]\, du.
+\end{multline}
+
+
+
+
+\section{Cyclical Ramsey Plans}\label{app:cyclical}
+
+\subsection{Cyclical $b_{0-,t}$ in Subsection~5.2}
+
+When $b_{0-,t} = b_0 + \theta_b\sin(\tfrac{\pi}{2}t)$, $G_t$ is constant, and {the utility function $U(C, N)=\log C-N$, $C_{0,t}^*$ under the Ramsey plan given by~\eqref{eq:C_given_Phi} can be simplified to
+\begin{equation}\label{eq:A19}
+C_{0,t}^* = \frac{\sqrt{1+4(b_0+\theta_b\sin(\tfrac{\pi}{2}t))\Phi_0^*(1+\Phi_0^*)}-1}{2(1+\Phi_0^*)},
+\end{equation}
+which is periodic with the same peaks, troughs, and period (four) as the initial debt structure~$b_{0-,t}$. The tax rate $\tau_{0,t}^* = 1-C_{0,t}^*$ also has period four but is countercyclical to~$b_{0-,t}$. When $G_t$ is constant over time, the primary surplus $S(C_{0,t}^*) = \tau_{0,t}^*\, N_{0,t}^* - G_t = C_{0,t}^*(1-C_{0,t}^*-G_t)$ is a periodic function with the same periodicity as~$\tau_{0,t}^*$. This follows from
+\[
+\frac{d(S_{0,t}^*-b_{0-,t})}{dt} = (1-2C_{0,t}^*-G)\frac{dC_{0,t}^*}{dt} - \frac{db_{0-,t}}{dt}
+\]
+and $dC_{0,t}^*/dt = 0$ if and only if $db_{0-,t}/dt = 0$.
+
+\begin{table}[h]
+	\centering
+	\caption{Peaks and troughs in Figure~2.}
+	\begin{tabular}{lcc}
+		\hline
+		& $t=1$ & $t=3$ \\
+		\hline
+		Initial debt $b_{0-,t}$ & Peak & Trough \\
+		Consumption $C_{0,t}^*$ & Peak & Trough \\
+		Tax rate $\tau_{0,t}^*$ & Trough & Peak \\
+		$S(C_{0,t}^*)-b_{0-,t}$ & Trough & Peak \\
+		\hline
+	\end{tabular}
+\end{table}
+
+
+\subsection{Cyclical $G_t$ in Subsection~5.3}
+
+When $G_t = G_0 + \theta_G\cos(\tfrac{\pi}{2}t)$, $b_{0-,t} = b_0$ is constant, and {the utility function  $U(C, N)=\log C-N$, $C_{0,t}^*$ under the Ramsey plan~\eqref{eq:C_given_Phi} is constant:
+\[
+C_{0,t}^* = \frac{\sqrt{1+4b_0\Phi_0^*(1+\Phi_0^*)}-1}{2(1+\Phi_0^*)}.
+\]
+The equilibrium interest rate $r_{0,t}^*$ equals~$\rho$ for all $t \ge 0$.
+
+Peaks, troughs, and inflection points of the primary surplus process $S_{0,t}^*-b_{0-,t}$ coincide with those of~$G_t$ because
+\[
+\frac{dG_t}{dt} = -\frac{\pi}{2}\theta_G\sin\Bigl(\frac{\pi}{2}t\Bigr), \qquad \frac{d^2 G_t}{dt^2} = -\Bigl(\frac{\pi}{2}\Bigr)^2 \theta_G\cos\Bigl(\frac{\pi}{2}t\Bigr),
+\]
+and
+\[
+\frac{d(S_{0,t}^*-b_{0-,t})}{dt} = -C_{0,t}\frac{dG_t}{dt}, \qquad \frac{d^2(S_{0,t}^*-b_{0-,t})}{dt^2} = -C_{0,t}\frac{d^2 G_t}{dt^2}.
+\]
+
+Since under a constant interest rate $r_{0,t}^* = \rho$ cumulative liabilities~$\Pi_t^*$ equal the present value of the net-of-interest surplus $S(C_{0,t}^*)-b_{0-,t}$, it is also a periodic function of time~$t$. But~$\Pi_t^*$ peaks and troughs at $S_{0,t}^* = b_{0-,t}$, since
+\begin{equation}\label{eq:A20}
+\frac{d\Pi_t^*}{dt} = 0 \iff (b_{0-,t}-S_{0,t}^*) = 0.
+\end{equation}
+Because $U_{C,t}$ is constant over time, the state variable $X_t^* = \Pi_t^*\, U_{C,t}^*$ is also a periodic function. Its peaks and troughs coincide with those of~$\Pi_t^*$.
+
+\begin{table}[h]
+	\centering
+	\caption{Peaks and troughs in Figure~3.}
+	\begin{tabular}{lcc}
+		\hline
+		& $t=0$ & $t=2$ \\
+		\hline
+		Government spending $G_t$ & Peak & Trough \\
+		Tax rate $\tau_{0,t}^*$ & constant & \\
+		Interest rate $r_{0,t}^*$ & constant & \\
+		$S(C_{0,t}^*)-b_{0-,t}$ & Trough & Peak \\
+		\hline
+	\end{tabular}
+\end{table}
+
+
+
+
+%% ==================================================================
+\section{Discrete-time Counterpart}% Continuous-time}
+\label{sec:discrete_cts}
+%% ==================================================================
+
+In this section, we recast the continuous-time formulation developed in Section~2 in a discrete-time setting with a time increment of~$\Delta$. We then show that the Ramsey plan in this discrete-time setting converges to that in the continuous-time formulation, characterized in Section~4, as~$\Delta$ shrinks to~0. A key takeaway of this section is that our results in preceding sections continue to hold in discrete time. However, mathematically, our analysis is technically more convenient as we are able to work with differential equations.
+
+Consider a discrete-time setting with a time increment $\Delta > 0$: $\{t_i = i\Delta,\, i = 0, 1, \ldots\}$. The representative household supplies a labor supply sequence $\{N_{0,i}^{(\Delta)}\, \Delta\}_{i=0}^\infty$ that produces a sequence of a single nonstorable good that must be allocated between a consumption sequence $\{C_{0,i}^{(\Delta)}\, \Delta\}_{i=0}^\infty$ and an exogenous government expenditure sequence $\{\tilde{G}_i^{(\Delta)}\, \Delta\}_{i=0}^\infty$:
+\begin{equation}\label{eq:resource_dt}
+C_{0,i\Delta}^{(\Delta)} + \tilde{G}_{i\Delta}^{(\Delta)} = N_{0,i\Delta}^{(\Delta)}, \quad \text{for all } i \ge 0,
+\end{equation}
+where a first subscript indicates a time that a variable is chosen and a second subscript indicates a time that a variable is realized.\footnote{To make the dependence of equilibrium objects, e.g., consumption and labor supply, on the size of time step~$\Delta$ explicit, we add a superscript~$(\Delta)$ for these equilibrium objects.}
+
+The representative household orders consumption and labor supply streams $\{C_{0,i}^{(\Delta)}\}_{i=0}^\infty$ and $\{N_{0,i}^{(\Delta)}\}_{i=0}^\infty$ according to
+\begin{equation}\label{eq:utility_dt}
+\sum_{i=0}^\infty e^{-\rho i\Delta}\, U\bigl(C_{0,i}^{(\Delta)}, N_{0,i}^{(\Delta)}\bigr)\, \Delta,
+\end{equation}
+where $\rho > 0$ and $U(\cdot,\cdot)$ are the same as those given in Section~2.
+
+In period~0, the government inherits an initial term-debt structure $\{b_{-1,i\Delta}^{(\Delta)}\}_{i=0}^\infty$ that it must service: the government must pay its creditors an amount~$b_{-1,i\Delta}^{(\Delta)}$ during time interval $[i\Delta, (i+1)\Delta)$. Let $\tau_{0,i}^{(\Delta)}$ denote a period-$i$ flat tax rate that the government sets in period~0 and let $q_{0,i}^{(\Delta)}$ be the period-0 value of a zero-coupon bond with a unit payoff at time~$i$. The representative household faces a single intertemporal budget constraint:
+\begin{equation}\label{eq:hh_budget_dt}
+\sum_{i=0}^\infty \bigl(C_{0,i\Delta}^{(\Delta)}\, \Delta\bigr) \cdot q_{0,i}^{(\Delta)} \le \sum_{i=0}^\infty \bigl(b_{-1,i\Delta}^{(\Delta)}\bigr) \cdot q_{0,i}^{(\Delta)} + \sum_{i=0}^\infty \bigl((1-\tau_{0,t_i}^{(\Delta)})\, N_{0,i}^{(\Delta)}\, \Delta\bigr) \cdot q_{0,i}^{(\Delta)}.
+\end{equation}
+Given tax-rate sequence $\{\tau_{0,i}^{(\Delta)}\}_{i=0}^\infty$ and bond-price sequence $\{q_{0,i}^{(\Delta)}\}_{i=0}^\infty$, the household chooses $\{C_{0,i\Delta}^{(\Delta)}, N_{0,i\Delta}^{(\Delta)}\}_{i=0}^\infty$ to maximize~\eqref{eq:utility} subject to constraint~\eqref{eq:hh_budget_dt}. First-order necessary conditions for~$N_{0,i}^{(\Delta)}$ and~$C_{0,i}^{(\Delta)}$ are
+\begin{align}
+1-\tau_{0,i}^{(\Delta)} &= -\frac{U_{N,i}}{U_{C,i}} \label{eq:foc_dt_tau}\\
+q_{0,i}^{(\Delta)} &= e^{-\rho i\Delta}\frac{U_{C,i}}{U_{C,0}}. \label{eq:foc_dt_q}
+\end{align}
+{Similarly}, we use first-order conditions~\eqref{eq:foc_dt_tau} and~\eqref{eq:foc_dt_q} together with feasibility constraint~\eqref{eq:resource_dt} to eliminate tax rates and bond prices from the household budget constraint~\eqref{eq:hh_budget_dt} and thereby to deduce the following implementability constraint on competitive equilibrium allocations $\{C_{0,i\Delta}^{(\Delta)}, N_{0,i\Delta}^{(\Delta)}\}_{i=0}^\infty$:
+\begin{equation}\label{eq:implement_dt}
+\sum_{i=0}^\infty e^{-\rho i\Delta}\bigl[C_{0,i}^{(\Delta)}\, U_{C,i} + (C_{0,i}^{(\Delta)}+\tilde{G}_i^{(\Delta)})\, U_{N,i} - b_{-1,i}^{(\Delta)}\, U_{C,i}\bigr] \cdot \Delta \ge 0.
+\end{equation}
+
+In this discrete-time setting, a Ramsey plan is obtained by choosing a sequence $\{C_{0,i\Delta}^{(\Delta)}\}_{i=0}^\infty$ that maximizes~\eqref{eq:utility} subject to resource constraint~\eqref{eq:resource_dt} and implementability constraint~\eqref{eq:implement_dt}. Given that $\{C_{0,i\Delta}^{(\Delta)}\}_{i=0}^\infty$ sequence, we can use first-order necessary conditions~\eqref{eq:foc_dt_tau} and~\eqref{eq:foc_dt_q} to compute associated equilibrium tax rate and bond price sequences.
+
+Following Jiang et al.\ (2025), we can characterize the Ramsey plan using a Lagrange method. Let $\{\tilde{C}_{0,i}^{(\Delta)*}, \tilde{N}_{0,i}^{(\Delta)*}, \tilde{\tau}_{0,i}^{(\Delta)*}, \tilde{q}_{0,i}^{(\Delta)*}\}_{i=0}^\infty$ denote the Ramsey plan. Then construct a $\{C_{0,t}^{(\Delta)*}\}_{t \ge 0}$ process, where $C_{0,t}^{(\Delta)*} = \tilde{C}_{0,\lfloor t/\Delta\rfloor}^{(\Delta)*}$ and $\lfloor t/\Delta \rfloor$ is the integer part of~$t/\Delta$, that is, the unique integer~$i$ such that $t \in [i\Delta, (i+1)\Delta)$. {We similarly construct processes $\{N_{0,t}^{(\Delta)*}\}_{t \ge 0}$, $\{\tau_{0,t}^{(\Delta)*}\}_{t \ge 0}$, and $\{q_{0,t}^{(\Delta)*}\}_{t \ge 0}$.}
+%% CHANGE NOTE: Broke the very long sentence listing all constructed processes into two.
+
+In addition, we also construct a debt payment process $\{b_{0-,t}^{(\Delta)}\}_{t \ge 0}$ and a spending process $\{G_t^{(\Delta)}\}_{t \ge 0}$. The following proposition states that, when $\{b_{0-,t}^{(\Delta)}\}_{t \ge 0}$ converges to $\{b_{0-,t}\}_{t \ge 0}$ and $\{G_t^{(\Delta)}\}_{t \ge 0}$ converges to $\{G_t\}_{t \ge 0}$ as $\Delta \to 0$, the Ramsey allocations in discrete time converge to those in the continuous-time setting analyzed in Section~4.
+
+\begin{proposition}\label{prop:convergence}
+	If $\{b_{0-,t}^{(\Delta)}\}_{t \ge 0}$ converges to $\{b_{0-,t}\}_{t \ge 0}$ and $\{G_t^{(\Delta)}\}_{t \ge 0}$ converges to $\{G_t\}_{t \ge 0}$ as~$\Delta$ goes to~0, the processes $\{C_{0,t}^{(\Delta)*}, N_{0,t}^{(\Delta)*}, \tau_{0,t}^{(\Delta)*}, q_{0,t}^{(\Delta)*}\}$ converge to $\{C_{0,t}^*, N_{0,t}^*, \tau_{0,t}^*, q_{0,t}^*\}$, respectively.
+\end{proposition}
+
+\begin{proof}
+%\noindent\textbf{Proof of Proposition~\ref{prop:convergence}.}\quad 
+First, we impose two regularity conditions: (1)~The utility function $U(\cdot,\cdot)$ and the associated function $C(\,\cdot\,;\, \cdot\,,\, \cdot\,)$ given in~\eqref{eq:C_given_Phi} are continuous in all arguments; (2)~as functions of time~$t$, $U(C(\Phi_0;\, b_{0-,t}^{(\Delta)}, G_t^{(\Delta)}), C(\Phi_0;\, b_{0-,t}^{(\Delta)}, G_t^{(\Delta)})+G_t^{(\Delta)})$ and $(C(\Phi_0;\, b_{0-,t}^{(\Delta)}, G_t^{(\Delta)})\, U_{C,t} + (C(\Phi_0;\, b_{0-,t}^{(\Delta)}, G_t^{(\Delta)})+G_t^{(\Delta)})\, U_{N,t} - b_{0-,t}^{(\Delta)}\, U_{C,t})$ are bounded by an integrable function of time~$t$.
+
+Recall that Proposition~\ref{prop:ramsey_DP} in our Section~4 and Proposition~2 in Jiang et al.\ (2025) characterize the Ramsey plans for continuous-time and discrete-time settings, respectively, when they exist. Thus, for $\forall \Delta$, there exist $\Phi_0^{(\Delta)*} \ge 0$ and $\Phi_0^* \ge 0$ such that $C_{0,t}^{(\Delta)*} = C(\Phi_0^{(\Delta)*};\, b_{0-,t}^{(\Delta)}, G_t^{(\Delta)})$ and $C_{0,t}^* = C(\Phi_0^*;\, b_{0-,t}, G_t)$. Via contradiction we can prove that $\lim_{\Delta \to 0} \Phi_0^{(\Delta)*} = \Phi_0^*$, which implies approximation
+\begin{equation}\label{eq:A9}
+\lim_{\Delta \to 0} C_{0,t}^{(\Delta)*} = C_{0,t}^*, \qquad \lim_{\Delta \to 0} N_{0,t}^{(\Delta)*} = N_{0,t}^*, \qquad t \ge 0.
+\end{equation}
+
+Suppose that for a sequence $\{\Delta_1 > \Delta_2 \cdots > \Delta_j > \cdots\}$ a non-negative limit of $\Phi_0^{(\Delta_j)*}$ exists that does not equal~$\Phi_0^*$: $\lim_{j \to \infty} \Phi_0^{(\Delta_j)*} = \Phi_0' \ne \Phi_0^*$. We can then construct a sequence of consumption allocations $\{C^{(\Delta_j)} = C(\Phi_0^*;\, b_{0-,t}^{(\Delta_j)}, G_t^{(\Delta_j)});\, t \ge 0\}$ for $j = 1, 2, \ldots$.
+
+First, we show that $\{C^{(\Delta_j)};\, t \ge 0\}$ is an admissible consumption policy. According to the definition of~$C_{0,t}^{(\Delta)*}$, we have
+\begin{equation}\label{eq:A10}
+\int_0^\infty e^{-\rho \lfloor t/\Delta \rfloor \Delta}\bigl[C_{0,t}^{(\Delta)*}\, U_{C,t} + (C_{0,t}^{(\Delta)*}+G_t^{(\Delta)})\, U_{N,t} - b_{0-,t}^{(\Delta)}\, U_{C,t}\bigr] \cdot dt \ge 0.
+\end{equation}
+Using the definition of $C(\,\cdot\,;\, \cdot\,,\, \cdot\,)$ given in~\eqref{eq:C_given_Phi}, for $j \ge 1$, we have
+\begin{multline}\label{eq:A11}
+U(C_{0,t}^{(\Delta_j)}, C_{0,t}^{(\Delta_j)}+G_t^{(\Delta_j)}) + \Phi_0^*\bigl(C_{0,t}^{(\Delta_j)}\, U_{C,t} + (C_{0,t}^{(\Delta_j)}+G_t^{(\Delta_j)})\, U_{N,t} - b_{0-,t}^{(\Delta_j)}\, U_{C,t}\bigr) \\
+\ge U(C_{0,t}^{(\Delta_j)*}, C_{0,t}^{(\Delta_j)*}+G_t^{(\Delta_j)}) + \Phi_0^*\bigl(C_{0,t}^{(\Delta_j)*}\, U_{C,t} + (C_{0,t}^{(\Delta_j)*}+G_t^{(\Delta_j)})\, U_{N,t} - b_{0-,t}^{(\Delta_j)}\, U_{C,t}\bigr).
+\end{multline}
+Multiplying both sides of~\eqref{eq:A11} by $e^{-\rho \lfloor t/\Delta \rfloor \Delta}$ and integrating, we obtain
+\begin{multline}\label{eq:A12}
+\int_0^\infty e^{-\rho \lfloor t/\Delta \rfloor \Delta}\bigl[U(C_{0,t}^{(\Delta_j)}, C_{0,t}^{(\Delta_j)}+G_t^{(\Delta_j)}) + \Phi_0^*(C_{0,t}^{(\Delta_j)}\, U_{C,t} + (C_{0,t}^{(\Delta_j)}+G_t^{(\Delta_j)})\, U_{N,t} - b_{0-,t}^{(\Delta_j)}\, U_{C,t})\bigr] \\
+\ge \int_0^\infty e^{-\rho \lfloor t/\Delta \rfloor \Delta}\bigl[U(C_{0,t}^{(\Delta_j)*}, C_{0,t}^{(\Delta_j)*}+G_t^{(\Delta_j)}) + \Phi_0^*(C_{0,t}^{(\Delta_j)*}\, U_{C,t} + (C_{0,t}^{(\Delta_j)*}+G_t^{(\Delta_j)})\, U_{N,t} - b_{0-,t}^{(\Delta_j)}\, U_{C,t})\bigr].
+\end{multline}
+Because a policy~$C^{(\Delta_j)}$ yields a smaller household utility than the policy~$C^{(\Delta_j)*}$, we have
+\begin{equation}\label{eq:A13}
+\int_0^\infty e^{-\rho \lfloor t/\Delta \rfloor \Delta} U(C_{0,t}^{(\Delta_j)*}, C_{0,t}^{(\Delta_j)*}+G_t^{(\Delta_j)}) > \int_0^\infty e^{-\rho \lfloor t/\Delta \rfloor \Delta} U(C_{0,t}^{(\Delta_j)}, C_{0,t}^{(\Delta_j)}+G_t^{(\Delta_j)}).
+\end{equation}
+Combining~\eqref{eq:A10}, \eqref{eq:A12} and~\eqref{eq:A13}, we obtain
+\begin{equation}\label{eq:A14}
+\int_0^\infty e^{-\rho \lfloor t/\Delta \rfloor \Delta}\bigl(C_{0,t}^{(\Delta_j)}\, U_{C,t} + (C_{0,t}^{(\Delta_j)}+G_t^{(\Delta_j)})\, U_{N,t} - b_{0-,t}^{(\Delta_j)}\, U_{C,t}\bigr) > 0.
+\end{equation}
+Therefore, consumption process $\{C^{(\Delta_j)} = C(\Phi_0^*;\, b_{0-,t}^{(\Delta_j)}, G_t^{(\Delta_j)});\, t \ge 0\}$ for $j = 1, 2, \ldots$ satisfies the implementability condition and is admissible.
+
+Second, under our regularity conditions, using $\lim_{j \to \infty} \Phi_0^{(\Delta_j)*} = \Phi_0'$, $\lim_{j \to \infty} b_{0-,t}^{(\Delta_j)} = b_{0-,t}$, $\lim_{j \to \infty} G_t^{(\Delta_j)} = G_t$, we have
+\[
+\lim_{j \to \infty} C(\Phi_0^*;\, b_{0-,t}^{(\Delta_j)}, G_t^{(\Delta_j)}) = C(\Phi_0^*;\, b_{0-,t}, G_t), \quad \text{and} \quad \lim_{j \to \infty} C(\Phi_0^{(\Delta_j)*};\, b_{0-,t}^{(\Delta_j)}, G_t^{(\Delta_j)}) = C(\Phi_0';\, b_{0-,t}, G_t).
+\]
+Applying the dominated convergence theorem to~\eqref{eq:A13}, we obtain:
+\begin{align}\label{eq:A15}
+& \int_0^\infty e^{-\rho t} U\bigl(C(\Phi_0';\, b_{0-,t}, G_t), C(\Phi_0';\, b_{0-,t}, G_t)+G_t\bigr)\, dt \notag \\
+& \quad \ge \int_0^\infty e^{-\rho t} U\bigl(C(\Phi_0^*;\, b_{0-,t}, G_t), C(\Phi_0^*;\, b_{0-,t}, G_t)+G_t\bigr)\, dt.
+\end{align}
+The implementability condition under the Ramsey plan is
+\begin{equation}\label{eq:A16}
+\int_0^\infty e^{-\rho \lfloor t/\Delta \rfloor \Delta}\bigl(C_{0,t}^{(\Delta_j)*}\, U_{C,t} + (C_{0,t}^{(\Delta_j)*}+G_t^{(\Delta_j)})\, U_{N,t} - b_{0-,t}^{(\Delta_j)}\, U_{C,t}\bigr) \ge 0.
+\end{equation}
+Applying the dominated convergence theorem to~\eqref{eq:A16}, we obtain:
+\begin{equation}\label{eq:A17}
+\int_0^\infty e^{-\rho t}\bigl(C(\Phi_0';\, b_{0-,t}, G_t)\, U_{C,t} + (C(\Phi_0';\, b_{0-,t}, G_t)+G_t)\, U_{N,t} - b_{0-,t}\, U_{C,t}\bigr)\, dt \ge 0.
+\end{equation}
+Therefore, $\{C(\Phi_0';\, b_{0-,t}, G_t);\, t \ge 0\}$ is an admissible policy for the initial debt structure $\{b_{0-,t};\, t \ge 0\}$ and government spending process $\{G_t;\, t \ge 0\}$. However, the optimality of~$\Phi_0^*$ requires that
+\begin{align}\label{eq:A18}
+& \int_0^\infty e^{-\rho t} U\bigl(C(\Phi_0^*;\, b_{0-,t}, G_t), C(\Phi_0^*;\, b_{0-,t}, G_t)+G_t\bigr)\, dt \notag \\
+& \quad  > \int_0^\infty e^{-\rho t} U\bigl(C(\Phi_0';\, b_{0-,t}, G_t), C(\Phi_0';\, b_{0-,t}, G_t)+G_t\bigr)\, dt,
+\end{align}
+which contradicts~\eqref{eq:A15}. 
+\end{proof} 
+
+
+
+
+\newpage
+\bigskip
+%\footnotesize
+%\begin{center}
+%\textbf{References}
+%\end{center}
+%	\singlespacing
+%\setlength{\bibsep}{0.3ex}
+\bibliographystyle{chicago}
+\bibliography{LSreference}
+
+%% ==================================================================
+%% REFERENCES
+%% ==================================================================
+%\begin{thebibliography}{99}
+%\bibitem{AguiarEtAl2019} Aguiar, M., M.\ Amador, H.\ Hopenhayn, and I.\ Werning (2019). Take the short route: Equilibrium default and debt maturity. \textit{Econometrica} 87(2), 423--462.
+%
+%\bibitem{Barro1979} Barro, R.\ J.\ (1979). On the determination of the public debt. \textit{Journal of Political Economy} 87(5, Part~1), 940--971.
+%
+%\bibitem{BlackScholes1973} Black, F.\ and M.\ Scholes (1973). The pricing of options and corporate liabilities. \textit{Journal of Political Economy}, 637--654.
+%
+%\bibitem{Coase1972} Coase, R.\ H.\ (1972). Durability and monopoly. \textit{The Journal of Law and Economics} 15(1), 143--149.
+%
+%\bibitem{DebortoliEtAl2021} Debortoli, D., R.\ Nunes, and P.\ Yared (2021). Optimal fiscal policy without commitment: Revisiting Lucas-Stokey. \textit{Journal of Political Economy} 129(5), 1640--1665.
+%
+%\bibitem{HarrisonKreps1979} Harrison, J.\ M.\ and D.\ M.\ Kreps (1979). Martingales and arbitrage in multiperiod securities markets. \textit{Journal of Economic Theory} 20(3), 381--408.
+%
+%\bibitem{JiangEtAl2025} Jiang, W., T.\ J.\ Sargent, and N.\ Wang (2025). {[Discrete-time companion paper --- full citation to be added.]}
+%
+%\bibitem{LucasStokey1983} Lucas, R.\ E.\ J.\ and N.\ L.\ Stokey (1983). Optimal fiscal and monetary policy in an economy without capital. \textit{Journal of Monetary Economics} 12(1), 55--93.
+%
+%\bibitem{Stokey1981} Stokey, N.\ L.\ (1981). Rational expectations and durable goods pricing. \textit{The Bell Journal of Economics}, 112--128.
+%\end{thebibliography}
+
+\end{document}

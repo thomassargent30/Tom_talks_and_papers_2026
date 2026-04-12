@@ -1,0 +1,1016 @@
+\documentclass[12pt]{article}
+
+\usepackage{amsmath,amssymb,amsthm,enumerate}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{mathtools}
+\geometry{margin=1.2in}
+
+\usepackage[round,comma,authoryear]{natbib}
+
+\onehalfspacing
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{remark}{Remark}
+\newtheorem{definition}{Definition}
+
+\newcommand{\calU}{\mathcal{U}}
+\newcommand{\calZ}{\mathcal{Z}}
+\newcommand{\zbar}{\bar{z}}
+\newcommand{\zlow}{z_{0}}
+\newcommand{\R}{\mathbb{R}}
+
+\title{An HJB Equation for the Mirrlees Problem:\\
+       A Structural Parallel with the Ramsey Tax Problem}
+\author{Thomas J.\ Sargent}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+  This note constructs a Hamilton--Jacobi--Bellman (HJB) equation for the
+  Mirrlees optimal nonlinear income-tax problem by exploiting a structural
+  parallel with the continuous-time Ramsey tax problem studied in Jiang,
+  Sargent, and Wang (2025).  In the Ramsey problem, decisions are ordered by
+  time $t \ge 0$ and a single implementability constraint attaches a constant
+  Lagrange multiplier $\Phi_0$ to the planner's problem; the value function is
+  linear in a scalar state variable $X_t$.  In the Mirrlees problem, decisions
+  are ordered by the household's productivity type $z \in [z_0, \bar{z}]$ and a
+  single resource constraint attaches a constant multiplier $\mu$; the
+  appropriate HJB has the value function linear in the state variable
+  $\calU(z)$---the utility assigned to type $z$---under quasilinear
+  preferences.  In the general case, the HJB still has a canonical form but
+  the value function is not linear in $\calU$.  The note draws a
+  correspondence table between the two problems.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%% ===========================================================================
+\section{The Ramsey Problem with No Initial Term Debt}
+\label{sec:ramsey}
+%% ===========================================================================
+
+\subsection{Environment}
+
+Following Jiang, Sargent, and Wang (2025), hereafter JSW, consider a
+continuous-time Lucas--Stokey economy.  A representative household and a
+benevolent government operate on $t \in [0,\infty)$.  The resource constraint
+is
+\begin{equation}\label{eq:R_resource}
+  C_t + G_t = N_t, \qquad t \ge 0,
+\end{equation}
+where $C_t$ is consumption, $N_t$ is labor supply, and $G_t \ge 0$ is an
+exogenous government expenditure flow.  The household's lifetime utility is
+\begin{equation}\label{eq:R_utility}
+  \int_0^\infty e^{-\rho t}\, U(C_t, N_t)\, dt, \qquad \rho > 0.
+\end{equation}
+Throughout this section we impose the special case:
+\begin{equation}\label{eq:R_nodebt}
+  b_{0-,t} = 0 \quad \text{for all } t \ge 0,
+\end{equation}
+meaning that the government carries \emph{no} initial term debt.
+
+\subsection{The implementability constraint}
+
+Using the household's first-order conditions and the government's budget
+constraint, JSW show that an allocation $\{C_t, N_t\}$ is a competitive
+equilibrium allocation if and only if it satisfies the resource constraint
+\eqref{eq:R_resource} and the \emph{implementability constraint}.  Under
+\eqref{eq:R_nodebt} this constraint simplifies to
+\begin{equation}\label{eq:R_impl}
+  \int_0^\infty e^{-\rho t}\bigl[C_t\, U_{C,t} + N_t\, U_{N,t}\bigr]\, dt = 0.
+\end{equation}
+The Ramsey planner selects the best feasible allocation by maximizing
+$\int_0^\infty e^{-\rho t} U(C_t, N_t)\, dt$ subject to
+\eqref{eq:R_resource}--\eqref{eq:R_impl}.
+
+\subsection{The cumulative-liability state variable}
+
+Because $b_{0-,t} = 0$, the government's cumulative liability $\Pi_t$
+(the net financial position the government would carry if it never restructured
+its debt) reduces to
+\begin{equation}\label{eq:R_Pi}
+  \Pi_t = \int_0^t \frac{q_{0,s}}{q_{0,t}}\bigl(G_s - \tau_s N_s\bigr)\, ds,
+  \qquad \Pi_0 = 0,
+\end{equation}
+where $q_{0,t} = e^{-\rho t} U_{C,t}/U_{C,0}$ is the zero-coupon bond price
+and $\tau_t$ is the flat labor-income tax rate.  In differential form,
+\begin{equation}\label{eq:R_dPi}
+  d\Pi_t = r_t\,\Pi_t\, dt + (G_t - \tau_t N_t)\, dt,
+\end{equation}
+where $r_t = \rho + \dot{C}_t/C_t$ is the equilibrium short rate.
+
+JSW define the scalar state variable
+\begin{equation}\label{eq:R_Xt}
+  X_t = \Pi_t\, U_{C,t},
+\end{equation}
+which encodes both the government's cumulative liability and the household's
+marginal utility of consumption.  Differentiating and using \eqref{eq:R_dPi}
+together with the household's first-order conditions, they obtain
+\begin{equation}\label{eq:R_dXt}
+  \dot{X}_t = \rho\, X_t - C_t\, U_{C,t} - N_t\, U_{N,t},
+\end{equation}
+where the $b_{0-,t}$ terms present in the general JSW formula vanish under
+\eqref{eq:R_nodebt}.  Note that the dynamics are \emph{linear} in $X_t$ (the
+$\rho X_t$ term).
+
+\medskip
+
+\noindent\textbf{Initial condition.}  Because $\Pi_0 = 0$, the state starts at
+$X_0 = 0$.
+
+\subsection{The HJB equation}
+
+Define the value function
+\begin{equation}\label{eq:R_V}
+  V(X_t, t) = \max_{\{C_s;\, s \ge t\}} \int_t^\infty e^{-\rho(s-t)} U(C_s, C_s+G_s)\, ds,
+\end{equation}
+subject to the law of motion \eqref{eq:R_dXt}.  By the principle of dynamic
+programming, $V$ satisfies the HJB equation
+\begin{equation}\label{eq:R_HJB}
+  \rho\, V = V_t + \max_{C_t}\Bigl\{U(C_t, C_t+G_t)
+  + V_X\,\bigl(\rho X_t - C_t U_{C,t} - N_t U_{N,t}\bigr)\Bigr\}.
+\end{equation}
+
+\subsection{The linear value-function guess and its verification}
+
+\noindent\textbf{Guess.}  Try the additively separable form
+\begin{equation}\label{eq:R_Vguess}
+  V(X_t, t;\, \Phi_0) = -\Phi_0\, X_t + H(t;\, \Phi_0),
+\end{equation}
+where $\Phi_0 \ge 0$ is a scalar and $H$ is a function of time and $\Phi_0$.
+Then $V_X = -\Phi_0$ (constant in both $X_t$ and $t$).
+
+\medskip\noindent\textbf{Verification.}  Substituting \eqref{eq:R_Vguess}
+into \eqref{eq:R_HJB}, the $-\Phi_0\, \rho X_t$ terms on both sides cancel,
+and the HJB reduces to the following ODE for $H$:
+\begin{equation}\label{eq:R_Hode}
+  \rho\, H(t;\, \Phi_0) = H'(t;\, \Phi_0)
+  + \max_{C_t}\Bigl\{U(C_t, C_t+G_t)
+  + \Phi_0\bigl(C_t U_{C,t} + N_t U_{N,t}\bigr)\Bigr\}.
+\end{equation}
+The maximization over $C_t$ on the right side is independent of the state
+$X_t$.  The optimal consumption satisfies
+\begin{equation}\label{eq:R_Copt}
+  C(\Phi_0;\, G_t) = \argmax_{C} \Bigl\{U(C, C+G_t)
+  + \Phi_0\bigl(C\, U_C + (C+G_t) U_N\bigr)\Bigr\}.
+\end{equation}
+
+\subsection{Determining the multiplier $\Phi_0$}
+
+Substituting the optimal plan $C^* = C(\Phi_0; G_t)$ and $N^* = C^* + G_t$ into
+the implementability constraint \eqref{eq:R_impl} and imposing $X_0 = 0$,
+the Ramsey multiplier $\Phi_0^*$ is the non-negative root of
+\begin{equation}\label{eq:R_IC}
+  I_0(\Phi_0) \equiv
+  \int_0^\infty e^{-\rho t}\bigl[C(\Phi_0;\, G_t)\, U_C + N(\Phi_0;\, G_t)\, U_N\bigr]\, dt
+  = 0,
+\end{equation}
+where $N(\Phi_0; G_t) = C(\Phi_0; G_t) + G_t$.
+
+\medskip
+\begin{remark}[Economic interpretation of $\Phi_0$]
+The multiplier $\Phi_0$ is the shadow price of the single implementability
+constraint and is \emph{constant across all dates}.  This constancy reflects
+the exponential discount structure in the Ramsey problem: the $\rho X_t$ term
+in the law of motion \eqref{eq:R_dXt} exactly cancels the discounting on the
+left side of the HJB, keeping the shadow price $-V_X = \Phi_0$ time-invariant.
+\end{remark}
+
+\medskip
+\begin{remark}[Constancy of the optimal tax rate when $G_t = G$]
+When government spending is constant ($G_t = G$ for all $t$), the
+right-hand side of \eqref{eq:R_Copt} does not depend on $t$, so
+$C^* = C(\Phi_0^*; G)$ is constant.  The implementability constraint
+\eqref{eq:R_IC} then collapses to the static condition
+$C^* U_{C}^* + N^* U_{N}^* = 0$, and the Ramsey tax rate is constant at
+$\tau^* = G/N^*$.  This echoes Barro's (1979) tax-smoothing result.
+\end{remark}
+
+%% ===========================================================================
+\section{The Mirrlees Problem: Sequential Structure in Productivity}
+\label{sec:mirrlees}
+%% ===========================================================================
+
+\subsection{Environment}
+
+Following the lecture notes on optimal nonlinear taxation, there is a continuum
+of households indexed by productivity $z \in \calZ = [\zlow, \zbar]$ with
+density $f(z) > 0$.  A type-$z$ household produces output
+\begin{equation}\label{eq:M_output}
+  y(z) = z\, n(z),
+\end{equation}
+where $n(z)$ is labor and $z$ is the marginal product.  Utility over
+consumption $c$ and labor $n$ is $U(c, n)$.  The government observes only
+income $y$, not the decomposition $(z, n)$.
+
+\subsection{The mechanism design formulation}
+
+By the taxation principle, the government can equivalently optimize over
+incentive-compatible (IC) allocations $\{c(z), y(z)\}$.  Defining household
+utility
+\begin{equation}\label{eq:M_utility}
+  \calU(z) = U\!\left(c(z),\, \frac{y(z)}{z}\right),
+\end{equation}
+the local IC condition (envelope theorem applied to the announcement problem)
+is
+\begin{equation}\label{eq:M_IC}
+  \frac{d\calU}{dz} = -U_n\!\left(c(z),\,\frac{y(z)}{z}\right)\frac{y(z)}{z^2}
+  \equiv \phi(z),
+\end{equation}
+where $\phi(z) > 0$ because $U_n < 0$.  Condition \eqref{eq:M_IC} is the
+\emph{envelope ODE}: it plays the role of the law of motion for the state
+variable when the problem is viewed sequentially in $z$.
+
+Consumption is the implicit function of state and control:
+\begin{equation}\label{eq:M_c}
+  c(z) = C\!\bigl(\calU(z),\, y(z)\bigr),
+  \qquad
+  \text{where } \calU = U(C(\calU, y),\, y/z).
+\end{equation}
+Its partial derivatives are $C_\calU = 1/U_c$ and $C_y = -U_n/(z U_c)$.
+
+\subsection{The planner's problem}
+
+The government maximizes social welfare subject to the IC law of motion
+\eqref{eq:M_IC} and a resource constraint:
+\begin{alignat}{2}
+  & \max_{y(\cdot),\, \calU(\zlow)} &
+  & \int_{\zlow}^{\zbar} \psi(z)\,\calU(z)\,f(z)\,dz
+  \label{eq:M_obj} \\
+  & \text{s.t.} &
+  & \frac{d\calU}{dz} = -U_n\!\bigl(C(\calU,y),\, y/z\bigr)\frac{y}{z^2},
+  \label{eq:M_IC2} \\
+  & &
+  & \int_{\zlow}^{\zbar}\bigl[y(z)-C(\calU(z), y(z))\bigr]f(z)\,dz \ge B.
+  \label{eq:M_RC}
+\end{alignat}
+The control is the output schedule $y(\cdot)$; the state is $\calU(z)$.  The
+initial utility level $\calU(\zlow)$ is a free endpoint to be optimized.
+
+The single \emph{global} constraint \eqref{eq:M_RC} plays the same structural
+role as the implementability constraint \eqref{eq:R_impl} in the Ramsey
+problem.  Attaching a non-negative Lagrange multiplier $\mu$ to \eqref{eq:M_RC},
+the augmented objective is
+\begin{equation}\label{eq:M_augmented}
+  \max_{y(\cdot),\, \calU(\zlow)}
+  \int_{\zlow}^{\zbar}
+  \bigl[\psi(z)\,\calU(z) + \mu\bigl(y(z) - C(\calU(z), y(z))\bigr)\bigr]
+  f(z)\,dz - \mu B.
+\end{equation}
+
+%% ===========================================================================
+\section{The Mirrlees HJB Equation}
+\label{sec:mirrlees_hjb}
+%% ===========================================================================
+
+\subsection{The sequential value function}
+
+Viewing productivity $z$ as the ``index'' along which the planner proceeds
+(just as $t$ indexes the Ramsey planner's decisions), define the
+\emph{continuation value} for the planner who has already assigned allocations
+to types below $z$ and now faces types $[\zlow, \ldots] \to [z, \zbar]$ with
+inherited state $\calU(z) = u$:
+\begin{align}
+  V(u, z;\, \mu) = \max_{y(\cdot)}
+  \int_z^{\zbar}
+  \bigl[\psi(\zeta)\,\calU(\zeta) + \mu\bigl(y(\zeta) - C(\calU(\zeta), y(\zeta))\bigr)\bigr]
+  f(\zeta)\,d\zeta,
+  \label{eq:M_V}
+\end{align}
+subject to \eqref{eq:M_IC2} and $\calU(z) = u$.
+
+\medskip\noindent\textbf{Commitment through promised values.}
+The state variable $u = \calU(z)$ is the utility that has already been
+\emph{promised} to type $z$ by the assignments made to all lower types
+$\zeta < z$.  A continuation planner starting at $z$ is therefore bound to
+deliver exactly $u$ to type $z$: it inherits a commitment it cannot revise.
+In this sense the sequential-in-$z$ formulation embeds full commitment by the
+original mechanism designer.  Types already processed ($\zeta < z$) have
+received their allocations and cannot be renegotiated; the promised value $u$
+is the only ``footprint'' those past decisions leave on the continuation
+problem.  This is the Mirrlees analogue of the Ramsey planner's commitment to
+an initial household budget constraint: just as the state variable $X_t =
+\Pi_t U_{C,t}$ in the Ramsey HJB records the cumulative fiscal obligation
+that the Ramsey planner cannot escape, the promised utility $u$ in the
+Mirrlees HJB records the incentive obligation to type $z$ that the Mirrlees
+planner cannot escape.
+
+\subsection{The HJB equation}
+
+By the principle of dynamic programming, $V$ satisfies
+\begin{equation}\label{eq:M_HJB}
+  -\frac{\partial V}{\partial z} =
+  \max_{y}\Bigl\{
+  \bigl[\psi(z)\, u + \mu\bigl(y - C(u, y)\bigr)\bigr]f(z)
+  + \frac{\partial V}{\partial u}\cdot
+  \Bigl(-U_n\!\bigl(C(u,y),\,y/z\bigr)\frac{y}{z^2}\Bigr)
+  \Bigr\}.
+\end{equation}
+This is the \emph{Mirrlees HJB equation}.  Writing $\phi(u, y, z) \equiv
+-U_n(C(u,y), y/z)\, y/z^2 > 0$, \eqref{eq:M_HJB} can be compactly stated as
+\begin{equation}\label{eq:M_HJBcompact}
+  -V_z = \max_y \Bigl\{
+  [\psi(z)\, u + \mu(y - C(u,y))] f(z)
+  + V_u\cdot \phi(u, y, z)
+  \Bigr\}.
+\end{equation}
+
+\noindent\textbf{Boundary condition.}  At the top of the type distribution
+there is no continuation value, so
+\begin{equation}\label{eq:M_HJBBC}
+  V(u, \zbar;\, \mu) = 0 \quad \text{for all } u.
+\end{equation}
+
+\subsection{The linear value-function guess}
+
+\noindent\textbf{Guess.}  Motivated by the Ramsey analogy, try
+\begin{equation}\label{eq:M_Vguess}
+  V(u, z;\, \mu) = \lambda(z;\, \mu)\cdot u + K(z;\, \mu),
+\end{equation}
+where $\lambda$ is a function of $z$ and $K$ is a separate function of $z$ and
+$\mu$.  Then $V_u = \lambda(z)$.
+
+\medskip\noindent\textbf{When does the guess work?}  The linear guess is valid
+whenever the maximand in \eqref{eq:M_HJBcompact} is \emph{affine in $u$}.
+This requires:
+\begin{enumerate}[(i)]
+  \item The flow payoff $[\psi(z) u + \mu(y - C(u,y))] f(z)$ to be affine in $u$, which holds when $C(u, y)$ is affine in $u$.
+  \item The state dynamics $\phi(u, y, z)$ to be independent of $u$ (or affine in $u$), which holds when $U_n(C(u,y), y/z)$ is independent of $u$.
+\end{enumerate}
+Both conditions are satisfied under \emph{quasilinear preferences}, $U(c,n) =
+c - v(n)$, since then $C(u, y) = u + v(y/z)$, which is linear in $u$ with
+slope $1$, and $U_n = -v'(y/z)$ is independent of $c$ and hence of $u$.
+
+\medskip\noindent\textbf{Verification under quasilinear preferences.}  With
+$U = c - v(n)$:
+\begin{align*}
+  C(u, y) &= u + v(y/z), \\
+  \phi(u, y, z) &= v'(y/z)\, y/z^2.
+\end{align*}
+Substituting the linear guess \eqref{eq:M_Vguess} into \eqref{eq:M_HJBcompact}:
+\begin{multline*}
+  -\lambda'(z)\, u - K'(z) \\
+  = \max_y \Bigl\{
+  \bigl[\psi(z) - \mu\bigr] u\, f(z)
+  + \mu\bigl[y - v(y/z)\bigr] f(z)
+  + \lambda(z)\, v'(y/z)\, y/z^2
+  \Bigr\}.
+\end{multline*}
+Separating terms in $u$ from terms independent of $u$:
+\begin{align}
+  \lambda'(z) &= \bigl[\mu - \psi(z)\bigr] f(z),
+  \label{eq:M_costate} \\[4pt]
+  K'(z) &= -\max_{y}\Bigl\{\mu\bigl[y - v(y/z)\bigr] f(z)
+             + \lambda(z)\, v'(y/z)\, y/z^2\Bigr\}.
+  \label{eq:M_Kode}
+\end{align}
+Equation \eqref{eq:M_costate} is exactly the costate equation derived from the
+Hamiltonian approach in the lecture notes.
+
+\subsection{Optimality condition for the output schedule}
+
+The first-order condition for the maximization problem in \eqref{eq:M_Kode}
+(in the quasilinear case) is
+\begin{equation}\label{eq:M_ystar}
+  0 = \mu\bigl[1 - v'(y/z)/z\bigr] f(z)
+  + \frac{\lambda(z)}{z^2}\bigl[v'(y/z) + n\, v''(y/z)\bigr],
+\end{equation}
+where $n = y/z$.  Rearranging using $v'(n) = z(1-T'(y))$:
+\begin{equation}\label{eq:M_taxformula}
+  \frac{T'(y(z))}{1-T'(y(z))}
+  = \Bigl[1 + \frac{n\, v''(n)}{v'(n)}\Bigr]\cdot
+  \frac{\lambda(z)}{z\, f(z)\, \mu}.
+\end{equation}
+This is the Diamond (1998) ABC formula.
+
+\subsection{Boundary conditions and determination of $\mu$}
+
+\medskip\noindent\textbf{At the top.}  The boundary condition \eqref{eq:M_HJBBC}
+with the guess \eqref{eq:M_Vguess} gives
+\begin{equation}\label{eq:M_bctop}
+  \lambda(\zbar) = 0, \qquad K(\zbar) = 0.
+\end{equation}
+
+\medskip\noindent\textbf{At the bottom.}  The initial utility $\calU(\zlow)$
+is a free endpoint (the planner can choose the utility of the lowest type).
+The transversality condition at the free endpoint is $V_u(u, \zlow) = 0$, which
+by the guess \eqref{eq:M_Vguess} gives
+\begin{equation}\label{eq:M_bcbot}
+  \lambda(\zlow) = 0.
+\end{equation}
+
+Together, \eqref{eq:M_bctop}--\eqref{eq:M_bcbot} are the two-point boundary
+conditions on the costate ODE \eqref{eq:M_costate}.  They are exactly the
+transversality conditions $\lambda(\zlow) = \lambda(\zbar) = 0$ derived in the
+lecture notes.  In the quasilinear case, integrating \eqref{eq:M_costate} from
+$z$ to $\zbar$ using $\lambda(\zbar) = 0$ gives
+\begin{equation}\label{eq:M_lambdasol}
+  \lambda(z) = \int_z^{\zbar} \bigl[\psi(\zeta) - \mu\bigr] f(\zeta)\, d\zeta,
+\end{equation}
+and the lower boundary condition $\lambda(\zlow) = 0$ pins down $\mu = 1$
+(the marginal utility of public funds equals one under quasilinear
+preferences).
+
+\medskip\noindent\textbf{Determining $\mu$ in general.}  For general
+preferences, the multiplier $\mu$ is determined by the resource constraint
+\eqref{eq:M_RC}:
+\begin{equation}\label{eq:M_mudet}
+  \int_{\zlow}^{\zbar}\bigl[y^\ast(z) - C(\calU^\ast(z), y^\ast(z))\bigr] f(z)\, dz = B,
+\end{equation}
+which plays the role of equation \eqref{eq:R_IC} in the Ramsey problem.
+
+%% ===========================================================================
+\section{Structural Correspondence between the Two Problems}
+\label{sec:correspondence}
+%% ===========================================================================
+
+Table~\ref{tab:correspondence} displays the element-by-element structural
+parallel between the Ramsey problem (no initial term debt) and the Mirrlees
+problem.
+
+\begin{table}[h!]
+\centering
+\caption{Structural Correspondence: Ramsey vs.\ Mirrlees}
+\label{tab:correspondence}
+\renewcommand{\arraystretch}{1.45}
+\begin{tabular}{@{} p{6.2cm} p{6.2cm} @{}}
+\toprule
+\textbf{Ramsey problem (no initial debt)} & \textbf{Mirrlees problem} \\
+\midrule
+Sequential index: time $t \in [0,\infty)$ &
+Sequential index: productivity $z \in [\zlow, \zbar]$ \\
+
+State variable: $X_t = \Pi_t\, U_{C,t}$ &
+State variable: $\calU(z)$ (household utility) \\
+
+Control: consumption $C_t$ &
+Control: output schedule $y(z)$ \\
+
+Law of motion:
+$\dot{X}_t = \rho X_t - C_t U_{C,t} - N_t U_{N,t}$ &
+Envelope ODE:
+$\calU'(z) = -U_n(c, y/z)\, y/z^2$ \\
+
+Initial condition: $X_0 = 0$ &
+Free endpoint: $\calU(\zlow)$ optimized; $\lambda(\zlow)=0$ \\
+
+Terminal condition: transversality as $t\to\infty$ &
+Terminal condition: $\lambda(\zbar)=0$ \\
+
+Objective:\newline $\displaystyle\int_0^\infty e^{-\rho t} U(C_t, N_t)\, dt$ &
+Objective:\newline $\displaystyle\int_{\zlow}^{\zbar} \psi(z)\, \calU(z)\, f(z)\, dz$ \\
+
+Single global constraint: implementability ($=0$) &
+Single global constraint: resource ($=B$) \\
+
+Global-constraint multiplier $\Phi_0$ &
+Global-constraint multiplier $\mu$ \\
+
+Value function: $V = -\Phi_0 X_t + H(t;\, \Phi_0)$ &
+Value function: $V = \lambda(z)\, \calU + K(z;\, \mu)$\newline
+(linear in $\calU$ under quasilinear preferences) \\
+
+HJB shadow price: $V_X = -\Phi_0$ \emph{(constant)} &
+HJB shadow price: $V_\calU = \lambda(z)$ \emph{(varies with $z$)} \\
+
+Costate dynamics:
+$-\Phi_0 = \text{const}$ &
+Costate ODE:
+$\lambda'(z) = [\mu - \psi(z)] f(z)$ \\
+
+Optimal control: $C(\Phi_0;\, G_t) = \displaystyle\argmax_C [\ldots]$ &
+Optimal control: $y(z) = \argmax_y [\ldots]$ (tax formula) \\
+
+Determines $\Phi_0$: $I_0(\Phi_0) = 0$ &
+Determines $\mu$: resource constraint $= B$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\medskip
+A key structural difference deserves emphasis:
+
+\begin{remark}[Constant vs.\ varying shadow price]
+In the Ramsey problem, the shadow price $V_X = -\Phi_0$ is the same
+constant at every date $t$.  This constancy arises because the state dynamics
+\eqref{eq:R_dXt} contain a $\rho X_t$ term that cancels the discounting
+$\rho V$ on the left of the HJB \eqref{eq:R_HJB}, leaving the costate
+equation trivially satisfied with $\Phi_0 = \text{const}$.
+
+In the Mirrlees problem, the shadow price $\lambda(z) = V_\calU$ evolves with
+$z$ according to the costate ODE \eqref{eq:M_costate}.  The reason is that
+the envelope ODE \eqref{eq:M_IC} contains no term proportional to $\calU$
+(analogous to no ``$z$-discounting''), and the welfare weight $\psi(z)$ varies
+with $z$.  The costate $\lambda(z)$ accumulates the gap between the social
+welfare weight $\psi$ and the social cost of public funds $\mu$, measuring the
+``redistribution pressure'' emanating from types above $z$.
+\end{remark}
+
+\begin{remark}[Quasilinear preferences as the exact Ramsey analogue]
+In the Ramsey problem, the linear value-function guess $V = -\Phi_0 X_t +
+H(t)$ works for \emph{all} admissible preferences.  This is because the
+dynamics \eqref{eq:R_dXt} are linear in $X_t$ for any preferences, and the
+optimization over $C_t$ in the HJB is independent of $X_t$.
+
+In the Mirrlees problem, the analogous linear guess $V = \lambda(z) \calU +
+K(z)$ works only under \emph{quasilinear preferences} $U = c - v(n)$, because
+only then is the implicit function $C(\calU, y) = \calU + v(y/z)$ linear in
+$\calU$, making the HJB affine in the state $\calU$.  For general preferences,
+$C(\calU, y)$ is nonlinear in $\calU$, and the value function $V(u,z)$ is
+nonlinear in $u$.  The HJB \eqref{eq:M_HJBcompact} remains the correct
+dynamic-programming equation in both cases; it is only the validity of the
+\emph{linear} guess that is special to quasilinear preferences.
+\end{remark}
+
+%% ===========================================================================
+\section{The Mirrlees HJB in the General Case}
+\label{sec:general}
+%% ===========================================================================
+
+For general preferences, the HJB \eqref{eq:M_HJBcompact} still governs the
+value function, but $V$ is a nonlinear function of $u$.  The optimality
+conditions derived from the Hamiltonian approach in the lecture notes---the
+$H_y = 0$ condition and the costate equation---are exactly the first-order
+conditions of the HJB: they arise from differentiating the maximand in
+\eqref{eq:M_HJBcompact} with respect to $y$ and equating the $z$-derivative
+of $V_\calU$ to minus the $\calU$-gradient of the maximand.
+
+Specifically, denote $\lambda(z) \equiv V_u(u^*(z), z)$ along the optimal
+path, where $u^*(z) = \calU^*(z)$ is the optimal utility assignment.  Then:
+
+\begin{enumerate}[(i)]
+
+\item \textbf{Optimality in $y$} (from $\partial/\partial y$ of the maximand):
+\begin{equation}\label{eq:M_Hy_general}
+  \mu \, [1 - C_y] f(z)
+  - \lambda(z)\Bigl[U_{nc}\, C_y + U_{nn}/z\Bigr]\frac{y}{z^2}
+  - \lambda(z)\frac{U_n}{z^2} = 0.
+\end{equation}
+
+\item \textbf{Costate equation} (from $-\partial/\partial u$ of the maximand):
+\begin{equation}\label{eq:M_costate_general}
+  \frac{d\lambda}{dz} = \mu\, C_\calU\, f(z) - \psi(z)\, f(z)
+  + \lambda(z)\, U_{nc}\,\frac{y}{z^2}\, C_\calU.
+\end{equation}
+
+\end{enumerate}
+These are identical to equations (5.2) and (5.3) of the lecture notes.  The HJB
+perspective makes clear that $\lambda(z)$ is not an auxiliary variable of the
+Hamiltonian approach but is the \emph{slope of the value function}
+$\lambda(z) = V_u(\calU^*(z), z)$ evaluated along the optimal path.
+
+%% ===========================================================================
+\section{Summary and Interpretation}
+\label{sec:summary}
+%% ===========================================================================
+
+Both the Ramsey and Mirrlees planning problems share the following structural
+architecture:
+
+\begin{enumerate}[(1)]
+
+\item \textbf{A sequential ordering principle.}  In Ramsey, decisions are made
+along the time axis $t$.  In Mirrlees, the social planner processes
+households from $z = \zlow$ upward through higher productivities.  In both
+cases, the planner integrates a \emph{flow payoff} and a \emph{law of motion}
+for a one-dimensional state variable.
+
+\item \textbf{A single global constraint that attaches a constant multiplier.}
+In Ramsey, the implementability constraint \eqref{eq:R_impl} attaches the
+constant $\Phi_0$.  In Mirrlees, the resource constraint \eqref{eq:M_RC}
+attaches the constant $\mu$.  In both cases, this multiplier folds the global
+constraint into the flow payoff and turns the problem into a standard
+(undiscounted or discounted) calculus-of-variations problem.
+
+\item \textbf{A Hamilton--Jacobi--Bellman equation.}  Once the global
+constraint is Lagrangianized, the problem admits a value function that
+satisfies an HJB.  The shadow price of the state variable ($V_X = -\Phi_0$ in
+Ramsey; $V_\calU = \lambda(z)$ in Mirrlees) is the costate variable of the
+underlying optimal control problem.
+
+\item \textbf{A determining equation for the global multiplier.}  The multiplier
+is found by imposing the global constraint: $I_0(\Phi_0) = 0$ in Ramsey, and
+the resource constraint \eqref{eq:M_mudet} in Mirrlees.
+
+\end{enumerate}
+
+\noindent The deepest difference is that in Ramsey the costate is constant
+(because exponential discounting with rate $\rho$ exactly offsets the $\rho
+X_t$ drift in the state), while in Mirrlees the costate $\lambda(z)$ varies,
+accumulating the difference between the planner's welfare weights and the
+social cost of funds.  Under quasilinear preferences the linear value-function
+guess works in both problems, and the two HJBs are fully isomorphic.
+
+%% ===========================================================================
+\section{Extension: Cyclical Government Expenditures in the Ramsey Problem}
+\label{sec:cyclical_ramsey}
+%% ===========================================================================
+
+\subsection{Setup}
+
+This section studies the Ramsey HJB under cyclical government expenditures,
+mirroring Section~5.3 of JSW.  Maintain the no-initial-debt specialization
+$b_{0-,t}=0$ and adopt the utility function $U(C,N)=\ln C - N$ used in JSW's
+quantitative examples.  Government spending follows
+\begin{equation}\label{eq:cyc_G}
+  G_t = G_0 + \theta_G \cos(\omega t), \qquad G_0,\,\theta_G>0,\; \omega>0,
+\end{equation}
+so that fiscal needs oscillate around the mean $G_0$ with amplitude $\theta_G$
+and angular frequency $\omega$.
+
+\subsection{Constant optimal tax from the HJB}
+
+Under $U = \ln C - N$ we have $U_C = 1/C$ and $U_N = -1$.  With
+$b_{0-,t}=0$, the maximization problem \eqref{eq:R_Copt} in the HJB becomes
+\begin{equation}\label{eq:cyc_HJBmax}
+  C(\Phi_0;\, G_t)
+  = \argmax_{C>0}\Bigl\{
+  \ln C - (C+G_t)
+  + \Phi_0\bigl[C\cdot\tfrac{1}{C} + (C+G_t)(-1)\bigr]
+  \Bigr\}
+  = \argmax_{C>0}\Bigl\{
+  \ln C - (1+\Phi_0)(C+G_t)
+  \Bigr\}.
+\end{equation}
+The first-order condition $1/C = 1+\Phi_0$ yields
+\begin{equation}\label{eq:cyc_Cstar}
+  C^* = \frac{1}{1+\Phi_0^*},
+  \qquad
+  \tau^* = 1 - C^* = \frac{\Phi_0^*}{1+\Phi_0^*}.
+\end{equation}
+Crucially, $C^*$ and $\tau^*$ are \emph{independent of $G_t$}: the cyclical
+component of fiscal needs does not appear in the static optimality condition
+for consumption.  The Ramsey planner therefore imposes a \emph{constant} tax
+rate on every date, even though government expenditures oscillate.  This is
+the HJB incarnation of Barro's (1979) tax-smoothing result.
+
+\medskip
+\begin{remark}[Why $G_t$ drops out]
+The HJB maximand contains $G_t$ twice: once in the felicity term $-(C+G_t)$ and once
+in the incentive term $-(1+\Phi_0)G_t$.  Both enter additively as constants
+in the maximization over $C$.  The optimum $C^*$ is therefore pinned by the
+ratio of the marginal utility of consumption to the Lagrange multiplier, with
+no role for $G_t$.
+\end{remark}
+
+\subsection{Determining $\Phi_0^*$ from the implementability constraint}
+
+The implementability constraint \eqref{eq:R_IC} with $U_C = 1/C^*$ and
+$U_N = -1$ reduces to
+\begin{equation}\label{eq:cyc_IC}
+  \int_0^\infty e^{-\rho t}\bigl[1 - (C^*+G_t)\bigr]\, dt = 0,
+\end{equation}
+which gives
+\begin{equation}\label{eq:cyc_PV}
+  \frac{1-C^*}{\rho}
+  = \int_0^\infty e^{-\rho t} G_t\, dt
+  = \frac{G_0}{\rho}
+  + \theta_G \frac{\rho}{\rho^2+\omega^2}.
+\end{equation}
+Hence
+\begin{equation}\label{eq:cyc_tau}
+  1-C^* = G_0 + \theta_G\frac{\rho^2}{\rho^2+\omega^2}.
+\end{equation}
+Three observations follow.  First, the equilibrium tax rate depends only on
+the discounted present value of government expenditures, not on the timing of
+the oscillations.  Second, the contribution of the cyclical component is
+attenuated by the factor $\rho^2/(\rho^2+\omega^2) \in (0,1)$: high-frequency
+fiscal cycles ($\omega \gg \rho$) contribute negligibly to the tax rate
+because they nearly cancel in present value.  Third, as $\theta_G\to 0$ the
+formula collapses to the constant-spending result $1-C^* = G_0$.
+
+\subsection{The cyclical state variable $X_t^*$}
+
+Even though $C^*$ and $\tau^*$ are constant, the state variable
+$X_t^* = \Pi_t^* U_{C,t}^* = \Pi_t^*/C^*$ inherits the cyclicality of $G_t$.
+Substituting $C^* = \text{const}$, $N_t^* = C^*+G_t$ into the law of motion
+\eqref{eq:R_dXt}:
+\begin{equation}\label{eq:cyc_dX}
+  \dot X_t = \rho X_t - 1 + C^* + G_t
+  = \rho X_t - \frac{\theta_G\rho^2}{\rho^2+\omega^2}
+    + \theta_G\cos(\omega t),
+\end{equation}
+where we used $1-C^* = G_0 + \theta_G\rho^2/(\rho^2+\omega^2)$ to absorb
+$G_0$.  The ODE \eqref{eq:cyc_dX} is a linear constant-coefficient equation
+with a sinusoidal forcing term and a constant term that exactly offsets the
+particular solution's mean.  Solving with $X_0 = 0$:
+\begin{equation}\label{eq:cyc_Xsol}
+  X_t^*
+  = \frac{\theta_G}{\rho^2+\omega^2}
+    \bigl[\rho\bigl(1-\cos(\omega t)\bigr) + \omega\sin(\omega t)\bigr].
+\end{equation}
+This solution is bounded, oscillates with period $2\pi/\omega$, and starts
+and returns to values near zero.  For $\omega \gg \rho$ the amplitude of
+oscillation is approximately $\theta_G/\omega$, so high-frequency spending
+shocks produce only small oscillations in the state variable.
+
+\medskip
+\begin{remark}[$X_t^*$ as a fiscal buffer]
+The state variable $X_t^*$ is the product of the government's cumulative
+liability $\Pi_t^*$ and the household's marginal utility $1/C^*$.  Under
+constant $C^*$, variations in $X_t^*$ map one-for-one into variations in
+$\Pi_t^*$.  Equation~\eqref{eq:cyc_Xsol} shows that $\Pi_t^*$ absorbs all
+cyclical fiscal fluctuations: when $G_t$ is high the government runs a deficit
+(the primary surplus $S_t^* = \tau^* N_t^* - G_t$ falls), pushing $\Pi_t^*$
+up; when $G_t$ returns to its mean, the surplus rises and $\Pi_t^*$ falls back.
+The tax rate is constant throughout because it is the \emph{state variable},
+not the tax rate, that adjusts.
+\end{remark}
+
+\subsection{Structure of $H(t;\, \Phi_0^*)$}
+
+The time-varying component of the value function, $H(t;\,\Phi_0^*)$, satisfies
+the ODE \eqref{eq:R_Hode} with $C_t = C^*$ fixed. Evaluating the maximand:
+\begin{equation}\label{eq:cyc_Hode}
+  \rho H(t;\,\Phi_0^*)
+  = H'(t;\,\Phi_0^*)
+  + \ln C^* - (C^*+G_t) + \Phi_0^*\bigl[1 - (C^*+G_t)\bigr].
+\end{equation}
+Because $G_t = G_0 + \theta_G\cos(\omega t)$, the right-hand side oscillates
+in $t$.  The solution $H(t;\,\Phi_0^*)$ is therefore a sum of a constant
+steady-state component (driven by $G_0$) and an oscillatory transient (driven
+by $\theta_G\cos(\omega t)$):
+\begin{equation}
+  H(t;\,\Phi_0^*) = H_\infty + A_H\cos(\omega t) + B_H\sin(\omega t),
+\end{equation}
+where $H_\infty = [\ln C^* - (1+\Phi_0^*) C^*]/\rho$ is the constant
+component and $(A_H, B_H)$ are determined by matching $\omega$-frequency
+terms.  Although $H$ oscillates, the optimal $C$ does not: the oscillations
+in $H$ represent the time-varying cost of financing cyclical government
+expenditures, holding the tax plan fixed.  The value function
+$V(X_t^*, t) = -\Phi_0^* X_t^* + H(t;\Phi_0^*)$ therefore oscillates both
+through the state $X_t^*$ and directly through $H(t)$, the two oscillations
+together reflecting the complete welfare cost of the cyclical fiscal program.
+
+\medskip
+\begin{remark}[Comparison with the constant-$G$ case]
+When $\theta_G = 0$ the problem is fully stationary: $C^* = 1/(1+\Phi_0^*)$,
+$\tau^* = G_0/N^* = G_0/(C^*+G_0)$ is constant, $r^* = \rho$ is constant,
+$X_t^* = 0$ for all $t$, and $H(t;\Phi_0^*) = H_\infty$ is constant.  The
+HJB collapses to a static saddle-point problem.  Introducing $\theta_G > 0$
+breaks stationarity of $H$ and $X^*$ but leaves the control rule intact: the
+optimal plan ``reacts'' to fiscal cycles entirely through the state variable,
+not through the tax rate.
+\end{remark}
+
+%% ===========================================================================
+\section{Extension: The Mirrlees HJB with Pareto-Distributed Productivity}
+\label{sec:pareto}
+%% ===========================================================================
+
+\subsection{Setup and motivation}
+
+The canonical Mirrlees analysis with bounded support $\calZ = [\zlow, \zbar]$
+yields a \emph{zero top marginal tax rate}: $T'(y(\zbar)) = 0$.  This result
+follows directly from the boundary condition $\lambda(\zbar) = 0$ together
+with the tax formula \eqref{eq:M_taxformula}: at the top, $(1-F(\zbar)) = 0$
+so the costate is zero and the distortion vanishes.  A large empirical
+literature documents that the upper tail of the earnings distribution is
+well-approximated by a Pareto distribution, not a distribution with bounded
+support.  Diamond and Saez (2011) argue that the zero-top-rate result is an
+artifact of bounded support and derive a formula for the optimal \emph{limiting}
+marginal tax rate under an unbounded Pareto tail.
+
+This section extends the HJB framework to unbounded support
+$\calZ = [\zlow, \infty)$ and derives the Diamond--Saez top-rate formula
+directly from the asymptotic behavior of the Mirrlees HJB.
+
+\subsection{The Pareto distribution}
+
+Let productivity $z$ follow a Pareto distribution with shape $\alpha > 1$
+and lower bound $\zlow$:
+\begin{equation}\label{eq:pareto_f}
+  f(z) = \alpha\,\zlow^\alpha\, z^{-\alpha-1}, \qquad
+  1 - F(z) = \left(\frac{\zlow}{z}\right)^\alpha, \qquad z \ge \zlow.
+\end{equation}
+The inverse hazard rate is
+\begin{equation}\label{eq:pareto_haz}
+  \frac{1-F(z)}{z\,f(z)} = \frac{1}{\alpha}\quad \text{for all } z \ge \zlow,
+\end{equation}
+a constant.  Under the optimal tax schedule, earnings $y(z)$ are also Pareto
+in the tail.  With quasilinear preferences $U = c - v(n)$ and constant
+elasticity $v(n) = n^{1+1/e}/(1+1/e)$, the earnings Pareto parameter is
+\begin{equation}\label{eq:pareto_y}
+  \alpha_y = \frac{\alpha\, e}{1+e},
+\end{equation}
+where $e = 1/\gamma$ is the compensated labor-supply (or taxable-income)
+elasticity.
+
+\subsection{Transversality replaces the upper boundary condition}
+
+With $\zbar = \infty$, there is no upper type to impose $\lambda(\infty) = 0$
+as a point condition.  Instead, optimality requires the transversality
+condition
+\begin{equation}\label{eq:pareto_TV}
+  \lim_{z\to\infty} V(u,\, z;\, \mu) = 0 \quad \text{for all } u,
+\end{equation}
+meaning no continuation value remains once all types have been assigned
+allocations.  Under the linear guess $V = \lambda(z)\,u + K(z;\mu)$, this
+decomposes into
+\begin{equation}\label{eq:pareto_BC}
+  \lambda(\infty) = 0, \qquad K(\infty) = 0.
+\end{equation}
+These are exactly the conditions that ensure the costate integral
+\eqref{eq:M_lambdasol} converges.  For the Pareto distribution, the integrand
+$[\psi(\zeta)-\mu]f(\zeta)$ decays as $\zeta^{-\alpha-1}$, fast enough for
+$\alpha > 1$, so the integral converges and $\lambda(\infty) = 0$ is
+automatically satisfied as a transversality condition rather than imposed as
+a point constraint.
+
+\subsection{Asymptotic costate and the nonzero top rate}
+
+Specialize to quasilinear preferences ($\mu = 1$) and assume the planner
+places zero welfare weight on the top: $\psi(z) \to 0$ as $z\to\infty$ (a
+purely redistributive planner).  For $z$ large enough that $\psi(z) = 0$:
+\begin{equation}\label{eq:pareto_lambda}
+  \lambda(z) = \int_z^\infty \bigl[\psi(\zeta)-1\bigr] f(\zeta)\,d\zeta
+  \;\approx\; -\int_z^\infty f(\zeta)\,d\zeta
+  = -(1-F(z))
+  = -\!\left(\frac{\zlow}{z}\right)^\alpha < 0.
+\end{equation}
+The costate is \emph{negative} for high types and decays to zero at the Pareto
+rate $z^{-\alpha}$.  Negative $\lambda(z)$ means the value function $V$ is
+\emph{decreasing} in the inherited utility $\calU$: giving more utility to a
+high-productivity type is socially costly because it tightens the incentive
+constraint for all lower types, requiring the planner to give them more utility
+to maintain IC.
+
+\medskip
+\begin{remark}[Negative costate and redistribution]
+In the bounded-support problem, $\lambda(z) \geq 0$ everywhere under
+redistributive weights (the costate equals the redistribution pressure from
+above, which is non-negative).  With Pareto unbounded support and zero tail
+weight, $\lambda(z) < 0$ for $z$ above the crossing point $\psi(z^{**}) = 1$.
+The sign reversal signals that the planner is willing to earn revenue from top
+types at the cost of distorting their labor supply---exactly what a positive
+top marginal tax rate achieves.
+\end{remark}
+
+\subsection{The Diamond--Saez formula from the asymptotic HJB}
+
+Substituting the asymptotic costate \eqref{eq:pareto_lambda} into the tax
+formula derived from the HJB first-order condition (the general formula
+\eqref{eq:M_taxformula} applied to the quasilinear case with constant
+elasticity $e = 1/\gamma$):
+\begin{align}
+  \frac{T'}{1-T'}
+  &= -\frac{1+\varepsilon^u}{\varepsilon^c} \cdot
+     \frac{\lambda(z)}{z\,f(z)\,\mu} \notag \\
+  &\approx \frac{1+\gamma}{\phantom{x}} \cdot
+     \frac{1-F(z)}{z\,f(z)} \notag \\
+  &= \frac{1+\gamma}{\alpha},
+  \label{eq:pareto_wedge}
+\end{align}
+where the second line uses $\lambda(z)/\mu \approx -(1-F(z))$ and the third
+uses the Pareto inverse hazard rate \eqref{eq:pareto_haz}.  Since
+$(1+\varepsilon^u)/\varepsilon^c = (1+1/e)/(1/e) = 1+\gamma$ for quasilinear
+preferences, and converting to the earnings Pareto
+parameter via $\alpha = \alpha_y(1+e)/e = \alpha_y(1+\gamma)$:
+\begin{equation}\label{eq:pareto_DS}
+  \frac{T'_\infty}{1-T'_\infty}
+  = \frac{1+\gamma}{\alpha_y(1+\gamma)}
+  = \frac{1}{\alpha_y\, e},
+\end{equation}
+giving the Diamond--Saez formula:
+\begin{equation}\label{eq:DS}
+  \boxed{T'_\infty = \frac{1}{1+\alpha_y\, e}.}
+\end{equation}
+
+\subsection{Interpretation through the HJB lens}
+
+Formula \eqref{eq:DS} can be read directly from three elements of the HJB:
+\begin{enumerate}[(i)]
+  \item \textbf{Costate decay rate $(\alpha)$.}  $-\lambda(z)/[1-F(z)] \to 1$:
+    the costate decays at exactly the rate of the Pareto tail.  A heavier tail
+    ($\alpha$ smaller) means the costate $\lambda(z)$ is numerically large
+    relative to density, so the incentive-constraint distortion is large and
+    the tax rate is high.
+
+  \item \textbf{Inverse hazard rate $(1/\alpha)$.}  The Pareto inverse hazard
+    rate \eqref{eq:pareto_haz} is the ratio $(1-F)/(zf)$ that converts the
+    magnitude of $\lambda$ per person into the tax wedge per unit of income.
+    With a thicker tail (smaller $\alpha$), more types are affected by any
+    given marginal rate, so the revenue gain from a rate increase is large
+    relative to the behavioral distortion at the margin.
+
+  \item \textbf{Elasticity $(e)$.}  The factor $(1+\varepsilon^u)/\varepsilon^c
+    = (1+\gamma)$ multiplies the inverse hazard rate.  A more elastic labor
+    supply (smaller $1/\gamma$, i.e., larger $e$) amplifies the behavioral
+    revenue loss from a rate increase, pushing the optimal rate down.
+\end{enumerate}
+The HJB perspective makes these three forces transparent: they are the
+gradient of the value function ($\lambda$), the geometry of the type
+distribution ($f$ and $F$), and the curvature of the flow payoff (the
+elasticity terms in the maximand).
+
+\subsection{Zero top rate under bounded support vs.\ positive top rate under
+Pareto: a unified view}
+
+In both cases the tax formula is
+$T'/(1-T') = -(1+\varepsilon^u)/\varepsilon^c \cdot \lambda(z)/(zf(z)\mu)$.
+The difference is entirely in the behavior of $\lambda(z)/[zf(z)]$:
+\begin{itemize}
+  \item \textbf{Bounded support:}  $1-F(z) \to 0$ as $z\to\zbar$ faster
+    than density $f(z) > 0$, so $(1-F(z))/(z\,f(z))\to 0$.  Combined with
+    $\lambda(\zbar)=0$, the tax formula gives $T'(\zbar) = 0$.
+
+  \item \textbf{Pareto tail:}  $(1-F(z))/(z\,f(z)) \to 1/\alpha > 0$ and
+    $\lambda(z)\approx -(1-F(z))$, so the ratio $\lambda(z)/(zf(z)) \to
+    -1/\alpha \neq 0$.  The tax formula gives $T'_\infty = 1/(1+\alpha_y e)>0$.
+\end{itemize}
+The zero-rate result and the Diamond--Saez formula are thus two limiting cases
+of the same HJB first-order condition, differing only in the asymptotic
+behavior of the Pareto inverse hazard rate.
+
+\subsection{Asymptotic value function under Pareto}
+
+Under the linear guess the value function is $V(u,z;\mu) = \lambda(z)\,u +
+K(z;\mu)$.  For large $z$:
+\begin{equation}\label{eq:pareto_V}
+  \lambda(z) \approx -(\zlow/z)^\alpha, \qquad
+  K(z;\mu) \approx -\int_z^\infty \mathcal{F}(\zeta)\,d\zeta
+\end{equation}
+where $\mathcal{F}(\zeta) = \mu[y^*(\zeta)-C(\calU^*(\zeta),y^*(\zeta))]f(\zeta)$
+is the flow resource surplus at $\zeta$.  Both $\lambda(z)$ and $K(z;\mu)$
+decay polynomially at rate $z^{-\alpha}$, consistent with the transversality
+condition $V(u,z;\mu) \to 0$.  The rate of decay is the Pareto shape
+$\alpha$: heavier tails (smaller $\alpha$) slow the decay of the continuation
+value, put more weight on incentive constraints at high types, and push up the
+optimal tax rate.
+
+\subsection{Table: bounded support vs.\ Pareto tail}
+
+\begin{table}[h!]
+\centering
+\caption{Mirrlees HJB: Bounded vs.\ Pareto-tailed productivity}
+\label{tab:pareto}
+\renewcommand{\arraystretch}{1.45}
+\begin{tabular}{@{} p{5.8cm} p{5.8cm} @{}}
+\toprule
+\textbf{Bounded support $\calZ=[\zlow,\zbar]$} &
+\textbf{Pareto tail $\calZ=[\zlow,\infty)$} \\
+\midrule
+Upper BC: $\lambda(\zbar)=0$ (point condition) &
+Upper BC: $\lambda(\infty)=0$ (transversality) \\
+$(1-F(\zbar))/(z_{\bar{z}}\,f(\zbar)) = 0$ &
+$(1-F(z))/(zf(z)) \to 1/\alpha > 0$ \\
+$\lambda(z)/[zf(z)] \to 0$ as $z\to\zbar$ &
+$\lambda(z)/[zf(z)] \to -1/\alpha < 0$ \\
+Zero top rate: $T'(\zbar)=0$ &
+Positive top rate: $T'_\infty=1/(1+\alpha_y e)>0$ \\
+Value fn.\ decay: $V(u,z)\to 0$ at finite $\zbar$ &
+Value fn.\ decay: $V(u,z)\sim z^{-\alpha}\to 0$ \\
+Costate: $\lambda(z)\geq 0$ is hump-shaped &
+Costate: $\lambda(z)$ turns negative for large $z$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{remark}[Empirical calibration]
+The Diamond--Saez formula \eqref{eq:DS} requires two empirical inputs:
+$\alpha_y$ (the Pareto shape of the earnings distribution) and $e$ (the
+compensated elasticity of taxable income).  Saez (2001) surveys estimates
+suggesting $\alpha_y \approx 2$ for the United States, and a benchmark value
+of $e \approx 0.25$ for broad income, giving $T'_\infty \approx 1/(1+2\times
+0.25) = 2/3 \approx 67\%$.  With higher elasticity, say $e = 0.5$, the
+formula gives $T'_\infty = 1/(1+1) = 50\%$.  Diamond and Saez (2011)
+conclude that $T'_\infty$ in the range $50$--$70\%$ is consistent with the
+empirical evidence, well above the top marginal rates prevailing in most
+countries at the time.
+\end{remark}
+
+%% ===========================================================================
+\appendix
+\section{The Hamiltonian and HJB for Mirrlees: Equivalence}
+\label{app:hamilton_hjb}
+%% ===========================================================================
+
+The Hamiltonian approach of the lecture notes defines
+\begin{equation}\label{eq:M_Hamilton}
+  \mathcal{H}(\calU, y, \lambda;\, z) =
+  \bigl[\psi(z)\,\calU + \mu(y - C(\calU, y))\bigr] f(z)
+  - \lambda\, U_n\!\bigl(C(\calU, y), y/z\bigr)\frac{y}{z^2}.
+\end{equation}
+The HJB \eqref{eq:M_HJBcompact} is the Hamilton--Jacobi equation
+\begin{equation}\label{eq:M_HJ}
+  -V_z(u, z) = \mathcal{H}\bigl(u,\, y^*(u,z),\, V_u(u,z);\, z\bigr),
+\end{equation}
+where $y^*(u,z) = \argmax_y \mathcal{H}(u, y, V_u(u,z); z)$.  Along the
+optimal path, the costate $\lambda(z) = V_u(\calU^*(z), z)$ satisfies
+$d\lambda/dz = -\mathcal{H}_\calU$ (equation \eqref{eq:M_costate_general}
+above), confirming that the Hamiltonian and HJB approaches are equivalent.
+
+\end{document}
