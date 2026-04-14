@@ -29,9 +29,8 @@
 \newcommand{\zlow}{z_{0}}
 \newcommand{\R}{\mathbb{R}}
 
-\title{An HJB Equation for the Mirrlees Problem:\\
-       A Structural Parallel with the Ramsey Tax Problem}
-\author{Thomas J.\ Sargent}
+\title{Notes on Jarda's Remark}
+%\author{Thomas J.\ Sargent}
 \date{\today}
 
 \begin{document}
@@ -53,10 +52,10 @@
   the value function is not linear in $\calU$.  The note draws a
   correspondence table between the two problems.
 \end{abstract}
-
-\tableofcontents
-\newpage
-
+%
+%\tableofcontents
+%\newpage
+%
 %% ===========================================================================
 \section{The Ramsey Problem with No Initial Term Debt}
 \label{sec:ramsey}
@@ -65,7 +64,7 @@
 \subsection{Environment}
 
 Following Jiang, Sargent, and Wang (2025), hereafter JSW, consider a
-continuous-time Lucas--Stokey economy.  A representative household and a
+continuous-time version of a special case of a Lucas--Stokey (1983) economy in which there is no initial term debt to be financed.  A representative household and a
 benevolent government operate on $t \in [0,\infty)$.  The resource constraint
 is
 \begin{equation}\label{eq:R_resource}
@@ -137,14 +136,68 @@ Define the value function
 \begin{equation}\label{eq:R_V}
   V(X_t, t) = \max_{\{C_s;\, s \ge t\}} \int_t^\infty e^{-\rho(s-t)} U(C_s, C_s+G_s)\, ds,
 \end{equation}
+where maximization is
 subject to the law of motion \eqref{eq:R_dXt}.  By the principle of dynamic
 programming, $V$ satisfies the HJB equation
 \begin{equation}\label{eq:R_HJB}
   \rho\, V = V_t + \max_{C_t}\Bigl\{U(C_t, C_t+G_t)
   + V_X\,\bigl(\rho X_t - C_t U_{C,t} - N_t U_{N,t}\bigr)\Bigr\}.
 \end{equation}
+We shall regard the choice problem on the right side of equation \eqref{eq:R_HJB} as confronting
+a {\em continuation Ramsey planner} at time $t$ who confronts state variable $X_t$ and chooses $C_t$.
 
-\subsection{The linear value-function guess and its verification}
+\subsection{The Ramsey planner and the continuation Ramsey planners}
+\label{sub:two_ramsey_planners}
+
+Following Lucas and Stokey (1983) and the QuantEcon lecture on optimal
+taxation, it is instructive to distinguish sharply between two roles in the
+Ramsey problem, each with its own state and choice variables.
+
+\medskip
+\noindent\textbf{The Ramsey planner at $t=0$.}
+The Ramsey planner operates once, at $t=0$.
+\begin{itemize}
+  \item \emph{State variable.} There is no initial debt that the Ramsey planner is committed to service.
+  Consequently, it faces state variable $X_0 = 0$ (see 
+    \eqref{eq:R_nodebt}). 
+  \item \emph{Choice variables.}  (i) The time-$0$ allocation $(C_0, N_0)$;
+    and (ii) the entire trajectory $\{X_s\}_{s>0}$ of promised values to be
+    bequeathed to continuation planners at every future instant.  By the
+    structure of the HJB these choices collapse to a single free scalar:
+    the Lagrange multiplier $\Phi_0\ge 0$ on \eqref{eq:R_impl}.  Once
+    $\Phi_0$ is chosen, the policy rule $C^* = C(\Phi_0; G_t)$ from
+    \eqref{eq:R_Copt} pins down consumption at every $t\ge 0$.
+  \item \emph{Value function.}  $ V(0,0;\Phi_0^*) = H(0;\Phi_0^*)$,
+    since $X_0 = \Pi_0 U_{C,0} = 0$.
+\end{itemize}
+
+\medskip
+\noindent\textbf{A continuation Ramsey planner at $t>0$.}
+A continuation Ramsey planner arrives at time $t>0$ with a pre-committed
+inherited state.  It cannot re-optimize $\Phi_0$ from scratch.
+\begin{itemize}
+  \item \emph{State variables.} $(X_t, t)$, where $X_t = \Pi_t U_{C,t}$ is
+    the marginal-utility-scaled cumulative liability.  The continuation
+    planner is \emph{obligated} to take $X_t$ as given; it records the fiscal
+    promises made on the household's behalf by all previous planners.
+  \item \emph{Choice variable.}  Current consumption $C_t$.  Through the law
+    of motion \eqref{eq:R_dXt}, choosing $C_t$ implies the promised value
+    $X_{t+dt}$ passed to the next continuation planner.
+  \item \emph{Value function.}  $V(X_t, t;\Phi_0) = -\Phi_0 X_t + H(t;\Phi_0)$.
+    The shadow price $V_X = -\Phi_0$ is the \emph{same constant} for every
+    continuation planner along the original Ramsey path.
+\end{itemize}
+
+\medskip
+\noindent\textbf{The time-inconsistency signature.}
+The two planners differ not only in their state variables but in the object
+that determines their first-order conditions.  The Ramsey planner at $t=0$
+faces initial debt $b_0 =0$ and freely chooses $\Phi_0$; the continuation Ramsey
+planner at $t>0$ faces the marginal-utility-scaled debt $X_t = u_c \cdot b_t$
+and treats $\Phi_0$ as a fixed parameter inherited from the Ramsey plan.
+
+
+\subsection{Linear value-function guess and verification}
 
 \noindent\textbf{Guess.}  Try the additively separable form
 \begin{equation}\label{eq:R_Vguess}
@@ -181,7 +234,7 @@ the Ramsey multiplier $\Phi_0^*$ is the non-negative root of
 where $N(\Phi_0; G_t) = C(\Phi_0; G_t) + G_t$.
 
 \medskip
-\begin{remark}[Economic interpretation of $\Phi_0$]
+\begin{remark}[Interpretation of $\Phi_0$]
 The multiplier $\Phi_0$ is the shadow price of the single implementability
 constraint and is \emph{constant across all dates}.  This constancy reflects
 the exponential discount structure in the Ramsey problem: the $\rho X_t$ term
@@ -189,18 +242,135 @@ in the law of motion \eqref{eq:R_dXt} exactly cancels the discounting on the
 left side of the HJB, keeping the shadow price $-V_X = \Phi_0$ time-invariant.
 \end{remark}
 
+%% ---------------------------------------------------------------------------
+\subsection{Cyclical government expenditures}
+\label{sub:cyclical_ramsey}
+%% ---------------------------------------------------------------------------
+
+To illustrate the power of the linear guess, we now specialise to
+$U(C,N)=\ln C - N$ (the baseline utility used in JSW's quantitative
+examples) and allow government spending to oscillate around a mean:
+\begin{equation}\label{eq:cyc_G}
+  G_t = G_0 + \theta_G \cos(\omega t), \qquad G_0,\,\theta_G>0,\;\omega>0,
+\end{equation}
+so that $G_t > 0$ for all $t$ provided $\theta_G < G_0$.
+
+\subsubsection{Constant optimal tax from the HJB}
+
+Under $U = \ln C - N$ we have $U_C = 1/C$ and $U_N = -1$.  With
+$b_{0-,t}=0$, the maximization problem \eqref{eq:R_Copt} in the HJB becomes
+\begin{equation}\label{eq:cyc_HJBmax}
+  C(\Phi_0;\, G_t)
+  = \argmax_{C>0}\Bigl\{
+  \ln C - (C+G_t)
+  + \Phi_0\bigl[C\cdot\tfrac{1}{C} + (C+G_t)(-1)\bigr]
+  \Bigr\}
+  = \argmax_{C>0}\Bigl\{
+  \ln C - (1+\Phi_0)(C+G_t)
+  \Bigr\}.
+\end{equation}
+The first-order condition $1/C = 1+\Phi_0$ yields
+\begin{equation}\label{eq:cyc_Cstar}
+  C^* = \frac{1}{1+\Phi_0^*},
+  \qquad
+  \tau^* = 1 - C^* = \frac{\Phi_0^*}{1+\Phi_0^*}.
+\end{equation}
+Crucially, $C^*$ and $\tau^*$ are \emph{independent of $G_t$}: the cyclical
+component of fiscal needs does not appear in the optimality condition for
+consumption.  The Ramsey planner therefore imposes a \emph{constant} tax
+rate at every date, even though government expenditures oscillate.  This is
+the HJB incarnation of Barro's (1979) tax-smoothing result.
+
 \medskip
-\begin{remark}[Constancy of the optimal tax rate when $G_t = G$]
-When government spending is constant ($G_t = G$ for all $t$), the
-right-hand side of \eqref{eq:R_Copt} does not depend on $t$, so
-$C^* = C(\Phi_0^*; G)$ is constant.  The implementability constraint
-\eqref{eq:R_IC} then collapses to the static condition
-$C^* U_{C}^* + N^* U_{N}^* = 0$, and the Ramsey tax rate is constant at
-$\tau^* = G/N^*$.  This echoes Barro's (1979) tax-smoothing result.
+\begin{remark}[Why $G_t$ drops out]
+The HJB maximand contains $G_t$ twice: once in the felicity term $-(C+G_t)$
+and once in the incentive term $-(1+\Phi_0)G_t$.  Both enter additively as
+constants in the maximization over $C$.  The optimum $C^*$ is therefore
+pinned by the ratio of marginal utility to the Lagrange multiplier, with no
+role for $G_t$.
 \end{remark}
 
+\subsubsection{Determining $\Phi_0^*$ from the implementability constraint}
+
+The implementability constraint \eqref{eq:R_IC} with $U_C = 1/C^*$ and
+$U_N = -1$ reduces to
+\begin{equation}\label{eq:cyc_IC}
+  \int_0^\infty e^{-\rho t}\bigl[1 - (C^*+G_t)\bigr]\, dt = 0,
+\end{equation}
+which gives
+\begin{equation}\label{eq:cyc_PV}
+  \frac{1-C^*}{\rho}
+  = \int_0^\infty e^{-\rho t} G_t\, dt
+  = \frac{G_0}{\rho}
+  + \theta_G \frac{\rho}{\rho^2+\omega^2}.
+\end{equation}
+Hence
+\begin{equation}\label{eq:cyc_tau}
+  1-C^* = G_0 + \theta_G\frac{\rho^2}{\rho^2+\omega^2}.
+\end{equation}
+Three observations follow.  First, the equilibrium tax rate depends only on
+the discounted present value of government expenditures, not on their timing.
+Second, the cyclical component is attenuated by $\rho^2/(\rho^2+\omega^2)\in(0,1)$:
+high-frequency cycles ($\omega\gg\rho$) contribute negligibly to the tax rate
+because they nearly cancel in present value.  Third, as $\theta_G\to 0$ the
+formula collapses to $1-C^* = G_0$.
+
+\subsubsection{The cyclical state variable $X_t^*$}
+
+Even though $C^*$ and $\tau^*$ are constant, the state variable
+$X_t^* = \Pi_t^* U_{C,t}^* = \Pi_t^*/C^*$ inherits the cyclicality of $G_t$.
+Substituting $C^* = \text{const}$, $N_t^* = C^*+G_t$ into the law of motion
+\eqref{eq:R_dXt}:
+\begin{equation}\label{eq:cyc_dX}
+  \dot X_t = \rho X_t - 1 + C^* + G_t
+  = \rho X_t - \frac{\theta_G\rho^2}{\rho^2+\omega^2}
+    + \theta_G\cos(\omega t),
+\end{equation}
+where we used $1-C^* = G_0 + \theta_G\rho^2/(\rho^2+\omega^2)$ to absorb
+$G_0$.  Solving with $X_0 = 0$:
+\begin{equation}\label{eq:cyc_Xsol}
+  X_t^*
+  = \frac{\theta_G}{\rho^2+\omega^2}
+    \bigl[\rho\bigl(1-\cos(\omega t)\bigr) + \omega\sin(\omega t)\bigr].
+\end{equation}
+This solution is bounded, oscillates with period $2\pi/\omega$, and starts
+near zero.  For $\omega \gg \rho$ the amplitude is approximately
+$\theta_G/\omega$, so high-frequency spending shocks produce only small
+oscillations in the state variable.
+
+\medskip
+\begin{remark}[$X_t^*$ as a fiscal buffer]
+Variations in $X_t^*$ map one-for-one into variations in $\Pi_t^*$ (since
+$C^*$ is constant).  When $G_t$ is high the government runs a deficit,
+pushing $\Pi_t^*$ up; when $G_t$ falls back, the surplus rises and $\Pi_t^*$
+declines.  The tax rate is constant throughout because it is the
+\emph{state variable}, not the tax rate, that absorbs fiscal fluctuations.
+\end{remark}
+
+\subsubsection{Structure of $H(t;\, \Phi_0^*)$}
+
+The time-varying component $H(t;\,\Phi_0^*)$ satisfies the ODE
+\eqref{eq:R_Hode} with $C_t = C^*$ fixed:
+\begin{equation}\label{eq:cyc_Hode}
+  \rho H(t;\,\Phi_0^*)
+  = H'(t;\,\Phi_0^*)
+  + \ln C^* - (C^*+G_t) + \Phi_0^*\bigl[1 - (C^*+G_t)\bigr].
+\end{equation}
+Because $G_t$ oscillates, $H$ has the form
+\begin{equation}
+  H(t;\,\Phi_0^*) = H_\infty + A_H\cos(\omega t) + B_H\sin(\omega t),
+\end{equation}
+where $H_\infty = [\ln C^* - (1+\Phi_0^*) C^*]/\rho$ and $(A_H, B_H)$ are
+determined by matching $\omega$-frequency terms.  The value function
+$V(X_t^*, t) = -\Phi_0^* X_t^* + H(t;\Phi_0^*)$ oscillates both through
+the state $X_t^*$ and directly through $H(t)$, together capturing the
+welfare cost of the cyclical fiscal program.  The optimal control rule is
+time-invariant throughout: the HJB linear guess cleanly separates the
+time-varying fiscal environment (absorbed by $H$) from the constant
+policy rule (pinned by $\Phi_0^*$).
+
 %% ===========================================================================
-\section{The Mirrlees Problem: Sequential Structure in Productivity}
+\section{The Mirrlees Problem: A Sequential Structure in Increasing Unobserved Productivity}
 \label{sec:mirrlees}
 %% ===========================================================================
 
@@ -292,21 +462,74 @@ inherited state $\calU(z) = u$:
 \end{align}
 subject to \eqref{eq:M_IC2} and $\calU(z) = u$.
 
-\medskip\noindent\textbf{Commitment through promised values.}
+\medskip\noindent\textbf{Sequential decision making protocol and  promised values.}
 The state variable $u = \calU(z)$ is the utility that has already been
 \emph{promised} to type $z$ by the assignments made to all lower types
 $\zeta < z$.  A continuation planner starting at $z$ is therefore bound to
-deliver exactly $u$ to type $z$: it inherits a commitment it cannot revise.
-In this sense the sequential-in-$z$ formulation embeds full commitment by the
-original mechanism designer.  Types already processed ($\zeta < z$) have
-received their allocations and cannot be renegotiated; the promised value $u$
-is the only ``footprint'' those past decisions leave on the continuation
-problem.  This is the Mirrlees analogue of the Ramsey planner's commitment to
+deliver exactly $u$ to type $z$.  Types already processed ($\zeta < z$) have
+received their allocations and cannot be changed.  This is the Mirrlees analogue of the Ramsey planner's commitment to
 an initial household budget constraint: just as the state variable $X_t =
 \Pi_t U_{C,t}$ in the Ramsey HJB records the cumulative fiscal obligation
-that the Ramsey planner cannot escape, the promised utility $u$ in the
-Mirrlees HJB records the incentive obligation to type $z$ that the Mirrlees
-planner cannot escape.
+that continuation  Ramsey planners must finance, the promised utility $u$ in the
+Mirrlees HJB records the incentive obligation to type $z$ that continuation  Mirrlees
+planners must honor. 
+
+\subsection{The Mirrlees planner and the continuation Mirrlees planners}
+\label{sub:two_mirrlees_planners}
+
+Paralleling the LS treatment, we distinguish the Mirrlees planner at the
+bottom of the type distribution from all continuation Mirrlees planners.
+
+\medskip
+\noindent\textbf{The Mirrlees planner at $z=\zlow$.}
+The planner at $\zlow$ faces no inherited commitment.
+\begin{itemize}
+  \item \emph{State variable.}  The initial promised utility $u(\zlow)$, which
+    is a \emph{free endpoint} in problem~\eqref{eq:M_obj}; no prior type has
+    imposed an obligation.  The participation constraint pins a floor on
+    $u(\zlow)$, playing the role that the initial debt $b_0$ plays in the
+    Ramsey problem.
+  \item \emph{Choice variables.}  (i) The output $y(\zlow)$ for the lowest
+    type; and (ii) the entire schedule $\{\calU(\zeta)\}_{\zeta>\zlow}$ of
+    promised utilities to bequeath to continuation planners.  By the structure
+    of the HJB these choices collapse to the single scalar $\mu\ge 0$ (the
+    Lagrange multiplier on the resource constraint \eqref{eq:M_RC}): once
+    $\mu$ is set, the FOC \eqref{eq:M_ystar} pins down output at every type.
+  \item \emph{Value function.} $V(u(\zlow),\zlow;\mu) = \lambda(\zlow)\,u(\zlow)
+    + K(\zlow;\mu)$.  The boundary condition $\lambda(\zlow)=0$ means the
+    $\zlow$-planner's value reduces to $K(\zlow;\mu)$, the aggregate resource
+    surplus from the entire mechanism.
+\end{itemize}
+
+\medskip
+\noindent\textbf{The continuation Mirrlees planner at $z>\zlow$.}
+A continuation Mirrlees planner at $z$ arrives with a pre-committed inherited
+state and cannot revise it.
+\begin{itemize}
+  \item \emph{State variables.}  $(u, z)$, where $u = \calU(z)$ is the
+    promised utility inherited from all types below $z$.  The continuation
+    planner is \emph{obligated} to honor $u$ and cannot renegotiate it.
+  \item \emph{Choice variable.}  The output $y(z)$ for type $z$.  Through the
+    IC law of motion \eqref{eq:M_IC2}, choosing $y(z)$ implies the promised
+    utility $\calU(z+dz)$ passed to the next continuation planner.
+  \item \emph{Value function.}  $V(u, z; \mu) = \lambda(z)\, u + K(z;\mu)$.
+    The shadow price $V_u = \lambda(z)$ records the social cost of tightening
+    incentive constraints at type $z$.
+\end{itemize}
+
+\medskip
+\noindent\textbf{Constant versus varying shadow prices.}
+A key difference from the Ramsey problem is that the Mirrlees shadow price
+$V_u = \lambda(z)$ \emph{varies} along the type distribution, whereas the
+Ramsey shadow price $-V_X = \Phi_0$ is \emph{constant} across all
+continuation planners.  The Mirrlees costate $\lambda(z)$ satisfies the ODE
+\eqref{eq:M_costate} and changes because the redistribution pressure shifts
+as the mechanism moves through the type distribution: $\lambda(z)$ is
+typically hump-shaped, large (in absolute value) where the planner most
+values relaxing the incentive constraint, and zero at both boundaries.  The
+constancy of $\Phi_0$ in Ramsey reflects the homogeneity of fiscal policy
+across time under commitment; the variation of $\lambda(z)$ in Mirrlees
+reflects the heterogeneity of incentive costs across types.
 
 \subsection{The HJB equation}
 
@@ -535,6 +758,53 @@ dynamic-programming equation in both cases; it is only the validity of the
 \emph{linear} guess that is special to quasilinear preferences.
 \end{remark}
 
+\begin{remark}[Initial planners versus continuation planners]
+\label{rem:t0_special}
+The table records a further structural parallel: the special role of the
+\emph{initial} planner in each problem.
+
+\medskip
+\noindent\textbf{Ramsey.}
+The entry ``Initial condition: $X_0 = 0$'' in the table is more than a
+technicality.  The entire Ramsey program is determined at time $t=0$ by the
+single number $\Phi_0^*$: once it is chosen, the continuation policy $C^*(t)$,
+$N^*(t)$, and the state trajectory $X_t^*$ are pinned down for all $t > 0$.
+The time-$0$ Ramsey planner is therefore in a unique position --- it is the
+only planner that can set $\Phi_0$ freely (subject to the implementability
+constraint \eqref{eq:R_IC}).  Every continuation Ramsey planner inherits
+$X_t^* \ne 0$ and must treat $\Phi_0$ as a given parameter.  A continuation
+Ramsey plan that restarts from some $(X_t, t)$ with $X_t > 0$ is
+\emph{not} a Ramsey plan starting from $t$: it would choose a different
+multiplier $\widetilde{\Phi}(X_t) \ne \Phi_0$, which is precisely the
+time-inconsistency of the Ramsey plan.
+
+\medskip
+\noindent\textbf{Mirrlees.}
+The entry ``Free endpoint: $\calU(\zlow)$ optimized; $\lambda(\zlow)=0$''
+has the same structure.  The entire mechanism is determined at $z=\zlow$ by
+the single number $u(\zlow)$: this initial promised utility, together with
+the Envelope ODE \eqref{eq:M_IC2}, pins down the complete allocation
+$\{\calU(z)\}_{z\ge\zlow}$.  The planner at $\zlow$ is the only planner
+free to choose $u(\zlow)$ (subject to the participation constraint).  A
+continuation Mirrlees planner that restarts at an intermediate type
+$z' > \zlow$ inherits $u(z') \ne u(\zlow)$ and faces a different problem.
+Commitment by the $\zlow$-planner --- to honor the utilities generated by
+the mechanism for all $\zeta \in [\zlow, z']$ --- prevents such
+reoptimization, exactly as commitment by the time-$0$ Ramsey planner
+prevents resetting $\Phi_0$ at $t > 0$.
+
+\medskip
+\noindent\textbf{Summary.}
+In both problems the initial planner simultaneously (i)~faces no inherited
+state to which it is obligated, and (ii)~sets the single free parameter
+($\Phi_0$ or $u(\zlow)$) that governs the entire continuation.  All
+subsequent planners are bound by a state they cannot revise.  The table's
+``determines $\Phi_0$: $I_0(\Phi_0)=0$'' and ``determines $\mu$: resource
+constraint $= B$'' rows reflect how each problem closes: just as $B$ pins $\mu$
+through the resource constraint for the Mirrlees mechanism, the implementability
+constraint closes the Ramsey problem and pins $\Phi_0^*$.
+\end{remark}
+
 %% ===========================================================================
 \section{The Mirrlees HJB in the General Case}
 \label{sec:general}
@@ -612,163 +882,33 @@ the resource constraint \eqref{eq:M_mudet} in Mirrlees.
 X_t$ drift in the state), while in Mirrlees the costate $\lambda(z)$ varies,
 accumulating the difference between the planner's welfare weights and the
 social cost of funds.  Under quasilinear preferences the linear value-function
-guess works in both problems, and the two HJBs are fully isomorphic.
+guess works in both problems.
 
 %% ===========================================================================
-\section{Extension: Cyclical Government Expenditures in the Ramsey Problem}
-\label{sec:cyclical_ramsey}
+%% ===========================================================================
+\appendix
+\section{The Hamiltonian and HJB for Mirrlees: Equivalence}
+\label{app:hamilton_hjb}
 %% ===========================================================================
 
-\subsection{Setup}
-
-This section studies the Ramsey HJB under cyclical government expenditures,
-mirroring Section~5.3 of JSW.  Maintain the no-initial-debt specialization
-$b_{0-,t}=0$ and adopt the utility function $U(C,N)=\ln C - N$ used in JSW's
-quantitative examples.  Government spending follows
-\begin{equation}\label{eq:cyc_G}
-  G_t = G_0 + \theta_G \cos(\omega t), \qquad G_0,\,\theta_G>0,\; \omega>0,
+The Hamiltonian approach of the lecture notes defines
+\begin{equation}\label{eq:M_Hamilton}
+  \mathcal{H}(\calU, y, \lambda;\, z) =
+  \bigl[\psi(z)\,\calU + \mu(y - C(\calU, y))\bigr] f(z)
+  - \lambda\, U_n\!\bigl(C(\calU, y), y/z\bigr)\frac{y}{z^2}.
 \end{equation}
-so that fiscal needs oscillate around the mean $G_0$ with amplitude $\theta_G$
-and angular frequency $\omega$.
-
-\subsection{Constant optimal tax from the HJB}
-
-Under $U = \ln C - N$ we have $U_C = 1/C$ and $U_N = -1$.  With
-$b_{0-,t}=0$, the maximization problem \eqref{eq:R_Copt} in the HJB becomes
-\begin{equation}\label{eq:cyc_HJBmax}
-  C(\Phi_0;\, G_t)
-  = \argmax_{C>0}\Bigl\{
-  \ln C - (C+G_t)
-  + \Phi_0\bigl[C\cdot\tfrac{1}{C} + (C+G_t)(-1)\bigr]
-  \Bigr\}
-  = \argmax_{C>0}\Bigl\{
-  \ln C - (1+\Phi_0)(C+G_t)
-  \Bigr\}.
+The HJB \eqref{eq:M_HJBcompact} is the Hamilton--Jacobi equation
+\begin{equation}\label{eq:M_HJ}
+  -V_z(u, z) = \mathcal{H}\bigl(u,\, y^*(u,z),\, V_u(u,z);\, z\bigr),
 \end{equation}
-The first-order condition $1/C = 1+\Phi_0$ yields
-\begin{equation}\label{eq:cyc_Cstar}
-  C^* = \frac{1}{1+\Phi_0^*},
-  \qquad
-  \tau^* = 1 - C^* = \frac{\Phi_0^*}{1+\Phi_0^*}.
-\end{equation}
-Crucially, $C^*$ and $\tau^*$ are \emph{independent of $G_t$}: the cyclical
-component of fiscal needs does not appear in the static optimality condition
-for consumption.  The Ramsey planner therefore imposes a \emph{constant} tax
-rate on every date, even though government expenditures oscillate.  This is
-the HJB incarnation of Barro's (1979) tax-smoothing result.
-
-\medskip
-\begin{remark}[Why $G_t$ drops out]
-The HJB maximand contains $G_t$ twice: once in the felicity term $-(C+G_t)$ and once
-in the incentive term $-(1+\Phi_0)G_t$.  Both enter additively as constants
-in the maximization over $C$.  The optimum $C^*$ is therefore pinned by the
-ratio of the marginal utility of consumption to the Lagrange multiplier, with
-no role for $G_t$.
-\end{remark}
-
-\subsection{Determining $\Phi_0^*$ from the implementability constraint}
-
-The implementability constraint \eqref{eq:R_IC} with $U_C = 1/C^*$ and
-$U_N = -1$ reduces to
-\begin{equation}\label{eq:cyc_IC}
-  \int_0^\infty e^{-\rho t}\bigl[1 - (C^*+G_t)\bigr]\, dt = 0,
-\end{equation}
-which gives
-\begin{equation}\label{eq:cyc_PV}
-  \frac{1-C^*}{\rho}
-  = \int_0^\infty e^{-\rho t} G_t\, dt
-  = \frac{G_0}{\rho}
-  + \theta_G \frac{\rho}{\rho^2+\omega^2}.
-\end{equation}
-Hence
-\begin{equation}\label{eq:cyc_tau}
-  1-C^* = G_0 + \theta_G\frac{\rho^2}{\rho^2+\omega^2}.
-\end{equation}
-Three observations follow.  First, the equilibrium tax rate depends only on
-the discounted present value of government expenditures, not on the timing of
-the oscillations.  Second, the contribution of the cyclical component is
-attenuated by the factor $\rho^2/(\rho^2+\omega^2) \in (0,1)$: high-frequency
-fiscal cycles ($\omega \gg \rho$) contribute negligibly to the tax rate
-because they nearly cancel in present value.  Third, as $\theta_G\to 0$ the
-formula collapses to the constant-spending result $1-C^* = G_0$.
-
-\subsection{The cyclical state variable $X_t^*$}
-
-Even though $C^*$ and $\tau^*$ are constant, the state variable
-$X_t^* = \Pi_t^* U_{C,t}^* = \Pi_t^*/C^*$ inherits the cyclicality of $G_t$.
-Substituting $C^* = \text{const}$, $N_t^* = C^*+G_t$ into the law of motion
-\eqref{eq:R_dXt}:
-\begin{equation}\label{eq:cyc_dX}
-  \dot X_t = \rho X_t - 1 + C^* + G_t
-  = \rho X_t - \frac{\theta_G\rho^2}{\rho^2+\omega^2}
-    + \theta_G\cos(\omega t),
-\end{equation}
-where we used $1-C^* = G_0 + \theta_G\rho^2/(\rho^2+\omega^2)$ to absorb
-$G_0$.  The ODE \eqref{eq:cyc_dX} is a linear constant-coefficient equation
-with a sinusoidal forcing term and a constant term that exactly offsets the
-particular solution's mean.  Solving with $X_0 = 0$:
-\begin{equation}\label{eq:cyc_Xsol}
-  X_t^*
-  = \frac{\theta_G}{\rho^2+\omega^2}
-    \bigl[\rho\bigl(1-\cos(\omega t)\bigr) + \omega\sin(\omega t)\bigr].
-\end{equation}
-This solution is bounded, oscillates with period $2\pi/\omega$, and starts
-and returns to values near zero.  For $\omega \gg \rho$ the amplitude of
-oscillation is approximately $\theta_G/\omega$, so high-frequency spending
-shocks produce only small oscillations in the state variable.
-
-\medskip
-\begin{remark}[$X_t^*$ as a fiscal buffer]
-The state variable $X_t^*$ is the product of the government's cumulative
-liability $\Pi_t^*$ and the household's marginal utility $1/C^*$.  Under
-constant $C^*$, variations in $X_t^*$ map one-for-one into variations in
-$\Pi_t^*$.  Equation~\eqref{eq:cyc_Xsol} shows that $\Pi_t^*$ absorbs all
-cyclical fiscal fluctuations: when $G_t$ is high the government runs a deficit
-(the primary surplus $S_t^* = \tau^* N_t^* - G_t$ falls), pushing $\Pi_t^*$
-up; when $G_t$ returns to its mean, the surplus rises and $\Pi_t^*$ falls back.
-The tax rate is constant throughout because it is the \emph{state variable},
-not the tax rate, that adjusts.
-\end{remark}
-
-\subsection{Structure of $H(t;\, \Phi_0^*)$}
-
-The time-varying component of the value function, $H(t;\,\Phi_0^*)$, satisfies
-the ODE \eqref{eq:R_Hode} with $C_t = C^*$ fixed. Evaluating the maximand:
-\begin{equation}\label{eq:cyc_Hode}
-  \rho H(t;\,\Phi_0^*)
-  = H'(t;\,\Phi_0^*)
-  + \ln C^* - (C^*+G_t) + \Phi_0^*\bigl[1 - (C^*+G_t)\bigr].
-\end{equation}
-Because $G_t = G_0 + \theta_G\cos(\omega t)$, the right-hand side oscillates
-in $t$.  The solution $H(t;\,\Phi_0^*)$ is therefore a sum of a constant
-steady-state component (driven by $G_0$) and an oscillatory transient (driven
-by $\theta_G\cos(\omega t)$):
-\begin{equation}
-  H(t;\,\Phi_0^*) = H_\infty + A_H\cos(\omega t) + B_H\sin(\omega t),
-\end{equation}
-where $H_\infty = [\ln C^* - (1+\Phi_0^*) C^*]/\rho$ is the constant
-component and $(A_H, B_H)$ are determined by matching $\omega$-frequency
-terms.  Although $H$ oscillates, the optimal $C$ does not: the oscillations
-in $H$ represent the time-varying cost of financing cyclical government
-expenditures, holding the tax plan fixed.  The value function
-$V(X_t^*, t) = -\Phi_0^* X_t^* + H(t;\Phi_0^*)$ therefore oscillates both
-through the state $X_t^*$ and directly through $H(t)$, the two oscillations
-together reflecting the complete welfare cost of the cyclical fiscal program.
-
-\medskip
-\begin{remark}[Comparison with the constant-$G$ case]
-When $\theta_G = 0$ the problem is fully stationary: $C^* = 1/(1+\Phi_0^*)$,
-$\tau^* = G_0/N^* = G_0/(C^*+G_0)$ is constant, $r^* = \rho$ is constant,
-$X_t^* = 0$ for all $t$, and $H(t;\Phi_0^*) = H_\infty$ is constant.  The
-HJB collapses to a static saddle-point problem.  Introducing $\theta_G > 0$
-breaks stationarity of $H$ and $X^*$ but leaves the control rule intact: the
-optimal plan ``reacts'' to fiscal cycles entirely through the state variable,
-not through the tax rate.
-\end{remark}
+where $y^*(u,z) = \argmax_y \mathcal{H}(u, y, V_u(u,z); z)$.  Along the
+optimal path, the costate $\lambda(z) = V_u(\calU^*(z), z)$ satisfies
+$d\lambda/dz = -\mathcal{H}_\calU$ (equation \eqref{eq:M_costate_general}
+above), confirming that the Hamiltonian and HJB approaches are equivalent.
 
 %% ===========================================================================
-\section{Extension: The Mirrlees HJB with Pareto-Distributed Productivity}
-\label{sec:pareto}
+\section{The Mirrlees HJB with Pareto-Distributed Productivity}
+\label{app:pareto}
 %% ===========================================================================
 
 \subsection{Setup and motivation}
@@ -992,25 +1132,5 @@ empirical evidence, well above the top marginal rates prevailing in most
 countries at the time.
 \end{remark}
 
-%% ===========================================================================
-\appendix
-\section{The Hamiltonian and HJB for Mirrlees: Equivalence}
-\label{app:hamilton_hjb}
-%% ===========================================================================
-
-The Hamiltonian approach of the lecture notes defines
-\begin{equation}\label{eq:M_Hamilton}
-  \mathcal{H}(\calU, y, \lambda;\, z) =
-  \bigl[\psi(z)\,\calU + \mu(y - C(\calU, y))\bigr] f(z)
-  - \lambda\, U_n\!\bigl(C(\calU, y), y/z\bigr)\frac{y}{z^2}.
-\end{equation}
-The HJB \eqref{eq:M_HJBcompact} is the Hamilton--Jacobi equation
-\begin{equation}\label{eq:M_HJ}
-  -V_z(u, z) = \mathcal{H}\bigl(u,\, y^*(u,z),\, V_u(u,z);\, z\bigr),
-\end{equation}
-where $y^*(u,z) = \argmax_y \mathcal{H}(u, y, V_u(u,z); z)$.  Along the
-optimal path, the costate $\lambda(z) = V_u(\calU^*(z), z)$ satisfies
-$d\lambda/dz = -\mathcal{H}_\calU$ (equation \eqref{eq:M_costate_general}
-above), confirming that the Hamiltonian and HJB approaches are equivalent.
 
 \end{document}

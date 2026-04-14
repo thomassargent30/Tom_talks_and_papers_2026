@@ -1,0 +1,1088 @@
+% pauli_exclusion_ML.tex
+% "Pauli's Heuristic as Statistical Inference: The Exclusion Principle
+%  as a Parsimonious Four-Parameter Model"
+% Thomas J. Sargent, 2026
+
+\documentclass[12pt]{article}
+
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage[margin=1.2in]{geometry}
+\usepackage{setspace}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{natbib}
+\usepackage{parskip}
+
+\onehalfspacing
+
+\hypersetup{
+  colorlinks  = true,
+  linkcolor   = blue,
+  citecolor   = blue,
+  urlcolor    = blue
+}
+
+\title{Pauli's Heuristic as Statistical Inference:\\
+       The Exclusion Principle as a Parsimonious\\
+       Four-Parameter Model, 1913--1928}
+\author{Thomas J.\ Sargent}
+\date{April 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+In his 1925 paper on the ``complex structure of spectra,'' Wolfgang Pauli
+proposed that each electron in an atom is characterised by exactly four quantum
+numbers---the principal quantum number~$n$, the azimuthal (orbital) quantum
+number~$l$, the magnetic quantum number~$m_l$, and a newly introduced
+fourth, ``two-valued'' quantum number~$m_s$---and that no two electrons in any
+atom may share the same 4-tuple $(n,l,m_l,m_s)$.  This note examines Pauli's
+reasoning from a modern statistical perspective.  The empirical regularities
+that Pauli organised---electron shell capacities of 2, 8, 18, 32; the doublet
+structure of alkali spectra; the anomalous Zeeman effect; the X-ray
+spectroscopic data systematised by Stoner (1924)---constitute a discrete
+dataset of counts and multiplicities.  Pauli's four-parameter state space
+predicts those counts \emph{exactly} via the formula: capacity of subshell~$l$
+equals $2(2l{+}1)$, implying a total shell capacity of $2n^2$.  We frame this
+as a highly constrained statistical model in which the parameters are the
+allowed ranges of four discrete quantum numbers and a binary occupation
+constraint, and we examine which ``data'' identified each parameter.  Pauli's
+procedure parallels Einstein's photoelectric derivation: theoretical insight
+restricted the hypothesis class to a parsimonious form, reducing what might
+have been an unmanageable combinatorial estimation problem to a counting
+exercise whose predictions match every relevant observation.  The episode
+illustrates how a one-sentence theoretical postulate---the Exclusion
+Principle---functions as an extreme form of inductive bias, compressing
+the effective hypothesis space from an open-ended combinatorial family to
+a single, fully determined prediction with zero tunable parameters.
+\end{abstract}
+
+\tableofcontents
+
+%======================================================================
+\section{Introduction}
+
+In December 1900, Max Planck introduced the energy quantum $h\nu$ to fit the
+blackbody spectrum.  Five years later, Einstein applied the same quantum to the
+photoelectric effect, deriving a two-parameter linear equation
+$V_0 = (h/e)\nu - W/e$ whose slope encoded Planck's constant.  Twenty years
+after that, in January 1925, Wolfgang Pauli proposed something structurally
+similar: a minimal theoretical principle from which a large body of empirical
+facts about atomic spectra and the periodic table follows as a counting
+exercise.
+
+Pauli's principle---that no two electrons in an atom may occupy the same
+quantum state---is presented in textbooks as a law of nature, delivered with
+an air of inevitability.  The historical record tells a more interesting story.
+Pauli \emph{conjectured} the principle as the simplest model consistent with a
+specific collection of quantitative empirical regularities that had accumulated
+between 1913 and 1924.  He called his fourth quantum number a
+``classically non-describable two-valuedness''~[\textit{eine nicht klassisch
+beschreibbare Zweideutigkeit}] because he had no physical interpretation for
+it.  It was, in his own words, a formal device introduced ``at any cost'' to
+organise the data.  In this respect, Pauli's reasoning is a closer relative of
+Planck's 1900 ``act of desperation'' than of the theoretical deductions from
+first principles that characterise later quantum mechanics.
+
+This note examines Pauli's 1925 paper through the lens of modern statistical
+inference.  The central questions are:
+\begin{enumerate}
+  \item What were the empirical \emph{data} that Pauli was organising?
+  \item What is the four-parameter \emph{model} that his principle defines,
+    and how many distinct states does it predict for each shell and subshell?
+  \item Which parameter---or which constraint---is identified by which
+    observation?
+  \item How does the episode compare, as an exercise in inference and
+    hypothesis formation, with Einstein's derivation of the photoelectric
+    equation?
+\end{enumerate}
+Sections~\ref{sec:history}--\ref{sec:stoner} sketch the experimental history
+from Bohr's 1913 model to Stoner's 1924 consolidation.
+Section~\ref{sec:model} defines Pauli's four-parameter state space precisely
+and works through the counting algebra.
+Section~\ref{sec:data} assembles the empirical ``dataset''---the shell
+capacities, spectral multiplicities, and anomalous Zeeman observations---that
+the model is required to fit.
+Section~\ref{sec:fit} examines the goodness of fit and the identification of
+each parameter from distinct empirical observations.
+Section~\ref{sec:identification} discusses the identification logic: which
+data identify each parameter.
+Section~\ref{sec:mle} frames the counting problem as a maximum likelihood
+estimation problem over a discrete state space.
+Section~\ref{sec:subsequent} traces the subsequent confirmations (Uhlenbeck and
+Goudsmit's spin hypothesis; Fermi--Dirac statistics; Dirac's relativistic
+derivation; the spin--statistics theorem).
+Section~\ref{sec:ml} reinterprets the episode in the language of machine
+learning.
+Section~\ref{sec:comparison} compares Pauli's episode with Einstein's
+photoelectric derivation.
+Section~\ref{sec:conclusions} concludes.
+
+%======================================================================
+\section{Historical Context, 1913--1924}
+\label{sec:history}
+
+\subsection{The Bohr Model and Its Three Quantum Numbers}
+
+Niels Bohr published his model of the hydrogen atom in 1913
+\citep{Bohr1913}.  The key postulate was that the electron's orbital angular
+momentum is quantised: $L = n\hbar$, $n=1,2,3,\ldots$  This single integer,
+the \emph{principal quantum number}~$n$, gives the energy levels
+\begin{equation}\label{eq:bohr}
+  E_n = -\frac{13.6\,\text{eV}}{n^2},
+\end{equation}
+correctly predicting the hydrogen emission spectrum (Lyman, Balmer, and
+Paschen series) to parts per thousand.
+
+Arnold Sommerfeld extended Bohr's model in 1916~\citep{Sommerfeld1916} by
+allowing elliptical orbits and applying the Wilson--Sommerfeld quantisation
+condition $\oint p_i\,dq_i = n_i h$ to each coordinate.  This introduced two
+additional integers:
+\begin{itemize}
+  \item The \emph{azimuthal quantum number}~$l$ (Sommerfeld's $k$,
+    relabelled later): $l\in\{0,1,\ldots,n-1\}$, determining the orbital
+    angular momentum magnitude $|\mathbf{L}| = \sqrt{l(l+1)}\,\hbar$.
+  \item The \emph{magnetic quantum number}~$m_l$: $m_l\in\{-l,-l{+}1,\ldots,
+    +l\}$, giving the projection $L_z = m_l\hbar$ of orbital angular momentum
+    on an external magnetic field axis.  In a field, each $m_l$ value produces
+    a slightly different energy (Zeeman splitting).
+\end{itemize}
+
+With these three integers $(n,l,m_l)$ the number of distinct states in shell~$n$
+is
+\begin{equation}\label{eq:three_count}
+  \sum_{l=0}^{n-1}(2l+1) = n^2.
+\end{equation}
+Table~\ref{tab:three_param} lists these counts for the first four shells.
+
+\begin{table}[ht]
+\centering
+\caption{States per shell under the three-quantum-number
+Bohr--Sommerfeld model vs.\ observed electron capacities.
+The observed capacity equals $2n^2$---exactly twice the predicted
+$n^2$---a discrepancy that motivated Pauli's fourth quantum number.}
+\label{tab:three_param}
+\medskip
+\begin{tabular}{cccc}
+\toprule
+Shell & $n$ & Predicted states ($n^2$) & Observed capacity ($2n^2$) \\
+\midrule
+K & 1 &  1 &  2 \\
+L & 2 &  4 &  8 \\
+M & 3 &  9 & 18 \\
+N & 4 & 16 & 32 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent The predicted capacities fall short by a factor of exactly~2.
+This was known but unexplained before 1925.
+
+\subsection{Failures of the Three-Parameter Model}
+
+Despite its successes for hydrogen, the Bohr--Sommerfeld three-quantum-number
+scheme faced three acute empirical failures by 1924.
+
+\paragraph{Shell closures and the periodic table.}
+Bohr proposed in 1922 that the chemical periodic table is organised by fills
+of successive electron shells, with noble gases corresponding to completed
+shells: helium has 2 electrons (shell $n=1$ full), neon has 10 (shells $n=1,2$
+full), argon has 18 ($n=1,2,3$ partially full in the $3s,3p$ subshells), krypton
+has 36, and xenon has 54.  No dynamical principle within the
+three-quantum-number scheme explained why a shell can hold exactly $2n^2$
+electrons---rather than $n^2$, or $3n^2$, or any other number---or why it is
+energetically ``closed'' once filled.
+
+\paragraph{The anomalous Zeeman effect.}
+Pieter Zeeman discovered in 1896--97 \citep{Zeeman1897} that magnetic fields
+split spectral lines.  Classical electron theory (Lorentz) predicted the
+\emph{normal Zeeman effect}: each line splits into exactly three components
+($\Delta m_l = 0,\pm 1$).  In reality, most lines in multi-electron atoms
+split into \emph{more} than three components, with fractional-unit spacings.
+This \emph{anomalous Zeeman effect} was inexplicable within the
+three-quantum-number scheme.  Pauli in 1924 wrote the most famous frustrated
+lament in the history of atomic physics, reportedly saying:
+\begin{quote}
+  ``How can one look happy when he is thinking about the anomalous Zeeman
+  effect?'' \citep{Pais1991}
+\end{quote}
+
+\paragraph{Half-integer angular momenta.}
+Alfred Landé in 1921 \citep{Lande1921} fitted the anomalous Zeeman patterns
+empirically with the formula
+\begin{equation}\label{eq:lande_g}
+  g_J = 1 + \frac{J(J+1) + S(S+1) - L(L+1)}{2J(J+1)},
+\end{equation}
+where $J$ is the total angular momentum quantum number and $L$, $S$ denote
+orbital and ``spin'' contributions.  This formula reproduced the observed
+line-splitting ratios remarkably well, but required $J$ to take \emph{half-integer}
+values for many atomic states---impossible in the three-quantum-number scheme,
+where all angular momenta are integers.
+
+%======================================================================
+\section{Stoner's 1924 Consolidation}
+\label{sec:stoner}
+
+The immediate empirical precursor to Pauli's paper was a 1924 article by
+Edmund Clifton Stoner \citep{Stoner1924}.  Stoner used X-ray spectroscopic
+level data (from Siegbahn and collaborators) to count the number of electrons
+assigned to each sublevel of each shell.
+
+Stoner's key observation: in an external magnetic field, all magnetic
+sublevels ($m_l$ values) within a given $(n,l)$ subshell become energetically
+distinct.  X-ray experiments showed that the number of electrons per subshell
+is
+\begin{equation}\label{eq:stoner}
+  \text{capacity of subshell } (n,l) = 2(2l+1).
+\end{equation}
+The factor $2l+1$ counts the distinct $m_l$ values; each $m_l$ sublevel holds
+\emph{two} electrons.  The mysterious factor of~2 per $m_l$ sublevel could
+not be explained by any then-known quantum number.
+
+Summing equation~\eqref{eq:stoner} over $l=0,1,\ldots,n-1$ gives
+\begin{equation}\label{eq:shell_cap}
+  \text{capacity of shell } n = \sum_{l=0}^{n-1} 2(2l+1)
+  = 2\sum_{l=0}^{n-1}(2l+1) = 2n^2.
+\end{equation}
+This matches the observed noble-gas configurations exactly
+(Table~\ref{tab:three_param}).  But Stoner did not explain \emph{why} each
+$m_l$ sublevel holds two electrons.  Pauli read Stoner's paper and recognised
+the answer: each sublevel is doubly occupied because there exists a fourth,
+two-valued quantum number that takes two distinct values.  Occupancy is then
+one electron per distinct 4-tuple, and the factor of~2 follows.
+
+%======================================================================
+\section{Pauli's Four-Parameter Model}
+\label{sec:model}
+
+\subsection{The Four Quantum Numbers}
+
+Pauli's 1925 paper \citep{Pauli1925} introduces the following model.  Each
+electron in an atom is completely characterised by four quantum numbers:
+
+\begin{enumerate}
+  \item \textbf{Principal quantum number} $n \in \{1,2,3,\ldots\}$:
+    determines the shell and (for hydrogen) the energy $E_n \propto -1/n^2$.
+    Range: any positive integer.
+
+  \item \textbf{Azimuthal quantum number} $l \in \{0,1,\ldots,n-1\}$:
+    determines the subshell and the orbital angular momentum magnitude.
+    Range: $n$ possible values for each $n$.
+
+  \item \textbf{Magnetic quantum number} $m_l \in \{-l,-l{+}1,\ldots,+l\}$:
+    projection of orbital angular momentum on the field axis; determines the
+    normal Zeeman sublevel.  Range: $2l+1$ possible values for each~$l$.
+
+  \item \textbf{Fourth quantum number} $m_s \in \{+\tfrac{1}{2},
+    -\tfrac{1}{2}\}$: a new, purely quantum-mechanical, two-valued
+    property of the electron with no classical mechanical
+    analogue.  Pauli called it a \emph{Zweideutigkeit}---two-valuedness.
+    Range: exactly 2 values.
+\end{enumerate}
+
+\noindent Pauli could not give a physical interpretation for $m_s$ in 1925; he
+was explicit that it is ``not classically describable.''  The physical
+interpretation (intrinsic electron spin) was supplied a few months later by
+Uhlenbeck and Goudsmit \citeyearpar{UhlenbeckGoudsmit1925}.
+
+\subsection{The Exclusion Constraint}
+
+With the four quantum numbers defined, the Exclusion Principle states:
+
+\begin{center}
+\fbox{\parbox{10cm}{%
+\textbf{Pauli's Exclusion Principle (1925).}
+In a multi-electron atom, no two electrons may simultaneously have identical
+values of all four quantum numbers $(n, l, m_l, m_s)$.\vspace{-4pt}}}
+\end{center}
+
+\noindent Equivalently, each distinct 4-tuple $(n,l,m_l,m_s)$ is a quantum
+\emph{state}, and every state may be occupied by at most one electron.
+The occupation number of state $s$ satisfies
+\begin{equation}\label{eq:occupation}
+  n_s \in \{0,\,1\}.
+\end{equation}
+This binary constraint is the statistical mechanics analogue of a $\{0,1\}$ dummy
+variable.  It is the defining property of \emph{fermions}---particles that obey
+Fermi--Dirac statistics---in contrast to \emph{bosons}, for which occupation
+numbers are unrestricted non-negative integers.
+
+\subsection{Counting States: The Model's Predictions}
+
+\paragraph{States per subshell.}
+For fixed $(n,l)$, the number of distinct states is
+\begin{equation}\label{eq:subshell_count}
+  \underbrace{(2l+1)}_{\text{values of }m_l} \times
+  \underbrace{2}_{\text{values of }m_s}
+  = 2(2l+1).
+\end{equation}
+Under the Exclusion Principle, the maximum number of electrons in the
+$(n,l)$ subshell equals the number of distinct states:
+\begin{equation}\label{eq:subshell_cap}
+  \text{capacity}(n,l) = 2(2l+1).
+\end{equation}
+Table~\ref{tab:subshell} lists the first four subshell types.
+
+\begin{table}[ht]
+\centering
+\caption{Predicted subshell capacities from Pauli's four-parameter model,
+equation~\eqref{eq:subshell_cap}.  Each entry agrees exactly with
+observation.}
+\label{tab:subshell}
+\medskip
+\begin{tabular}{ccccc}
+\toprule
+Subshell & $l$ & $m_l$ values & States $2(2l+1)$ & Observed electrons \\
+\midrule
+$s$ & 0 & $\{0\}$              &  2 &  2 \\
+$p$ & 1 & $\{-1,0,+1\}$        &  6 &  6 \\
+$d$ & 2 & $\{-2,-1,0,+1,+2\}$ & 10 & 10 \\
+$f$ & 3 & $\{-3,-2,-1,0,+1,+2,+3\}$ & 14 & 14 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{States per shell.}
+For fixed $n$, summing over subshells:
+\begin{equation}\label{eq:shell_count}
+  \text{capacity}(n) = \sum_{l=0}^{n-1} 2(2l+1)
+  = 2\sum_{l=0}^{n-1}(2l+1) = 2n^2.
+\end{equation}
+\textit{Derivation:}\quad $\displaystyle\sum_{l=0}^{n-1}(2l+1)
+  = 2\cdot\frac{(n-1)n}{2} + n = n^2$, so the shell capacity is $2n^2$.
+
+Table~\ref{tab:shell} verifies these predictions against noble-gas
+electron configurations.  The agreement is exact at every shell.
+
+\begin{table}[ht]
+\centering
+\caption{Shell capacities predicted by Pauli's model vs.\ observed
+electron configurations of noble gases.  ``Observed'' electron count is
+the total for the filled inner shells, confirmed by X-ray spectroscopy and
+the chemical inertness of the noble gases.}
+\label{tab:shell}
+\medskip
+\begin{tabular}{ccccl}
+\toprule
+Shell & $n$ & Predicted $2n^2$ & Observed & Noble gas \\
+\midrule
+K & 1 &  2 &  2 & He ($Z=2$): $1s^2$ \\
+L & 2 &  8 &  8 & Ne ($Z=10$): He $+\;2s^2 2p^6$ \\
+M & 3 & 18 & 18 & Ar ($Z=18$): Ne $+\;3s^2 3p^6$ \\
+N & 4 & 32 & 32 & Kr ($Z=36$): Ar $+\;4s^2 3d^{10} 4p^6$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%======================================================================
+\section{The Empirical Dataset}
+\label{sec:data}
+
+The ``data'' that Pauli was required to organise fall into three classes,
+each contributing a distinct type of \emph{empirical count} or
+\emph{empirical multiplicity}.
+
+\subsection{Class~1: Shell and Subshell Electron Capacities}
+
+The electron capacities of each shell and subshell were known empirically
+from two sources:
+\begin{enumerate}
+  \item \emph{Chemical valence and noble-gas stability.}  Bohr in 1922
+    inferred from the periodic table that the noble-gas configurations
+    correspond to closed shells with 2, 8, 18, 32 electrons.
+  \item \emph{X-ray spectroscopy.}  Manne Siegbahn's group measured the
+    binding energies and number of energy sublevels in the K, L, M, and N
+    shells, identifying how many electrons reside at each distinct energy.
+    Stoner \citeyearpar{Stoner1924} systematised these in his 1924 paper.
+\end{enumerate}
+
+The resulting empirical dataset is given in Table~\ref{tab:empirical_data}.
+Each row is one ``observation.''
+
+\begin{table}[ht]
+\centering
+\caption{Empirical electron capacities used by Pauli.  Shell and subshell
+electron counts from chemical data (noble-gas configurations) and X-ray
+spectroscopy (Siegbahn; systematised by \citealt{Stoner1924}).
+These are the observables that Pauli's model must predict exactly.}
+\label{tab:empirical_data}
+\medskip
+\begin{tabular}{ccccc}
+\toprule
+Shell & $n$ & Subshell & $l$ & Observed electrons \\
+\midrule
+K & 1 & $1s$ & 0 & 2 \\
+L & 2 & $2s$ & 0 & 2 \\
+  &   & $2p$ & 1 & 6 \\
+M & 3 & $3s$ & 0 & 2 \\
+  &   & $3p$ & 1 & 6 \\
+  &   & $3d$ & 2 & 10 \\
+N & 4 & $4s$ & 0 & 2 \\
+  &   & $4p$ & 1 & 6 \\
+  &   & $4d$ & 2 & 10 \\
+  &   & $4f$ & 3 & 14 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Class~2: Spectral Term Multiplicities}
+
+The \emph{multiplicity} of a spectral term ${}^{2S+1}L_J$ counts the number
+of distinct quantum states with a given $L$, $S$, and $J$: specifically, it
+equals $2J+1$ (the number of $m_J$ projections).  The observed term
+multiplicities for the first few elements are:
+
+\begin{itemize}
+  \item \emph{Alkali metals} (Li, Na, K, \ldots): doublet spectra
+    (${}^2S_{1/2}$, ${}^2P_{1/2}$, ${}^2P_{3/2}$, \ldots).
+    The doublet character---two lines everywhere the classical single-electron
+    theory predicted one---was a direct signal of $S = \tfrac{1}{2}$.
+  \item \emph{Alkaline earths} (Be, Mg, Ca, \ldots): singlet and triplet
+    series (${}^1S_0$, ${}^3S_1$, ${}^1P_1$, ${}^3P_{0,1,2}$, \ldots).
+  \item \emph{Carbon, nitrogen, oxygen}: quartet terms among excited
+    configurations.
+\end{itemize}
+
+\noindent These term multiplicities are predicted exactly by the
+four-quantum-number scheme: for a closed subshell the total spin is zero
+(singlet); for an outer shell with one electron the total spin is $S=\tfrac{1}{2}$
+(doublet); for two valence electrons in different orbitals, $S \in \{0,1\}$
+(singlet or triplet).
+
+\subsection{Class~3: Anomalous Zeeman Component Counts}
+
+In a weak external magnetic field, each spectral term ${}^{2S+1}L_J$ splits
+into $2J+1$ sublevels.  A transition ${}^{2S+1}L_J \to {}^{2S'+1}L'_{J'}$
+then produces a number of distinct emission lines equal to the number of
+allowed ($|\Delta m_J| \leq 1$, $\Delta m_J \in \{-1,0,+1\}$) transitions
+between those sublevels.  Table~\ref{tab:zeeman_data} lists key observed
+anomalous Zeeman patterns.
+
+\begin{table}[ht]
+\centering
+\caption{Observed anomalous Zeeman component counts for selected sodium
+spectral lines.  The upper and lower $J$ values and the corresponding
+$m_J$-sublevel counts are listed.  ``Predicted'' uses the four-quantum-number
+model with the exclusion principle and is identical to the observed count in
+every case.  Classical Lorentz theory always predicts 3 components.}
+\label{tab:zeeman_data}
+\medskip
+\begin{tabular}{lccccc}
+\toprule
+Transition &
+Line (nm) &
+Upper $J$ &
+Lower $J$ &
+Observed lines &
+Classical \\
+\midrule
+$^2P_{3/2}\to{}^2S_{1/2}$ & 589.0 (D$_2$) & 3/2 & 1/2 & 6 & 3 \\
+$^2P_{1/2}\to{}^2S_{1/2}$ & 589.6 (D$_1$) & 1/2 & 1/2 & 4 & 3 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent \emph{Calculation for the D$_2$ line.}
+The upper state $^2P_{3/2}$ has $J=3/2$, giving $m_J \in
+\{-3/2,-1/2,+1/2,+3/2\}$ (4~sublevels).  The lower state $^2S_{1/2}$
+has $J=1/2$, giving $m_J\in\{-1/2,+1/2\}$ (2~sublevels).  The allowed
+transitions with $\Delta m_J \in \{-1,0,+1\}$ number exactly~6, as observed.
+For the D$_1$ line, both levels have $J=1/2$; the 4 allowed transitions
+are $(\Delta m_J = 0, \pm1)$ from 2 upper to 2 lower sublevels
+(one $\Delta m_J = 0$ is forbidden for $J=1/2\to1/2$, $\Delta J=0$
+by the selection rule, leaving~4).~\footnote{Precisely: for $\Delta J = 0$
+the transition $m_J=0 \to m_J=0$ is allowed only if $J \neq 0$.  For
+the D$_1$ line the two $\Delta m_J=0$ transitions both occur ($+1/2\to+1/2$
+and $-1/2\to-1/2$), giving 2 longitudinal lines, combined with 1 transverse
+$\sigma^+$ and 1 $\sigma^-$, totalling~4.}
+
+These counts---6 and 4 instead of the classical 3---are \emph{impossible}
+within the three-quantum-number scheme, which yields only integer $J$ and
+hence cannot produce the half-integer $J=3/2$ or $J=1/2$ occurring in
+the sodium D~doublet.
+
+\subsection{Landé's g-Factor Data}
+
+Landé's 1921 empirical formula~\eqref{eq:lande_g} summarises a further
+dataset: the \emph{spacing ratios} of Zeeman components.  The splitting
+of a level in a magnetic field $B$ is $\Delta E = g_J \mu_B m_J B$, where
+$\mu_B = e\hbar/(2m_e)$ is the Bohr magneton.  Observed $g_J$ values
+for sodium are:
+\begin{align*}
+  g_J({}^2S_{1/2}) &= 2.0, \\
+  g_J({}^2P_{1/2}) &= 2/3 \approx 0.667, \\
+  g_J({}^2P_{3/2}) &= 4/3 \approx 1.333.
+\end{align*}
+These non-integer values---inexplicable if $g_{\mathrm{spin}} = 1$ as classical
+orbital mechanics would have it---require $g_s = 2$ for the spin contribution.
+Formula~\eqref{eq:lande_g} with $g_s = 2$ reproduces all observed $g_J$
+values exactly.  The anomalous value $g_s = 2$ is identified by the Zeeman
+spacing data.
+
+%======================================================================
+\section{Goodness of Fit: Zero Residuals}
+\label{sec:fit}
+
+Table~\ref{tab:fit} compares Pauli's predicted electron capacities with
+every observed capacity from Table~\ref{tab:empirical_data}.
+
+\begin{table}[ht]
+\centering
+\caption{Predicted vs.\ observed subshell electron capacities.  Pauli's
+model predicts $2(2l+1)$ electrons per subshell $(n,l)$.  The residual
+is zero in every case; the model fits all ten observations exactly with
+no adjustable parameters beyond the ranges of the four quantum numbers.}
+\label{tab:fit}
+\medskip
+\begin{tabular}{cccrrc}
+\toprule
+Subshell & $l$ & Formula $2(2l+1)$ &
+Predicted & Observed & Residual \\
+\midrule
+$1s$ & 0 &  $2(1)$  &  2 &  2 & $0$ \\
+$2s$ & 0 &  $2(1)$  &  2 &  2 & $0$ \\
+$2p$ & 1 &  $2(3)$  &  6 &  6 & $0$ \\
+$3s$ & 0 &  $2(1)$  &  2 &  2 & $0$ \\
+$3p$ & 1 &  $2(3)$  &  6 &  6 & $0$ \\
+$3d$ & 2 &  $2(5)$  & 10 & 10 & $0$ \\
+$4s$ & 0 &  $2(1)$  &  2 &  2 & $0$ \\
+$4p$ & 1 &  $2(3)$  &  6 &  6 & $0$ \\
+$4d$ & 2 &  $2(5)$  & 10 & 10 & $0$ \\
+$4f$ & 3 &  $2(7)$  & 14 & 14 & $0$ \\
+\midrule
+\multicolumn{4}{l}{RSS} & & $0$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent The residual sum of squares is identically zero.  A formal
+$\chi^2$ goodness-of-fit test statistic
+\[
+  \chi^2 = \sum_{\text{subshells}}
+  \frac{(\text{Observed} - \text{Predicted})^2}{\text{Predicted}}
+  = 0.
+\]
+Pauli's model does not fit the data approximately; it generates the
+observed counts \emph{deductively}.  The fitting exercise has zero
+degrees of freedom in the residual because the model produces
+the observed counts as exact consequences of counting arguments,
+not as the output of a curve-fit with estimated free parameters.
+
+\medskip
+This situation precisely parallels Einstein's photoelectric equation: the
+five-point OLS regression for sodium gave $R^2 \approx 0.99999$ and
+residuals below 2\,mV, but crucially the \emph{functional form}
+$V_0 = \alpha + \beta\nu$ and the \emph{universality of the slope} $\beta = h/e$
+were \emph{predicted} by theory, not estimated from data.  For Pauli, the
+functional form of the capacity formula $2(2l+1)$ is similarly predicted by
+theory; the counting data serve as a confirmation test, not as inputs to a
+parameter-estimation algorithm.
+
+%======================================================================
+\section{Parameter Identification}
+\label{sec:identification}
+
+In a classical regression, ``identification'' asks which variation in the data
+pins down which parameter.  For Pauli's lattice of allowed states, the
+analogous question is: which empirical observation establishes each of the four
+quantum numbers and the exclusion constraint?
+
+\begin{center}
+\begin{tabular}{p{3.8cm}p{5.5cm}p{4.5cm}}
+\toprule
+Parameter & What it determines & Identifying observation \\
+\midrule
+$n \in \{1,2,3,\ldots\}$ & Shell index; number of subshells
+  $= n$ & Chemical periodicity; discrete X-ray absorption edges \\
+$l \in \{0,\ldots,n-1\}$ & Subshell type; $2l+1$ magnetic sublevels
+  & Fine structure of X-ray levels; Sommerfeld's elliptical orbits \\
+$m_l \in \{-l,\ldots,+l\}$ & Normal Zeeman splitting into $2l+1$ components
+  & Normal Zeeman effect (integer-valued splitting,
+    $\Delta\nu \propto m_l$) \\
+$m_s \in \{\pm\tfrac{1}{2}\}$ & Factor-of-2 per $m_l$ sublevel;
+  doublet structure in alkali spectra
+  & Stoner's factor-of-2 per X-ray sublevel; alkali-metal
+    doublets; Landé $g_s = 2$ \\
+Exclusion ($n_s \leq 1$) & Total shell capacity $= 2n^2$;
+  chemical inertness of noble gases
+  & Noble-gas stability; absence of transitions out of
+    closed shells \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Remark on the exclusion constraint.}
+Without the constraint $n_s \leq 1$, multiple electrons could pile into the
+ground state~$1s$ (as bosons do).  Every atom would have all its electrons in
+the $n=1$, $l=0$, $m_l=0$, $m_s=+\tfrac{1}{2}$ state, and the periodic
+table would not exist.  The chemical diversity of matter is a consequence
+solely of this constraint.  In statistical language, the constraint is
+identified by the existence of the periodic table itself: the chemical fact
+that atoms do not all collapse to a single ground-state configuration is
+direct evidence that electrons must obey an exclusion rule.
+
+\paragraph{Remark on $m_s$.}
+The identification of $m_s$ is notably \emph{indirect}: the empirical evidence
+for a fourth quantum number comes from its \emph{consequences} (the factor of~2
+in subshell capacities; the doublet line structure) rather than from a direct
+measurement of the quantum number itself as a physical observable.  Pauli
+acknowledged this explicitly in his Nobel lecture: ``I was unable to give a
+logical reason for the exclusion principle or to derive it from more general
+assumptions'' \citep{Pauli1946Nobel}.  The physical object
+corresponding to $m_s$ was identified only after Uhlenbeck and Goudsmit proposed
+electron spin.
+
+%======================================================================
+\section{A Maximum Likelihood Framing}
+\label{sec:mle}
+
+The photoelectric regression has a natural MLE formulation under Gaussian
+errors.  Pauli's counting problem is discrete, and its counterpart is a
+multinomial likelihood.  We set this up here to make the statistical parallel
+explicit.
+
+\subsection{The Discrete Probability Model}
+
+Consider the experiment of drawing an electron uniformly at random from among
+all quantum states available in shell~$n$, and recording its $(l, m_l, m_s)$
+values.  Under the Exclusion Principle, each available state is equally
+accessible (the Pauli principle says nothing about energy ordering; for the
+purpose of counting, all states are equivalent).  The relevant statistical
+object is therefore the \emph{marginal probability} that the electron is in
+subshell~$l$:
+\begin{equation}\label{eq:marginal}
+  p(l \mid n) = \frac{2(2l+1)}{2n^2}
+              = \frac{2l+1}{n^2},
+  \quad l=0,1,\ldots,n-1.
+\end{equation}
+This is a discrete distribution on $\{0,1,\ldots,n-1\}$ with probabilities
+proportional to the subshell degeneracy $2l+1$.
+
+\subsection{The Multinomial Likelihood}
+
+Suppose we observe $N_l$ electrons in subshell~$l$ for $l=0,1,\ldots,n-1$,
+with $\sum_l N_l = N$ (the total number of electrons in shell~$n$ at
+maximum fill).  The multinomial likelihood is
+\begin{equation}\label{eq:multinomial}
+  \mathcal{L}(\{p_l\}) \propto \prod_{l=0}^{n-1} p_l^{N_l}.
+\end{equation}
+Pauli's model predicts the \emph{unique} probability vector
+$p_l^* = (2l+1)/n^2$.  Any competing model that, for example, assigns equal
+probability to all subshells ($p_l = 1/n$) or uses only three quantum numbers
+($p_l = 1/(n^2)$ per $m_l$ if no $m_s$) would predict different capacities.
+
+Under the true multinomial, the log-likelihood ratio comparing Pauli's model
+to the null model of equal subshell occupancy ($p_l^{\text{null}} = 1/n$ for all $l$)
+is
+\begin{equation}\label{eq:llr}
+  \Lambda = 2\sum_{l=0}^{n-1} N_l \ln\!\frac{p_l^*}{p_l^{\text{null}}}
+          = 2N \sum_{l=0}^{n-1} \frac{2l+1}{n^2}\ln\!\frac{n(2l+1)}{n^2},
+\end{equation}
+which is strictly positive (Pauli's model fits better) for all $n\geq 2$.
+The $\chi^2$ statistic comparing the predicted capacities from
+Table~\ref{tab:fit} with the null prediction of $2n^2/n$ electrons per
+subshell is:
+
+\begin{center}
+\begin{tabular}{ccccr}
+\toprule
+Shell $n$ & Subshell $l$ & Predicted ($2(2l+1)$) &
+  Null ($2n^2/n = 2n$) & $\chi^2$ contribution \\
+\midrule
+$n=2$ & $l=0$ ($s$) &  2 & 4 & $4/4=1.00$ \\
+$n=2$ & $l=1$ ($p$) &  6 & 4 & $4/4=1.00$ \\
+\midrule
+\multicolumn{4}{r}{Shell $n=2$ total $\chi^2$} & $2.00$ \\
+\midrule
+$n=3$ & $l=0$ ($s$) &  2 & 6 & $16/6=2.67$ \\
+$n=3$ & $l=1$ ($p$) &  6 & 6 & $0/6=0.00$ \\
+$n=3$ & $l=2$ ($d$) & 10 & 6 & $16/6=2.67$ \\
+\midrule
+\multicolumn{4}{r}{Shell $n=3$ total $\chi^2$} & $5.33$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent The null model of equal subshell occupancy is clearly rejected by
+the observed capacity data at any conventional significance level.  Pauli's
+model, by contrast, fits perfectly.
+
+\subsection{Parsimony: The Model Has No Free Parameters}
+
+The multinomial likelihood for the capacity data has, in principle, $n-1$
+free probability parameters for each shell~$n$.  Pauli's model reduces these
+to \emph{zero} free parameters: the probabilities $p_l^* = (2l+1)/n^2$ are
+completely determined by the structure of the four quantum numbers and the
+counting rule.  There is nothing to estimate.
+
+In the language of information criteria, if a competitor model uses $k$ free
+parameters and Pauli's model uses~0, the Akaike Information Criterion (AIC)
+favours Pauli's model by $2k$ units \emph{plus} the improvement in
+log-likelihood from the exact fit.  Since the exact fit achieves the maximum
+possible likelihood (the observed data are the maximum-likelihood estimate
+of their own probabilities), no model can outpredict Pauli's on data
+that were used to derive the principle --- but Pauli's model generalises
+analytically to any shell, including $n=5$ (xenon) and $n=7$ (actinides),
+whereas a purely empirical fit to shells $n=1,\ldots,4$ would have no
+basis for predicting shell~5.
+
+%======================================================================
+\section{Subsequent Confirmations}
+\label{sec:subsequent}
+
+\subsection{Uhlenbeck and Goudsmit: Physical Interpretation of $m_s$}
+
+Pauli proposed $m_s$ as a purely formal device in January 1925.  In
+September 1925, George Uhlenbeck and Samuel Goudsmit
+\citeyearpar{UhlenbeckGoudsmit1925} proposed that the electron possesses an
+\emph{intrinsic angular momentum} (spin) of magnitude $\hbar/2$, with
+projection $m_s = \pm\tfrac{1}{2}$ along any axis.  The associated magnetic
+moment has an anomalous gyromagnetic ratio $g_s \approx 2$---twice the
+classical orbital value.  The Uhlenbeck--Goudsmit proposal:
+\begin{itemize}
+  \item Gave a physical object---intrinsic spin---to Pauli's abstract
+    two-valuedness.
+  \item Explained the doublet structure of alkali spectra as arising from the
+    spin--orbit coupling $\mathbf{L}\cdot\mathbf{S}$ between orbital and spin
+    angular momenta.
+  \item Reproduced the Landé g-factor formula~\eqref{eq:lande_g} with the
+    substitution $g_s = 2$, explaining why the formula contains the factor~2
+    in the numerator.
+\end{itemize}
+
+\subsection{Fermi--Dirac Statistics}
+
+In 1926 Enrico Fermi \citeyearpar{Fermi1926} and Paul Dirac
+\citeyearpar{Dirac1926} independently derived the statistical mechanics of
+a gas of identical particles obeying the Exclusion Principle.  For a system
+in thermal equilibrium at temperature $T$ with chemical potential $\mu$, the
+mean occupation number of a state with energy $\varepsilon$ is
+\begin{equation}\label{eq:fermi_dirac}
+  \bar{n}(\varepsilon) = \frac{1}{e^{(\varepsilon-\mu)/k_BT} + 1}.
+\end{equation}
+The $+1$ in the denominator (vs.\ the $-1$ of Bose--Einstein statistics)
+is the signature of the Exclusion Principle: the constraint $n_s\leq 1$
+prevents accumulation, and $0 < \bar{n} < 1$ for all $\varepsilon$ and $T>0$.
+At $T=0$, equation~\eqref{eq:fermi_dirac} becomes a step function: all states
+below the Fermi energy $E_F = \mu(T=0)$ are completely filled
+($\bar{n}=1$) and all above are empty ($\bar{n}=0$)---a direct restatement
+of the Exclusion Principle as a thermodynamic limiting case.
+
+Fermi--Dirac statistics had immediate astrophysical consequences.
+\citet{Fowler1926} applied them to explain the stability of white dwarf
+stars: the electron degeneracy pressure arising from the Exclusion Principle
+resists gravitational collapse even at zero temperature.  Sommerfeld
+\citeyearpar{Sommerfeld1927} resolved the long-standing puzzle of why
+conduction electrons contribute far less to metallic heat capacity than
+classical equipartition predicts: at room temperature, $k_BT \ll E_F$,
+and the Pauli exclusion principle suppresses thermal excitations for all
+but the small fraction of electrons within $k_BT$ of the Fermi surface.
+
+\subsection{Dirac's Relativistic Derivation}
+
+Paul Dirac derived the relativistic quantum equation for the electron in 1928
+\citep{Dirac1928}.  The Dirac equation requires the wave function to be a
+four-component spinor, automatically producing:
+\begin{itemize}
+  \item Intrinsic spin-$\tfrac{1}{2}$: the spin degree of freedom is not
+    added by hand but emerges from the algebra of the equation.
+  \item $g_s = 2$ exactly: the anomalous gyromagnetic ratio of Uhlenbeck and
+    Goudsmit is a direct consequence of the Dirac equation; quantum
+    electrodynamic corrections produce the small deviation
+    $g_s = 2.00232\ldots$
+\end{itemize}
+Dirac's derivation retroactively justified the Uhlenbeck--Goudsmit proposal
+and gave Pauli's fourth quantum number its derivation from first principles.
+
+\subsection{The Spin--Statistics Theorem}
+
+Pauli proved in 1940 \citep{Pauli1940} that in any relativistic quantum field
+theory satisfying locality, causality, and positivity of energy, particles with
+half-integer spin \emph{must} obey the Exclusion Principle (Fermi--Dirac
+statistics), while particles with integer spin must obey Bose--Einstein
+statistics.  The Exclusion Principle is thus not an independent postulate in quantum
+field theory: it is a theorem, a consequence of combining quantum mechanics
+with special relativity in a consistent way.  This is the deepest confirmation
+of Pauli's 1925 heuristic.
+
+Pauli received the Nobel Prize in Physics in 1945 specifically ``for the
+discovery of the Exclusion Principle, also called the Pauli Principle.''
+
+%======================================================================
+\section{Pauli as Machine Learner}
+\label{sec:ml}
+
+The vocabulary of modern machine learning---supervised learning, hypothesis
+class, inductive bias, feature engineering, model selection---maps onto
+Pauli's scientific reasoning in almost the same way it maps onto Einstein's
+photoelectric reasoning.
+
+\subsection{The Learning Problem}
+
+The ``dataset'' assembled by Pauli is a table of discrete counts
+(Table~\ref{tab:empirical_data}) and multiplicities
+(Tables~\ref{tab:zeeman_data},~\ref{tab:fit}).  The task is to find a
+model that predicts all entries in these tables from a minimal set of
+structural rules.  In modern ML parlance, this is a multivariate
+\emph{classification} or \emph{generative model} problem over a discrete
+state space.
+
+\subsection{The Hypothesis Class and Inductive Bias}
+
+Einstein's hypothesis class was the set of affine functions
+$f_{\alpha,\beta}:\nu\mapsto\alpha+\beta\nu$, derived from the light-quantum
+postulate.  Pauli's hypothesis class is the set of binary occupation functions
+on four-integer-labeled states, derived from two postulates:
+\begin{enumerate}
+  \item \emph{Four quantum numbers}: the state space is the Cartesian product
+    $\{1,2,\ldots\}\times\{0,\ldots,n-1\}\times\{-l,\ldots,+l\}\times
+    \{+\tfrac{1}{2},-\tfrac{1}{2}\}$.
+  \item \emph{Exclusion}: occupation numbers are in $\{0,1\}$.
+\end{enumerate}
+Together these postulates restrict the capacity of each subshell to exactly
+$2(2l+1)$---a prediction with zero adjustable parameters beyond the
+specification of the state space.
+
+Prior to Pauli, the effective hypothesis class was a much larger family: models
+with arbitrary occupation rules, non-integer quantum numbers, or additional
+continuous parameters.  Pauli's postulates function as an extreme inductive
+bias that collapses all combinatorial freedom into a single prediction.  In
+learning-theoretic terms, the VC dimension of Pauli's ``model class'' (the
+lattice of binary-occupied states subject to the exclusion constraint) is
+effectively~1: there is only one model in the class (given the four quantum
+numbers and the exclusion rule, the capacity function is uniquely determined),
+so any single observation that confirms the predicted capacity suffices to
+``learn'' the model.
+
+\subsection{Feature Selection}
+
+Pauli's four quantum numbers are four \emph{features} of each electron's
+state.  By 1924, three of these features were known from Sommerfeld's work;
+the problem was that the known feature set $(n, l, m_l)$ was incomplete.
+Pauli's scientific contribution was to recognise that a fourth binary feature
+is needed---not because a large dataset demanded it, but because the observed
+capacity data were off by the precise factor of~2 that a binary feature adds.
+
+This is a form of \emph{feature engineering}: diagnosing that the existing
+feature set is insufficient, inferring the minimum additional feature---a
+two-valued one---needed to close the discrepancy, and verifying that the
+augmented feature set fits all observations exactly.
+
+\subsection{What a Naive Data-Driven Learner Would Miss}
+
+A purely data-driven learning system confronting Table~\ref{tab:empirical_data}
+would observe ten (subshell, count) pairs.  A regression tree or neural
+network could be trained to predict these counts from $(n,l)$.  What it could
+not do without theoretical structure:
+
+\begin{enumerate}
+  \item It would not know that the correct model has the form $2(2l+1)$---it
+    would fit a table of numbers and perhaps find the pattern numerically.
+  \item It would not know that the explanation of the pattern is a fourth quantum
+    number with exactly two values.  The data are consistent with many mathematical
+    formulas; the fourth quantum number is the physically and theoretically
+    minimal explanation.
+  \item It would not generalise to the anomalous Zeeman effect predictions
+    without the physical model as a common underlying theory.  The connection
+    between shell capacity data and Zeeman splitting data requires the quantum
+    number structure as the shared latent variable.
+  \item It could not predict the Fermi distribution~\eqref{eq:fermi_dirac} or
+    white dwarf stability---applications that rely on the Exclusion Principle
+    in a continuum of energies, far outside the discrete atomic-level dataset.
+\end{enumerate}
+
+Pauli's irreplaceable contribution was the theoretical unification: a single
+two-sentence postulate that simultaneously explains the capacity data, the
+spectral multiplicities, and the Zeeman patterns, and that generalises to
+all subsequent applications of the Exclusion Principle in condensed matter
+physics, nuclear physics, and quantum field theory.
+
+\subsection{Transfer Learning}
+
+Einstein's slope $h/e$ transferred exactly from sodium to lithium---a
+zero-shot prediction confirmed to 0.2\%.  Pauli's shell-capacity formula
+$2n^2$ transfers from atoms to molecules (Hückel's rule for aromatic
+stability), to nuclei (nuclear shell model), to solid-state crystals
+(Fermi surfaces), and to neutron stars (neutron degeneracy pressure).
+Each application is zero-shot: the Exclusion Principle was not re-estimated
+but transferred with no adjustment, constrained only by the energy levels
+applicable in the new domain.
+
+%======================================================================
+\section{Comparison with the Photoelectric Episode}
+\label{sec:comparison}
+
+Table~\ref{tab:comparison} compares the two episodes side by side.
+
+\begin{table}[ht]
+\centering
+\caption{Structural comparison of Einstein's photoelectric derivation (1905--1916)
+and Pauli's exclusion principle derivation (1924--1925) from the perspective
+of statistical inference and machine learning.}
+\label{tab:comparison}
+\medskip
+\begin{tabular}{p{3.5cm}p{5cm}p{5cm}}
+\toprule
+Dimension & Einstein (photoelectric) & Pauli (exclusion principle) \\
+\midrule
+Empirical anomaly & Stopping potential
+  independent of intensity; depends on $\nu$ &
+  Shell capacity $2n^2$ not $n^2$; anomalous
+  Zeeman multiplicities \\
+Key precursor data & Lenard (1902):
+  $V_0$ vs.\ $\nu$ qualitative &
+  Stoner (1924): $2$ electrons per $m_l$
+  sublevel \\
+Theoretical postulate & Light quantum:
+  $E = h\nu$ &
+  Fourth quantum number $m_s$; exclusion
+  constraint $n_s \leq 1$ \\
+Hypothesis class & Affine functions:
+  $V_0 = \alpha + \beta\nu$ &
+  Binary occupation on four-dimensional
+  integer lattice \\
+Free parameters & 2 (slope $\beta = h/e$;
+  intercept $\alpha = -W/e + v_c$) &
+  0 (all capacities determined by counting) \\
+Prediction & $V_0 = (h/e)\nu - W/e$;
+  universal slope across metals &
+  Capacity$(n,l) = 2(2l+1)$;
+  universal across all atoms and shells \\
+Fit statistic & OLS: $R^2 = 0.99999$,
+  $\hat\sigma = 1.4$\,mV (Millikan 1916) &
+  $\chi^2 = 0$: exact fit to all 10
+  subshell observations \\
+Transfer & Na and Li slopes agree to 0.2\% &
+  Formula transfers to molecules, nuclei,
+  stars \\
+Physical interpretation delayed & Light
+  quantum debated until Compton (1923) &
+  $m_s$ uninterpreted until Uhlenbeck--Goudsmit
+  (1925) \\
+Deductive grounding achieved & QED:
+  photoelectric equation exact &
+  Dirac (1928) and Pauli (1940) spin--statistics
+  theorem \\
+Nobel Prize & 1921 (Einstein, for
+  photoelectric equation) &
+  1945 (Pauli, for exclusion principle) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A key structural difference is the \emph{type of data}.  Einstein's equation
+is a linear regression on continuous data $(\nu_i, V_{0i})$; the free
+parameters $\beta = h/e$ and $\alpha = -W/e + v_c$ are estimated by
+OLS/MLE with degrees of freedom from three or more observations.  Pauli's
+model involves a discrete counting argument; the ``free parameters'' are the
+integer ranges of $n$, $l$, $m_l$, and the binary range of $m_s$, and they
+are identified by qualitative and semi-quantitative spectroscopic data rather
+than by a quantitative regression.
+
+A second structural difference is the \emph{role of error}.  Einstein's
+regression has a genuine residual $\varepsilon$ from measurement noise;
+Millikan's precision was finite and the standard error of $h/e$ was
+estimated at $0.1\%$.  Pauli's counting formula predicts integers; there is
+no room for statistical noise---the capacity of the $2p$ subshell is exactly~6,
+not $6.1 \pm 0.3$.  The ``goodness of fit'' is either perfect or it is not.
+
+In both cases, theory supplied the hypothesis class before quantitative
+data were available: Einstein wrote down $V_0 = (h/e)\nu - W/e$ in 1905
+before clean data existed; Pauli wrote down the exclusion rule and the
+fourth quantum number in January 1925, relying principally on the qualitative
+patterns in Stoner's (1924) table.  In both cases, the theoretical prior
+reduced the effective number of free parameters to near zero, enabling
+confirmation with a minimal dataset.
+
+%======================================================================
+\section{Pauli's Epistemic Situation}
+
+Pauli's relationship to his own principle shares certain features with
+Millikan's relationship to Einstein's equation.  As Millikan confirmed
+Einstein's equation while for years publicly rejecting its physical
+interpretation, Pauli proposed the exclusion principle and the fourth quantum
+number while explicitly refusing to interpret $m_s$ physically:
+
+\begin{quote}
+  ``Already in my original paper I stressed the circumstance that I was
+  unable to give a logical reason for the exclusion principle or to derive
+  it from more general assumptions\ldots\ To me, the suggestion of Stoner
+  appeared to be an important step forward, since for the first time the
+  number~2, characteristic of the closed shells, had to be attributed to the
+  electron itself---to its `two-valuedness.'\,'' \citep{Pauli1946Nobel}
+\end{quote}
+
+The lesson is the same as in the photoelectric case: a sufficiently parsimonious
+formal model can unify a body of empirical observations before the physical
+mechanism underlying the model is understood.  Pauli in 1925 was, in modern
+parlance, fitting a discrete probability model over quantum state space; the
+physical object that corresponds to $m_s$---intrinsic spin---was supplied by
+Uhlenbeck and Goudsmit a few months later, and its relativistic necessity was
+established by Dirac three years after that.
+
+When Uhlenbeck and Goudsmit proposed electron spin, Pauli was initially
+sceptical, pointing out that a classically spinning electron the size of a
+point particle would need a surface velocity exceeding the speed of light.
+This reservation was eventually resolved by Dirac's equation, in which spin
+is a purely quantum-mechanical property with no classical analogue---exactly
+the ``classically non-describable two-valuedness'' Pauli had insisted upon
+from the start.
+
+%======================================================================
+\section{Conclusions}
+\label{sec:conclusions}
+
+Pauli's 1925 determination of the quantum-mechanical state space for atomic
+electrons is a canonical exercise in scientific model specification.  Starting
+from a handful of empirical regularities---Stoner's factor-of-2 per sublevel,
+the doublet structure of alkali spectra, the anomalous Zeeman multiplicities,
+and the noble-gas closure counts---Pauli inferred the existence of a fourth,
+two-valued quantum number and a binary occupation constraint.  His model has
+the structure of a four-parameter discrete probability distribution over a
+lattice, with the unusual property that the parameters are integers (the
+ranges of $n$, $l$, $m_l$, $m_s$) and the predictions are exact counts,
+leaving zero tunable parameters and zero residual degrees of freedom.
+
+Three features of the episode are especially instructive from a statistical
+standpoint.
+
+\medskip
+\emph{First, extreme parsimony.}  The principle is a single sentence
+($n_s \leq 1$), yet it organises the structure of the entire periodic
+table, explains all atomic spectral multiplicities, predicts the anomalous
+Zeeman patterns, and implies Fermi--Dirac statistics.  The
+Akaike-information-criterion premium for zero free parameters---relative
+to any competitor that uses tunable constants---is overwhelmingly in Pauli's
+favour.
+
+\medskip
+\emph{Second, theory-first identification.}  Like Einstein's photoelectric
+paper, Pauli's principle was proposed before quantitative experimental
+confirmation was complete.  The fourth quantum number was inferred from
+the inability of three quantum numbers to explain a well-known discrepancy
+(factor of~2), not from a new precision measurement.  The measurement
+confirmation---via Zeeman pattern counts, X-ray level counts, and chemical
+periodicities---served to verify a pre-existing theoretical prediction.
+
+\medskip
+\emph{Third, uninterpreted success.}  Pauli in 1925 did not know what $m_s$
+was.  In this he resembles Planck in 1900, who introduced the energy quantum
+$h\nu$ to fit the blackbody spectrum without knowing what a ``quantum''
+physically was, and Einstein in 1905, who proposed the light quantum while
+acknowledging that it conflicted with the wave theory of light.  Each of these
+model specifications---Planck's, Einstein's, Pauli's---introduced a formal
+device that organised empirical data parsimoniously, long before a
+self-consistent physical interpretation was available.  The pattern suggests
+that in fundamental physics, as in econometrics, the ability to specify a
+parsimonious model is often the critical intellectual step, and the ability to
+interpret its parameters often follows much later.
+
+\bigskip
+\bibliographystyle{plainnat}
+\bibliography{pauli_exclusion_ML}
+
+\end{document}
