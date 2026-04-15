@@ -1,0 +1,801 @@
+\documentclass[aspectratio=169]{beamer}
+%\usetheme{Madrid} % My favorite!
+%\usetheme{Boadilla} % Pretty neat, soft color.
+\usetheme{default}
+%\usetheme{Warsaw}
+%\usetheme{Bergen} % This template has nagivation on the left
+%\usetheme{Frankfurt} % Similar to the default
+%with an extra region at the top.
+%\usecolortheme{seahorse} % Simple and clean template
+%\usetheme{Darmstadt} % not so good
+% Uncomment the following line if you want %
+% page numbers and using Warsaw theme%
+%\setbeamertemplate{footline}[page number]
+%\setbeamercovered{transparent}
+%\setbeamercovered{invisible}
+% To remove the navigation symbols from
+% the bottom of slides%
+\setbeamertemplate{navigation symbols}{}
+%
+%\usepackage{fullpages}
+%\usepackage{psfig}
+\usepackage{epstopdf}
+\usepackage{hyperref}
+
+
+%\usepackage{subfig}
+%\usepackage{tikz}
+%\usepackage{chronology}
+
+
+\usepackage{amsmath}    % need for subequations
+\usepackage{verbatim}   % useful for program listings
+\usepackage{color}      % use if color is used in text
+\usepackage{subfigure}  % use for side-by-side figures
+\usepackage{hyperref}   % use for hypertext links, including those to external documents and URLs
+\usepackage{amssymb,latexsym, amsmath}
+\usepackage{graphicx}
+\usepackage{amsthm}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+%\usepackage{subcaption}
+%\usepackage{caption}
+%\usepackage{subcaption}
+%\usepackage{bm} % For typesetting bold math (not \mathbold)
+%\logo{\includegraphics[height=0.6cm]{yourlogo.eps}}
+\theoremstyle{Definition}
+\newtheorem{defi}{Definition}
+\newtheorem{propo}{Proposition}
+%\graphicspath{{graphs//}}
+
+\title{AI: Past, Present, and Future\\
+%\color{red}{For Nicole} 
+}
+\author{Thomas J. Sargent \\
+Peking University HSBC Business School   \\
+Shenzhen, China}
+\date{December 29, 2025 \\
+PHBS}
+% \today will show current date.
+% Alternatively, you can specify a date.
+%
+
+%----------------------------------------------------------------------------------------------
+\begin{document}
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Activities Associated with  Human Intelligence}
+
+\begin{itemize}
+\item Pattern Recognition
+\item Generalization
+\item Decision Making
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Cognitive Disabilities}
+\begin{itemize}
+\item Statistics
+\item Biology
+\item Economics
+\item Physics
+\end{itemize}
+
+\quad \quad \quad Pinker, {\em The Blank Slate}, chapter 13.
+
+\end{frame}
+
+
+\begin{frame}{Sources of AI and Machine Learning}
+\begin{itemize}
+\item Statistics
+\item Biology
+\item Economics
+\item Physics
+\end{itemize}
+\end{frame}
+
+%Origins of Artificial Intelligence
+
+
+\begin{frame}{Authors of Scientific Revolution}
+\begin{itemize}
+\item Copernicus{\color{red}$^*$}
+\item Brahe
+\item Kepler{\color{red}$^*$}
+\item Galileo
+\item Newton{\color{red}$^*$}
+\item Darwin
+\end{itemize}
+
+\medskip
+\medskip
+
+{\color{red}$^*$} -- part time economist
+
+\end{frame}
+
+
+\begin{frame}{Ptolemy's curve fitting}
+\begin{itemize}
+\item Big data: tables of noisy data on planets' (time, location) pairs  collected over many centuries
+\item Use circles
+\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}{Kepler's curve fitting}
+\begin{itemize}
+\item Brahe's big data set
+\item Use ellipses instead of circles
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Galileo's laboratory experiment}
+
+Measurement tools
+\begin{itemize}
+\item A clock
+\item An inclined plane
+\item Some metal balls
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Darwin}
+Components
+\begin{itemize}
+\item Natural variation
+\item Children inherit some characteristics
+\item Selection (artificial and natural)
+
+
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Under Hood of AI}
+
+\begin{itemize}
+\item Prices and values
+\item Game theory
+\item Distributed computing
+\item Dynamic programming
+\item Monte Carlo simulations
+\item Competition and ``survival of fittest''
+
+\end{itemize}
+
+
+\end{frame}
+
+
+
+\begin{frame}{John Holland's Artificial Mind}
+Genetic algorithm and classifier systems
+
+\begin{itemize}
+\item DNA to encode if-then statements as binary strings
+\begin{itemize}
+\item mutation
+\item  sexual reproduction
+\end{itemize}
+\item Ledgers
+\item Competing if-then statements
+\item Auctions
+\item Randomization
+\item Exploration--exploitation tradeoff
+
+
+\end{itemize}
+
+
+\end{frame}
+
+
+
+
+
+\begin{frame}{Richard Feynman's Metaphor}
+
+\begin{itemize}
+%\item An observer  does not know rules of  chess
+\item Ignorant of the rules of chess, an observer watches  two people  play one game of chess
+\item From those data, the observer is asked to infer the rules of the game of chess
+\item Likewise,  a physicist infers laws of nature from incomplete observations of a physical system
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Two Types of Physics Models}
+
+Parameters two types of  models:
+\begin{itemize}
+\item Kepler's third law: $T^2 = K r^3 $;  invariant parameters: $2, 3, K $ 
+\item Newton's interpretation of Kepler's third law:
+\begin{itemize}
+\item  $K = \frac{2 \pi}{G M} $; $G$ invariant parameter
+\item $F = m r \omega^2 = G \frac{m M}{r^2} $ (centripetal force); 
+\end{itemize}  
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Relevance of Richard Feynman's Metaphor}
+\begin{itemize}
+\item Feynman's metaphor literally describes  what a structural economic statistician   tries  to do
+\item From incomplete observations of prices and quantities, an economic statistician wants to infer a game that generated
+those prices and quantities
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{A game}
+\begin{itemize}
+\item Lists of
+\begin{itemize} 
+\item  players
+\item  available choices
+\item payoffs
+\item information sets
+\end{itemize}
+\item a timing protocol
+\item an equilibrium concept
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}{Relevance of Richard Feynman's Metaphor}
+\begin{itemize}
+\item AI is good at detecting and organizing patterns
+\item So far, it is not good at inferring ``rules of game'' 
+\end{itemize}
+\bigskip
+
+Nevertheless,  many jobs involve tasks that are about detecting and organizing patterns.
+
+\end{frame}
+
+
+
+\begin{frame}{Physics Metaphors and Economics}
+
+von Neumann and Morgenstern (chapter 1, 1944) and Koopmans (1946) described two types of statistical models:
+\begin{itemize}
+\item Kepler stage: descriptive model with curve-fitting parameters
+\item Newton stage: structural model with  parameters characterizing physical invariants  
+\end{itemize}
+
+
+
+
+
+\end{frame}
+
+
+\begin{frame}{Regressions, Structure, Invariance}
+
+\begin{itemize}
+\item Von Neumann and Morgenstern
+\item Koopmans
+\item Marschak
+\item Lucas
+\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}{Description and Explanation}
+
+\begin{quote}
+
+%the essential purport of the first two laws of motion, namely this: that
+$\ldots$  the laws of dynamics are to be stated in terms of accelerations. In this respect, Copernicus and Kepler are still to be classed with the ancients; they sought laws stating the shapes of the orbits of the heavenly bodies. Newton made it clear that laws stated in this form could never be more than approximate. The planets do not move in exact ellipses, because of the perturbations caused by the attractions of other planets. Nor is the orbit of a planet ever exactly repeated, for the same reason. But the law of gravitation, which dealt with accelerations, was very simple $\ldots$
+%, and was thought to be quite exact until two hundred years after Newton's time. When it was amended by Einstein, it still remained a law dealing with accelerations.
+
+\quad \quad Bertrand Russell, History of Western Philosophy
+
+\end{quote}
+
+
+\end{frame}
+
+\begin{frame}{Meaning of   ``cause''}
+%
+%Toward the end of the chapter "The Rise of Science" in his History of Western Philosophy, 
+%Bertrand Russell wrote
+\begin{quote}
+
+
+There are some respects in which the concepts of modern theoretical physics differ from those of the Newtonian system. To begin with, the conception of 'force', which is prominent in the seventeenth century, has been found to be superfluous. 'Force', in Newton, is the cause of change of motion, whether in magnitude or direction. The notion of cause is regarded as important, and force is conceived imaginatively as the sort of thing that we experience when we push or pull.
+% For this reason it was considered an objection to gravitation that it acted at a distance, and Newton himself conceded that there must be some medium by which it was transmitted. 
+%Gradually it was found that all the equations could be written down without bringing in forces. What was observable was a certain relation between acceleration and configuration; to say that this relation was brought about by the intermediacy of 'force' was to add nothing to our knowledge. Observation shows that planets have at all times an acceleration towards the sun, which varies inversely as the square of their distance from it. To say that this is due to the 'force' of gravitation is merely verbal, like saying that opium makes people sleep because it has a dormitive virtue. The modern physicist, therefore, merely states formulae which determine accelerations, and avoids the word 'force' altogether. 'Force' was the faint ghost of the vitalist view as to the causes of motions, and gradually the ghost has been exorcized."
+
+\bigskip
+
+\quad \quad Bertrand Russell, History of Western Philosophy
+
+
+\end{quote}
+
+
+\end{frame}
+
+
+\begin{frame}{Cause and Force}
+
+\begin{quote}
+
+
+%"There are some respects in which the concepts of modern theoretical physics differ from those of the Newtonian system. To begin with, the conception of 'force', which is prominent in the seventeenth century, has been found to be superfluous. 'Force', in Newton, is the cause of change of motion, whether in magnitude or direction. The notion of cause is regarded as important, and force is conceived imaginatively as the sort of thing that we experience when we push or pull. For this reason it was considered an objection to gravitation that it acted at a distance, and Newton himself conceded that there must be some medium by which it was transmitted.
+ Gradually it was found that all the equations could be written down without bringing in forces. What was observable was a certain relation between acceleration and configuration; to say that this relation was brought about by the intermediacy of 'force' was to add nothing to our knowledge. Observation shows that planets have at all times an acceleration towards the sun, which varies inversely as the square of their distance from it. 
+ $\ldots$ %To say that this is due to the 'force' of gravitation is merely verbal, like saying that opium makes people sleep because it has a dormitive virtue. 
+ The modern physicist, therefore, merely states formulae which determine accelerations, and avoids the word 'force' altogether. 'Force' was the faint ghost of the vitalist view as to the causes of motions, and gradually the ghost has been exorcized."
+ 
+ \bigskip
+
+\quad \quad Bertrand Russell, History of Western Philosophy
+
+
+\end{quote}
+
+
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}{Master Equations}
+\begin{itemize}
+\item Equilibrium Markov models
+\begin{itemize}
+\item Coherent collections of Markov decision problems defined on a common state space
+\end{itemize}
+\item Used throughout  economics, finance, machine learning, pattern recognition, AI
+\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}{Using AI to Solve Master Equations}
+\begin{itemize}
+\item Mean field games
+\item Optimal transport
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Using AI to Solve Master Equations}
+Main lessons:
+\begin{itemize}
+\item Promise/challenge: AI can manage ``curse of dimensionality''
+\begin{itemize}
+\item Shrewd dimension reduction
+\end{itemize}
+\item AI doesn't do it without lots of {\em human} supervision
+\item Lots of high skilled human model-specific talent
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Machine Learning a Ramsey Plan}
+
+    \textbf{Machine learning} deploys algorithms to 
+    compute a nonlinear function $f : X \rightarrow Y$. % under specific contexts.
+
+    Popular contexts include:
+    \begin{enumerate}
+    \item $\{x_i, y_i\}_{i=1}^I \in X^I \times Y^I $ is a data set and $f$ is 
+    a non-linear least squares regression function.
+    \item $f$ solves a particular functional equation or maximizes a particular 
+    functional.
+    \end{enumerate}
+
+    You can  use ML (a.k.a.~ AI) to compute welfare-maximizing  government plan for a model
+    of   Calvo (1978)
+    
+    \medskip
+    
+    Interpreting the plan in terms of optimal "inflation targeting" requires  HI
+    
+    %by optimizing a government's objective function.
+\end{frame}
+
+
+\begin{frame}{AI and Jobs}
+\
+\bigskip
+
+Will  software replace people?
+\end{frame}
+
+
+\begin{frame}{Is  software eroding labor's share of GDP?}
+
+\begin{itemize}
+\item Capital goods are heterogeneous and workers differentially use equipment and software
+\item Technical change manifests itself more and more in improvements in software 
+\item Prices of software have been declining faster than prices  of equipment.
+%\begin{itemize}
+%\item various service delivered over the internet, platform business, AI
+%\end{itemize}
+\end{itemize}
+
+\end{frame}
+%
+%
+%\begin{frame}{Distributing gains from AI}
+%Is  software eroding labor's share of GDP?
+%\begin{itemize}
+%\item Capital goods are heterogeneous and workers differentially use equipment and software
+%\item Technical change manifests itself more and more in improvements in software 
+%\item Price of software has declines more rapidly than that of equipment.
+%%\begin{itemize}
+%%\item various service delivered over the internet, platform business, AI
+%%\end{itemize}
+%\end{itemize}
+%
+%\end{frame}
+
+
+\begin{frame}{Labor's share is declining, capital's  is rising}
+
+\begin{itemize}
+\item Software is replacing some kinds of tasks and jobs 
+\item
+Labor share has been declining as software replaces (substitutes  for)  labor and raises firms' markups over costs.
+\item Aum and Shin (2024)
+\item Nested CES production function -- elasticities of substitution govern outcomes
+
+\end{itemize}
+
+\end{frame}
+
+
+\end{document}
+
+\begin{frame}{Digital Finance: What's new? What's old?}
+Activities  are very old
+\begin{itemize}
+\item paper and pencil ledger books, bank notes, and currencies
+\item new technologies for doing old things faster, cheaper
+\item electronic ledgers and currencies
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Opportunities and Innovations}
+\begin{itemize}
+\item New ways to facilitate trust and enforcement through
+\begin{itemize}
+\item Information about past buying and selling practices
+\item Power to exclude undesirable agents from a platform
+\end{itemize}
+\item New technologies that do  things that banks and courts  have   done in other, more costly ways
+\item Drawing lines between institutions that will operate these technologies 
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{What's new? What's old?}
+Want arrangements 
+\begin{itemize}
+\item to trust and verify trading partners
+\item to detect and exclude bad actors 
+ \item to facilitate  community policing and regulation
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Activities of Financial Intermediaries}
+\begin{itemize}
+\item Custodians
+\item Banks, insurance companies, other financial intermediaries
+\item Exchanges
+\item Brokers
+\item Dealers
+\item Regulators
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}{Activities and Technologies}
+``Fintech'' aspires to use computers and algorithms to
+
+\begin{itemize}
+\item Record information
+\item Transmit information about  transactions between buyers and sellers
+\item Make contracts depend on information acquired by platform
+\item Foster trust in trading partners  and enforcement of contracts
+\end{itemize}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}{How digital money differs from paper money?}
+\begin{itemize}
+\item Whether or not they have {\color{red}{ledgers}}
+\item Digital {\color{red}{ledger}}
+\begin{itemize}
+\item Makes history-dependent  smart contracts possible and programmable
+\item Information collection facilitates contract enforcement
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Ledgers as a substitute for cash}
+Different possible transparencies (i.e., degrees of openness)
+\begin{itemize}
+\item Private
+\item Public
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Types of Digital Monies}
+\begin{itemize}
+\item Bank reserves at central banks
+\item Bank account deposits
+\item Bitcoin, Ether, Ripple, and other digital currencies
+\item Tokens on supply chains
+\item Central Bank digital currencies
+\end{itemize}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Opportunities and Innovations}
+\begin{itemize}
+\item Supply chains with payment rails and tokens
+\item Programmable transactions -- ``smart contracts'' that automatically trigger transactions
+\item Social networks and retail platforms with tokens and histories of information
+\item Interoperability and exchange rates among tokens
+\item Challenges about who operates and who owns data
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Centralization versus Decentralization}
+\begin{itemize}
+\item Centralized exchange -- order book, algorithm, ledger
+\item Decentralized exchange -- distributed ledgers
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Central Bank Digital Currency}
+
+\begin{itemize}
+\item Universal access? -- consumers and producers?
+\item A common ledger versus exclusion as enforcement tool?
+\item Way to nudge commercial banks to compete and modernize?
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Decentralized Finance?}
+\begin{itemize}
+\item Replace banks?
+\item Replace credit rating agencies?
+\item Replace loan payment collectors?
+\item Or enable banks to do these things better?
+\item Drawing lines among organizations and ledgers
+\end{itemize}
+
+\end{frame}
+
+
+
+
+\begin{frame}{Helping SME's}
+    Open and Cooperation: Co-creating a Digital Industry Ecosystem
+\end{frame}
+
+\begin{frame}{Main observation}
+\begin{itemize}
+    \item In leading computer-advanced economies all over the world -- especially China and the US --
+    inexpensive software and computing power  is available to help  SME's do business efficiently, quickly,
+    and inexpensively. 
+    \item Returns to scale and declining cost curves
+    \item Reduced information-frictions and transactions costs 
+\end{itemize}
+\end{frame}
+
+\end{document}
+
+\begin{frame}{Machine Learning}
+Components:
+\begin{itemize}
+\item data and labels: $\{x_i, y_i\}_{i=0}^N$
+\item a function to learn: $y_i = f(x_i) $
+\item a parameterized set  of possible functions: $ f \in {\mathcal F} = \{ f_{\theta \in \Theta}\}$
+\item curse of dimensionality
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Curse of Dimensionality}
+\begin{quote} 
+$ \ldots$  simple arguments $\ldots$ reveal the impossibility of learning from generic high dimensional data as a result of the curse of dimensionality
+$\ldots$
+
+\quad \quad \quad
+
+\textit{Geometric Deep Learning: Grids, Groups Graphs, Geodesics, and Gauges}, M. Bronstein et al. (2021) \end{quote}
+
+\end{frame}
+
+
+\begin{frame}{Curse of Dimensionality}
+\begin{quote} 
+While simple arguments $\ldots$ reveal the impossibility of learning from generic high dimensional data as a result of the curse of dimensionality, {\color{red}there is hope for physically-structured data, where we can employ two fundamental principles: symmetry and scale invariance.}
+$\ldots$
+
+\quad \quad \quad
+
+\textit{Geometric Deep Learning: Grids, Groups Graphs, Geodesics, and Gauges}, M. Bronstein et al. (2021) \end{quote}
+
+\end{frame}
+
+
+\begin{frame}{Two Types of Priors}
+\begin{itemize}
+\item geometric \begin{itemize}
+\item composition of simple functions: $f = h \circ g \circ k \circ h \circ g \circ k \circ \cdots $
+\item design `architecture' of component functions $h, g, k$ to build in symmetries (invariances)
+\item use chain rule to get FONC's
+\end{itemize}
+\item economic 
+\begin{itemize}
+\item posit a dynamic game with small number of parameters  (invariants) that describe players' payoffs and physical constraints
+\item use restrictions across players' equilibrium strategies to infer parameters
+\item interpret those parameters as ``invariants'' that allow the economist to study consequences of historically unprecedented economic policies
+
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Two Types of Priors}
+Common desiderata:
+
+\begin{itemize}
+\item Invariants
+\item Regularizers
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Geometric Priors}
+
+Symmetries and architectures, e.g., CNN's (convolutional neural networks)
+\begin{itemize}
+\item translational invariance
+\item scale invariance (pooling)
+
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Geometric Priors}
+
+Symmetries and architectures, e.g., GNN's (graph  neural networks)
+\begin{itemize}
+\item translational invariance
+\item scale invariance (pooling)
+\item permutation invariance
+\end{itemize}
+
+
+
+
+
+
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+\begin{frame}{Two Classes of Priors}
+Geometric:
+\begin{itemize}
+\item Descriptive
+\item Measurement without Theory (T.C. Koopmans, 1946)
+\item Auxiliary (Gallant and Tauchen, 1996)
+\end{itemize}
+Economic:
+\begin{itemize}
+\item Structural (Koopmans, 1946-1950; Lucas (1973), Rust, Wolpin, $\ldots$, )
+\end{itemize}
+
+
+
+\end{frame}
+
+
+\begin{frame}{Deploying  ML for Structural Models}
+\begin{itemize}
+\item As input to  solving "direct problems"
+\begin{itemize}
+\item Hamilton-Jacobi-Bellman equations take form $f_\theta = T(f_\theta), \quad \theta \in \Theta$
+\item $T$ is an operator, $\Theta$ a manifold of  parameters describing game
+\item $f_\theta$ is a {\em value} or {\em policy} function
+\item Approximate  $f_\theta$ with composition of functions parameterized by auxiliary parameters
+\end{itemize}
+\item ``Deep learning'' and "Optimal Transport" tools for   solving  partial differential  equations associated with HJB equations
+\end{itemize}
+
+
+
+
+\end{frame}
+
+
+\begin{frame}{Concluding Remarks}
+ To answer  ``what is a parameter?'' modern AI and ML  distinguishes two types of statistical model
+\begin{itemize}
+\item Descriptive (Kepler stage)
+\item Structural (Newton stage)
+\end{itemize}
+In this way, it respects the ``Lucas Critique''.
+
+\end{frame}
+
+\end{document}
+\begin{frame}{Geometry}
+
+
+\begin{itemize}
+\item information projection 
+\item manifolds of models
+\item roles for machine learning
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Junk}
+$$
+\begin{\align*}
+\pi_t & = d_0  \left( \frac{1 - d_1^t}{1-d_1} \right) + d_1^t \pi_0  \\
+\mu_t & = b_0 + b_1 d_0 \left( \frac{1 - d_1^t}{1-d_1} \right) + b_1 d_1^t \pi_0
+\end{align*}
+$$
+\end{frame}
+
+
+\end{document}
+

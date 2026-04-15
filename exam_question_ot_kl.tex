@@ -1,0 +1,43 @@
+% exam_question_ot_kl.tex
+
+\documentclass[12pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[margin=1.2in]{geometry}
+\usepackage{setspace}
+\usepackage{parskip}
+\onehalfspacing
+
+\begin{document}
+
+\begin{center}
+  {\large\bfseries Exam Question: Couplings, KL Divergence, and Optimal Transport}
+\end{center}
+
+\bigskip
+
+Let $X \subset \mathbb{R}$ be a compact interval and let $f$ and $g$ be two
+distinct probability density functions defined on $X$, both positive everywhere
+on $X$ and integrating to one with respect to Lebesgue measure~$\lambda$.
+\begin{enumerate}
+  \item[\textbf{(a)}] \textbf{Coupling.}  Define a \emph{coupling} of $f$ and $g$.
+    In particular, specify what joint density $\pi(x,y)$ on $X \times X$ must
+    satisfy in order to qualify as a coupling, and give one explicit example.
+
+  \item[\textbf{(b)}] \textbf{KL divergence.}  Write down the
+    Kullback-Leibler divergence $D_{\mathrm{KL}}(f \| g)$.
+    State (with brief justification) whether it is symmetric in $f$ and $g$,
+    and whether it constitutes a metric on the space of density functions.
+
+  \item[\textbf{(c)}] \textbf{Optimal transport problem.}  Let $c: X \times X
+    \to [0,\infty)$ be a continuous cost function.  Recalling the definition
+    of a coupling from part~(a), write down the Kantorovich optimal transport
+    problem that seeks a coupling of $f$ and~$g$ that minimizes expected
+    transport cost.
+
+  \item[\textbf{(d)}] \textbf{Wasserstein distance.}  For $p \geq 1$, define
+    the Wasserstein-$p$ distance $W_p(f,g)$ as the outcome of a  special case of the
+    Kantorovich problem in~(c), specifying the choice of cost function.
+    State one property that $W_p$ possesses that $D_{\mathrm{KL}}(f\|g)$ lacks.
+\end{enumerate}
+
+\end{document}

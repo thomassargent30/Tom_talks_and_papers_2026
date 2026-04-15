@@ -1,0 +1,498 @@
+% mayor_queloz_exoplanet_ML.bib
+% Bibliography for "The Wobbling Star as Statistical Inference"
+
+@book{Holland1975,
+  author    = {Holland, John H.},
+  title     = {Adaptation in Natural and Artificial Systems:
+               An Introductory Analysis with Applications to Biology,
+               Control, and Artificial Intelligence},
+  publisher = {University of Michigan Press},
+  address   = {Ann Arbor},
+  year      = {1975},
+  note      = {Second edition: MIT Press, Cambridge MA, 1992.
+               Introduces the genetic algorithm as a method for
+               adaptive search over high-dimensional parameter spaces,
+               formalising Darwin's natural selection as a
+               probabilistic optimisation procedure.}
+}
+
+@book{Goldberg1989,
+  author    = {Goldberg, David E.},
+  title     = {Genetic Algorithms in Search, Optimization, and
+               Machine Learning},
+  publisher = {Addison-Wesley},
+  address   = {Reading, MA},
+  year      = {1989},
+  note      = {The standard textbook treatment of Holland's
+               genetic algorithm and its applications.  Discusses
+               binary and real-valued encodings, crossover operators,
+               mutation rates, and convergence theory.}
+}
+
+@article{Charbonneau1995,
+  author  = {Charbonneau, Paul},
+  title   = {Genetic Algorithms in Astronomy and Astrophysics},
+  journal = {Astrophysical Journal Supplement Series},
+  volume  = {101},
+  pages   = {309--334},
+  year    = {1995},
+  doi     = {10.1086/192242},
+  note    = {Introduces \textsc{Pikaia}, a floating-point genetic
+             algorithm code implementing Holland's framework,
+             specifically tailored for astrophysical fitting problems.
+             Demonstrates applications to spectral-line profile
+             fitting and solar magnetic field inversion.  \textsc{Pikaia}
+             was widely adopted in the exoplanet radial-velocity community
+             for orbital fitting, where the likelihood surface is
+             strongly multimodal in period space.}
+}
+
+@article{Mayor1995,
+  author  = {Mayor, Michel and Queloz, Didier},
+  title   = {A {J}upiter-mass companion to a solar-type star},
+  journal = {Nature},
+  volume  = {378},
+  pages   = {355--359},
+  year    = {1995},
+  doi     = {10.1038/378355a0},
+  note    = {The discovery paper for 51~Pegasi~b, the first
+             confirmed exoplanet orbiting a main-sequence star.
+             Reports $P = 4.2308$~days, $K = 56.0$~m/s,
+             $e \approx 0$, $m_p\sin i \approx 0.47\,M_J$ from
+             \textsc{Elodie} radial velocity measurements.
+             Nobel Prize in Physics, 2011 (Mayor and Queloz, shared).}
+}
+
+@article{Baranne1996,
+  author  = {Baranne, A. and Queloz, D. and Mayor, M. and Adrianzyk, G.
+             and Knispel, G. and Kohler, D. and Lacroix, D.
+             and Meunier, J.-P. and Rimbaud, G. and Vin, A.},
+  title   = {{ELODIE}: A spectrograph for accurate radial velocity
+             measurements},
+  journal = {Astronomy and Astrophysics Supplement Series},
+  volume  = {119},
+  pages   = {373--390},
+  year    = {1996},
+  doi     = {10.1051/aas:1996251},
+  note    = {Instrument paper for the \textsc{Elodie} fiber-fed
+             echelle spectrograph at the Observatoire de
+             Haute-Provence 1.93~m telescope.  Documents the
+             cross-correlation method, simultaneous thorium-argon
+             wavelength calibration, and the $\approx 13$~m/s
+             single-measurement precision that led to the 51~Peg
+             discovery.}
+}
+
+@article{Marcy1996,
+  author  = {Marcy, Geoffrey W. and Butler, R. Paul},
+  title   = {A Planetary Companion to 70~{V}irginis},
+  journal = {Astrophysical Journal Letters},
+  volume  = {464},
+  pages   = {L147--L151},
+  year    = {1996},
+  doi     = {10.1086/310096},
+  note    = {Independent confirmation of the planetary interpretation
+             of radial-velocity signals, by the California group
+             using the Hamilton echelle spectrograph at Lick Observatory.
+             Their simultaneous discovery of 47~Uma~b (Butler \&\ Marcy
+             1996, ApJL 464, L153) established the new class of
+             ``hot Jupiters'' and validated the Geneva group's techniques.}
+}
+
+@article{Butler1996,
+  author  = {Butler, R. Paul and Marcy, Geoffrey W. and Williams, Eric
+             and McCarthy, Chris and Dosanjh, Prgeeta and Vogt, Steven S.},
+  title   = {Attaining {D}oppler Precision of 3~{m/s}},
+  journal = {Publications of the Astronomical Society of the Pacific},
+  volume  = {108},
+  pages   = {500--509},
+  year    = {1996},
+  doi     = {10.1086/133751},
+  note    = {Describes the iodine-cell technique used by the California
+             group to achieve $\sim 3$~m/s radial velocity precision
+             with the Lick Hamilton spectrograph.  The iodine cell
+             imprints a dense forest of absorption lines simultaneously
+             on every stellar spectrum, enabling a self-calibrating
+             wavelength solution independent of a secondary lamp.}
+}
+
+@article{Lomb1976,
+  author  = {Lomb, Nick R.},
+  title   = {Least-squares frequency analysis of unequally spaced data},
+  journal = {Astrophysics and Space Science},
+  volume  = {39},
+  pages   = {447--462},
+  year    = {1976},
+  doi     = {10.1007/BF00648343},
+  note    = {Develops the Lomb periodogram for unevenly sampled time
+             series, equivalent to a least-squares fit of a sinusoid
+             at each trial frequency.  The standard tool for identifying
+             candidate orbital periods in radial velocity data;
+             however, it assumes circular orbits and a single sinusoidal
+             signal---limitations that motivate the genetic algorithm
+             for eccentric or multi-planet systems.}
+}
+
+@article{Scargle1982,
+  author  = {Scargle, Jeffrey D.},
+  title   = {Studies in astronomical time series analysis.
+             {II.}\ Statistical aspects of spectral analysis of
+             unevenly spaced data},
+  journal = {Astrophysical Journal},
+  volume  = {263},
+  pages   = {835--853},
+  year    = {1982},
+  doi     = {10.1086/160554},
+  note    = {Provides the statistical framework for the Lomb
+             periodogram, deriving the false alarm probability (FAP)
+             under the null hypothesis of pure Gaussian noise.
+             Establishes that the normalised power $z_{\rm max}$ has
+             an exponential distribution under $H_0$, enabling
+             significance assessment for putative periodic signals.
+             For 51~Peg~b the FAP $< 10^{-9}$.}
+}
+
+@article{Cumming1999,
+  author  = {Cumming, Andrew and Marcy, Geoffrey W. and Butler, R. Paul},
+  title   = {The {L}ick Planet Search: Detectability and Mass Thresholds},
+  journal = {Astrophysical Journal},
+  volume  = {526},
+  pages   = {890--915},
+  year    = {1999},
+  doi     = {10.1086/308020},
+  note    = {Develops the likelihood ratio periodogram extending the
+             Lomb-Scargle formalism to eccentric orbits.  Shows that
+             the floating-mean periodogram and the $F$-ratio statistic
+             provide more sensitive detection for eccentric and
+             multi-planet systems than the sinusoidal Lomb-Scargle
+             periodogram.}
+}
+
+@article{Mayor2003,
+  author  = {Mayor, Michel and Pepe, Francesco and Queloz, Didier and
+             Bouchy, Fran\c{c}ois and Rupprecht, G. and Lo Curto, G.
+             and Avila, G. and Benz, W. and Bertaux, J.-L.
+             and Bonfils, X. and Dall, Th. and Dekker, H.
+             and Delabre, B. and Eckert, W. and Fleury, M.
+             and Gilliotte, A. and Gojak, D. and Guzman, J.~C.
+             and Kohler, D. and Lizon, J.-L. and Longinotti, A.
+             and Lovis, Christophe and M\'egevand, D. and
+             Pasquini, L. and Reyes, J. and Sivan, J.-P. and
+             Sosnowska, D. and Soto, R. and Udry, St\'ephane and
+             van Kesteren, A. and Weber, L. and Weilenmann, U.},
+  title   = {Setting New Standards with {HARPS}},
+  journal = {The Messenger},
+  volume  = {114},
+  pages   = {20--24},
+  year    = {2003},
+  note    = {Announces the HARPS spectrograph (High Accuracy
+             Radial velocity Planet Searcher) mounted on the ESO
+             3.6~m telescope at La Silla, Chile.  Vacuum-enclosed
+             design and $R \approx 115{,}000$ achieves $\approx
+             1$~m/s precision---a factor of~13 improvement over
+             ELODIE---enabling detection of Neptune-mass and
+             super-Earth planets.}
+}
+
+@article{Pepe2004,
+  author  = {Pepe, Francesco and Mayor, Michel and Queloz, Didier and
+             Benz, Willy and Bonfils, Xavier and Bouchy,
+             Fran\c{c}ois and Delfosse, Xavier and Forveille,
+             Thierry and Lovis, Christophe and Melo, C. and
+             Moutou, Claire and Naef, D. and Rupprecht, G. and
+             Santos, Nuno C. and Sivan, J.-P. and Sosnowska,
+             Dorota and Udry, St\'ephane},
+  title   = {The {HARPS} search for southern extra-solar planets.
+             {II.}\ A 14 {E}arth-mass exoplanet around
+             $\mu$~{A}rae},
+  journal = {Astronomy and Astrophysics},
+  volume  = {423},
+  pages   = {L21--L24},
+  year    = {2004},
+  doi     = {10.1051/0004-6361:200401136},
+  note    = {First HARPS discovery paper, reporting a 14-Earth-mass
+             planet with $P = 9.5$~days and $K = 4.1$~m/s---well
+             below ELODIE's noise floor.  Demonstrates that the
+             combination of HARPS precision and genetic-algorithm
+             orbital fitting opens up a new mass regime.}
+}
+
+@article{Udry2007,
+  author  = {Udry, St\'ephane and Santos, Nuno C.},
+  title   = {Statistical Properties of Exoplanets},
+  journal = {Annual Review of Astronomy and Astrophysics},
+  volume  = {45},
+  pages   = {397--439},
+  year    = {2007},
+  doi     = {10.1146/annurev.astro.45.051806.110529},
+  note    = {Comprehensive review of the statistical distribution of
+             exoplanet masses, orbital periods, and eccentricities
+             from Mayor's Geneva group and the California group's
+             combined Lick-Keck-AAT survey.  Discusses detection
+             biases and the mass function of exoplanets.}
+}
+
+@article{Walker1995,
+  author  = {Walker, Gordon A. H. and Walker, A. R. and Irwin, A. W.
+             and Larson, A. M. and Yang, S. L. S. and
+             Richardson, D. C.},
+  title   = {A search for {J}upiter-mass companions to nearby stars},
+  journal = {Icarus},
+  volume  = {116},
+  pages   = {359--375},
+  year    = {1995},
+  doi     = {10.1006/icar.1995.1130},
+  note    = {Reports 12 years of radial velocity monitoring of 21
+             solar-type stars with the Victoria spectrograph, achieving
+             $\approx 13$~m/s precision.  No convincing planetary
+             detections, demonstrating the selection pressure for
+             improved spectrographs.  An important precursor
+             establishing the feasibility of the Doppler method.}
+}
+
+@article{Fischer2005,
+  author  = {Fischer, Debra A. and Valenti, Jeff},
+  title   = {The Planet-Metallicity Correlation},
+  journal = {Astrophysical Journal},
+  volume  = {622},
+  pages   = {1102--1117},
+  year    = {2005},
+  doi     = {10.1086/428383},
+  note    = {Reports that the frequency of gas-giant planets correlates
+             strongly with host-star iron abundance: stars with
+             $[{\rm Fe/H}] > +0.3$ have a $\approx 25$\% planet
+             occurrence rate vs.\ $\approx 3$\% for solar metallicity
+             stars.  This structural prediction from the core-accretion
+             model could be confirmed only because the radial velocity
+             method detected a large enough sample.}
+}
+
+@article{Queloz2001,
+  author  = {Queloz, D. and Henry, G. W. and Sivan, J. P. and
+             Baliunas, S. L. and Beuzit, J. L. and Donahue, R. A.
+             and Mayor, M. and Naef, D. and Perrier, C. and
+             Udry, S.},
+  title   = {No evidence for planets orbiting
+             $\varepsilon$~{E}ridani},
+  journal = {Astronomy and Astrophysics},
+  volume  = {379},
+  pages   = {279--287},
+  year    = {2001},
+  doi     = {10.1051/0004-6361:20011342},
+  note    = {A cautionary example illustrating how stellar activity
+             (spots, jitter) can produce periodic radial velocity
+             signals mimicking a planet.  The apparent companion to
+             $\varepsilon$~Eri was identified as an alias of the
+             stellar rotation period.  Motivates the inclusion of
+             stellar jitter $\sigma_{\rm jit}$ as a free parameter
+             in the likelihood.}
+}
+
+@article{Mayor2009,
+  author  = {Mayor, Michel and Bonfils, Xavier and Forveille, Thierry
+             and Delfosse, Xavier and Udry, St\'ephane and
+             Bertaux, J.-L. and Beust, H. and Bouchy,
+             Fran\c{c}ois and Lovis, Christophe and Pepe, Francesco
+             and Perrier, Claire and Queloz, Didier and
+             Santos, Nuno C.},
+  title   = {The {HARPS} search for southern extra-solar planets.
+             {XVIII.}\ An {E}arth-mass planet in the {GJ}~581
+             planetary system},
+  journal = {Astronomy and Astrophysics},
+  volume  = {507},
+  pages   = {487--494},
+  year    = {2009},
+  doi     = {10.1051/0004-6361/200912172},
+  note    = {Discovery of super-Earth planet GJ~581e with
+             $K = 1.87$~m/s and $m_p\sin i = 1.94\, M_\oplus$---a
+             mass barely above that of Earth.  Represents the ultimate
+             achievement of Mayor's program: the Keplerian likelihood
+             plus HARPS precision plus a genetic-algorithm global
+             search, applied to a $\approx1$~m/s signal in 119 HARPS
+             observations.}
+}
+
+@article{Saar1997,
+  author  = {Saar, Steven H. and Donahue, Robert A.},
+  title   = {Activity-related Radial Velocity Variation in Cool Stars},
+  journal = {Astrophysical Journal},
+  volume  = {485},
+  pages   = {319--327},
+  year    = {1997},
+  doi     = {10.1086/304392},
+  note    = {Quantifies the amplitude of radial velocity ``jitter''
+             induced by stellar surface activity: magnetic spots,
+             plages, and oscillations.  For a solar-type star with
+             low activity, $\sigma_{\rm jit} \approx 2$--$5$~m/s.
+             For active stars, $\sigma_{\rm jit}$ can reach 50~m/s,
+             masking or mimicking planetary signals.}
+}
+
+@article{Baluev2008,
+  author  = {Baluev, Roman V.},
+  title   = {Assessing the statistical significance of periodogram
+             peaks},
+  journal = {Monthly Notices of the Royal Astronomical Society},
+  volume  = {385},
+  pages   = {1279--1285},
+  year    = {2008},
+  doi     = {10.1111/j.1365-2966.2008.12689.x},
+  note    = {Derives analytic approximations for the false alarm
+             probability of the maximum Lomb-Scargle periodogram power,
+             accounting for the multiple-testing correction over a
+             wide frequency range.  Replaces Monte Carlo FAP
+             calculations for computational efficiency.}
+}
+
+@article{UdryBonfils2007,
+  author  = {Udry, St\'ephane and Bonfils, Xavier and Delfosse, Xavier
+             and Forveille, Thierry and Mayor, Michel and Perrier,
+             Claire and Bouchy, Fran\c{c}ois and Lovis, Christophe
+             and Pepe, Francesco and Queloz, Didier and
+             Bertaux, Jean-Loup},
+  title   = {The {HARPS} search for southern extra-solar planets.
+             {XI.}\ Super-{E}arths (5 and 8~$M_\oplus$) in a
+             3-planet system},
+  journal = {Astronomy and Astrophysics Letters},
+  volume  = {469},
+  pages   = {L43--L47},
+  year    = {2007},
+  doi     = {10.1051/0004-6361:20077612},
+  note    = {Announces two super-Earth planets orbiting GJ~581.
+             The three-planet system has $5N_p + 1 = 16$ free
+             parameters; simultaneous global optimisation of the
+             Keplerian likelihood over 16 parameters cannot be done
+             reliably by gradient methods---illustrating the
+             necessity of genetic-algorithm global search.}
+}
+
+@article{Lovis2011,
+  author  = {Lovis, Christophe and Fischer, Debra A.},
+  title   = {Radial Velocity Techniques for Exoplanets},
+  journal = {in: \textit{Exoplanets}, ed.\ S.\ Seager},
+  year    = {2011},
+  note    = {University of Arizona Press, Tucson, pp.\ 27--53.
+             Comprehensive review of Doppler spectroscopy instruments,
+             data reduction pipelines, and orbital-fitting methods,
+             including the use of global optimisation algorithms for
+             the Keplerian parameter estimation problem.}
+}
+
+@article{Marcy2000,
+  author  = {Marcy, Geoffrey W. and Butler, R. Paul},
+  title   = {Planets orbiting other suns},
+  journal = {Publications of the Astronomical Society of the Pacific},
+  volume  = {112},
+  pages   = {137--140},
+  year    = {2000},
+  doi     = {10.1086/316516}
+}
+
+@article{Mayor2014,
+  author  = {Mayor, Michel and Marmier, Maxime and Lovis, Christophe
+             and Udry, St\'ephane and S\'egransan, Damien and
+             Pepe, Francesco and Benz, Willy and Bertaux,
+             Jean-Loup and Bouchy, Fran\c{c}ois and Dumusque,
+             Xavier and Lo Curto, G. and Mordasini, Christoph and
+             Queloz, Didier and Santos, Nuno C.},
+  title   = {The {HARPS} search for southern extra-solar planets.
+             {XXXIV}.\ Occurrence, mass and orbital distribution of
+             super-{E}arths and {N}eptune-mass planets},
+  journal = {arXiv preprint},
+  year    = {2011},
+  note    = {arXiv:1109.2497.  Reports the statistical distribution of
+             exoplanet masses and periods from the complete HARPS GTO
+             survey of 376 nearby FGK stars.  The population statistics
+             are enabled by the genetic-algorithm orbital fitting that
+             finds the global likelihood maximum for each star.}
+}
+
+@article{Wilks1938,
+  author  = {Wilks, Samuel S.},
+  title   = {The Large-Sample Distribution of the Likelihood Ratio for
+             Testing Composite Hypotheses},
+  journal = {Annals of Mathematical Statistics},
+  volume  = {9},
+  pages   = {60--62},
+  year    = {1938},
+  doi     = {10.1214/aoms/1177732360},
+  note    = {Proves that twice the log-likelihood ratio statistic
+             $2\Delta\ln L = 2[\ln L(\hat{\boldsymbol\theta}) -
+             \ln L(\boldsymbol\theta_0)]$ has a $\chi^2$ distribution
+             with degrees of freedom equal to the number of constrained
+             parameters under the null hypothesis~$H_0$.  Applied to
+             the exoplanet problem: the Keplerian model versus the
+             null (stellar jitter only) gives
+             $2\Delta\ln L \sim \chi^2_6$ under $H_0$ for a one-planet
+             model.}
+}
+
+@article{Hornik1989,
+  author  = {Hornik, Kurt and Stinchcombe, Maxwell and White, Halbert},
+  title   = {Multilayer feedforward networks are universal
+             approximators},
+  journal = {Neural Networks},
+  volume  = {2},
+  number  = {5},
+  pages   = {359--366},
+  year    = {1989},
+  doi     = {10.1016/0893-6080(89)90020-8}
+}
+
+@book{Vapnik1998,
+  author    = {Vapnik, Vladimir N.},
+  title     = {Statistical Learning Theory},
+  publisher = {Wiley},
+  address   = {New York},
+  year      = {1998}
+}
+
+@article{Belkin2019,
+  author  = {Belkin, Mikhail and Hsu, Daniel and Ma, Siyuan and
+             Mandal, Soumik},
+  title   = {Reconciling modern machine-learning practice and the
+             classical bias-variance trade-off},
+  journal = {Proceedings of the National Academy of Sciences},
+  volume  = {116},
+  number  = {32},
+  pages   = {15849--15854},
+  year    = {2019},
+  doi     = {10.1073/pnas.1903070116}
+}
+
+@misc{Nobel2019,
+  author = {{Royal Swedish Academy of Sciences}},
+  title  = {The {N}obel Prize in Physics 2019: Scientific Background.
+            Discoveries in physical cosmology; and exoplanet orbiting
+            a solar-type star},
+  year   = {2019},
+  note   = {Nobelprize.org.  Summarises the scientific contributions
+            of James Peebles (cosmological theory, half the prize)
+            and Michel Mayor and Didier Queloz (exoplanet discovery,
+            half the prize shared equally).}
+}
+
+@article{Bonfils2005,
+  author  = {Bonfils, Xavier and Forveille, Thierry and Delfosse, Xavier
+             and Udry, St{\'e}phane and Mayor, Michel and Perrier, Christian
+             and Bouchy, Fran{\c c}ois and Pepe, Francesco and Queloz, Didier
+             and Bertaux, Jean-Loup},
+  title   = {{HARPS} search for southern extra-solar planets.
+             {VI.} {A} close-in super-{E}arth around the {M}-dwarf {GJ\,581}},
+  journal = {Astronomy \& Astrophysics},
+  volume  = {443},
+  pages   = {L15--L18},
+  year    = {2005},
+  doi     = {10.1051/0004-6361:200500193}
+}
+
+@article{Udrescu2020,
+  author  = {Udrescu, Silviu-Marian and Tegmark, Max},
+  title   = {{AI} {F}eynman: A physics-inspired method for symbolic
+             regression},
+  journal = {Science Advances},
+  volume  = {6},
+  pages   = {eaay2631},
+  year    = {2020},
+  doi     = {10.1126/sciadv.aay2631}
+}

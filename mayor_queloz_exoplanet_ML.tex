@@ -1,0 +1,1458 @@
+% mayor_queloz_exoplanet_ML.tex
+% "The Wobbling Star as Statistical Inference:
+%  Radial Velocity, Keplerian Orbits, the Genetic Algorithm,
+%  and the Nobel Prize for Exoplanet Discovery, 1988--2019"
+% Thomas J. Sargent, 2026
+
+\documentclass[12pt]{article}
+
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage[margin=1.2in]{geometry}
+\usepackage{setspace}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{natbib}
+\usepackage{parskip}
+
+\onehalfspacing
+
+\hypersetup{
+  colorlinks  = true,
+  linkcolor   = blue,
+  citecolor   = blue,
+  urlcolor    = blue
+}
+
+\title{The Wobbling Star as Statistical Inference:\\
+       Radial Velocity, Keplerian Orbits, the Genetic Algorithm,\\
+       and the Nobel Prize for Exoplanet Discovery, 1988--2019}
+\author{Thomas J.\ Sargent}
+\date{April 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+In October 1995, Michel Mayor and Didier Queloz \citep{Mayor1995}
+reported the first confirmed exoplanet orbiting a main-sequence star,
+51~Pegasi~b, using the radial velocity (Doppler wobble) method.
+For this work, Mayor and Queloz shared one half of the 2011 Nobel Prize
+in Physics.  Their argument had two components: a physical \emph{model}
+(Kepler's laws of orbital motion) and a \emph{measurement equation}
+relating the observable Doppler shift of the host star's spectral lines to
+a sum of sinusoidal velocity components with five free parameters per
+planet: orbital period~$P$, radial velocity semi-amplitude~$K$,
+eccentricity~$e$, argument of periastron~$\omega$, and a phase
+angle~$T_0$.  This note examines their reasoning from a modern
+statistical perspective.  I describe the data assembled by the Geneva
+group---high-resolution cross-correlation spectra from the
+\textsc{Elodie} and \textsc{Harps} spectrographs, reduced to
+time-stamped radial velocity measurements with photon-noise
+uncertainties---and lay out the maximum likelihood estimation problem
+they solved: finding the orbital parameters that maximise the likelihood
+of the observed velocity residuals under a Keplerian signal plus
+Gaussian noise.  Under Gaussian errors, MLE coincides with weighted
+least squares (WLS).  The likelihood surface in the five-dimensional
+Keplerian parameter space is \emph{strongly multimodal}: a dense comb
+of local maxima spaced $\sim P^{-2}$ apart in period space masks the
+global maximum from any gradient-based optimiser started at a generic
+initial point.  Mayor and his collaborators turned to John Holland's
+genetic algorithm \citep{Holland1975} as implemented in
+\citet{Charbonneau1995}'s \textsc{Pikaia} code: an evolutionary optimiser
+that maintains a population of candidate orbital solutions, applies
+selection, crossover, and mutation operators, and converges to the
+neighbourhood of the global maximum even in the presence of many local
+optima.  The genetic algorithm maps precisely onto modern machine learning
+concepts: the parameter vector is the ``genome,'' the log-likelihood is
+the ``fitness function,'' and the evolutionary operators implement a form
+of parallel stochastic search whose exploration-exploitation trade-off
+is controlled by the mutation rate.  Applications of this framework to
+\textsc{Harps} data led to the detection of Neptune-mass and super-Earth
+planets with radial velocity amplitudes of $K \approx 1$--$5$~m/s---an
+amplitude one-fiftieth that of 51~Peg~b.
+\end{abstract}
+
+\tableofcontents
+
+%======================================================================
+\section{Introduction}
+
+In 1995 the received scientific wisdom was that planetary systems
+resembling our own Solar System might be rare, and that Earth-mass
+planets would remain forever beyond observational reach.  Michel Mayor
+and Didier Queloz overturned both beliefs in a single seven-minute paper
+\citep{Mayor1995}.  Their instrument---the \textsc{Elodie} fiber-fed echelle
+spectrograph \citep{Baranne1996} at the 1.93~m telescope of the
+Observatoire de Haute-Provence---achieved single-measurement radial
+velocity precision of $\approx 13$~m/s.  Their analysis method---fitting
+a Keplerian orbit to 51 radial velocity measurements---was, at its
+mathematical core, a maximum likelihood estimation problem solved by
+minimising a weighted sum of squared residuals.
+
+A twenty-first-century statistician confronting a table of
+(time, radial velocity, uncertainty) triples would recognise the
+exoplanet problem as a \emph{nonlinear periodic regression} with five
+parameters per planet and a likelihood surface so multimodal that
+gradient descent almost certainly fails to find the global optimum.
+The interesting history is that Mayor and his collaborators recognised
+this optimisation difficulty early and adopted Holland's genetic
+algorithm---an evolutionary search procedure inspired by Darwinian
+natural selection---as the global search engine for the Keplerian
+likelihood.  The resulting pipeline could, and did, reliably locate
+the global likelihood maximum even for multi-planet systems with
+fifteen or more free parameters.
+
+The episode is the third in our series of case studies---following
+Einstein's photoelectric regression and the supernova cosmology
+analysis---in which a physicist's structural model specified the
+hypothesis class for a regression problem, reducing an immense
+function-learning challenge to a compact parameter-estimation exercise.
+Here the structural model is Kepler's gravitational two-body solution,
+the free parameters are five orbital elements per planet, and the
+optimisation challenge is unusual enough to require a specialised
+algorithm drawn from outside classical statistics.
+
+The story has five features of particular statistical interest.
+\begin{enumerate}
+  \item \textbf{The Doppler method and data quality control.}
+    The radial velocity technique measures the line-of-sight component
+    of the star's orbital velocity around the star-planet barycentre.
+    The primary challenge---analogous to Millikan's contact-EMF problem
+    and the supernova $K$-correction---is separating the Keplerian
+    signal from stellar intrinsic variability (``jitter''), instrumental
+    drift, and telluric contamination.  Each of these enters as a
+    nuisance component in the likelihood.
+
+  \item \textbf{Kepler's laws as the hypothesis class.}
+    Newton's law of gravity specifies the velocity curve of an orbiting
+    star exactly: it is a sum of sinusoidal (for circular orbits) or
+    quasi-sinusoidal (for eccentric orbits) velocity components.  This
+    physical model collapses the regression function from an arbitrary
+    periodic function to a five-parameter family.  Five parameters per
+    planet can be estimated from $\gtrsim 10$ well-timed velocity
+    measurements, whereas a model-free estimate of the same
+    periodic function would require many more data points.
+
+  \item \textbf{The multimodality problem and the failure of gradient
+    methods.}  The log-likelihood surface $\ell(P, K, e, \omega, T_0)$
+    is riddled with local maxima at all aliases of the true period
+    ($P/2$, $P/3$, $2P$, etc.).  Newton's method, Levenberg--Marquardt,
+    and other gradient-based optimisers converge to the nearest local
+    maximum and miss the global one unless initialised very close to
+    the truth.  The genetic algorithm was adopted precisely to overcome
+    this difficulty.
+
+  \item \textbf{John Holland's genetic algorithm as a fitness-function
+    maximiser.}  Holland's \citeyearpar{Holland1975} framework represents
+    candidate solutions as bit strings or real-valued vectors (``genomes''),
+    evaluates each genome by a scalar ``fitness function'' (here: the
+    log-likelihood), and iterates selection, crossover, and mutation to
+    evolve a population toward higher fitness.  The algorithm has no
+    gradient; it explores the parameter space globally through
+    population diversity and exploits promising regions through selection.
+
+  \item \textbf{From 51~Peg~b to super-Earths: the role of precision.}
+    The 1995 discovery required $K \approx 56$~m/s; the subsequent
+    \textsc{Harps} instrument at La~Silla achieved $\approx 1$~m/s
+    precision, extending the method to Neptune-mass planets
+    ($K \approx 4$~m/s, \citealt{Pepe2004}) and eventually super-Earth
+    mass planets ($K \approx 1.9$~m/s, \citealt{Mayor2009}).  The
+    combination of better instrumentation and the genetic-algorithm
+    orbital fitter made the entire mass range accessible.
+\end{enumerate}
+
+Section~\ref{sec:background} reviews the observational background.
+Sections~\ref{sec:doppler}--\ref{sec:instrument} describe the measurement
+technique and the instruments.
+Section~\ref{sec:kepler} develops the Keplerian model and the
+measurement equation.
+Section~\ref{sec:data} describes the dataset.
+Section~\ref{sec:mle} presents the WLS/MLE procedure.
+Section~\ref{sec:multimodal} analyses the multimodality problem.
+Section~\ref{sec:ga} describes the genetic algorithm.
+Section~\ref{sec:51peg} presents the 51~Peg results.
+Section~\ref{sec:nuisance} discusses the stellar jitter identification
+problem.
+Section~\ref{sec:harps} covers the extension to
+super-Earth mass planets with \textsc{Harps}.
+Sections~\ref{sec:ml}--\ref{sec:dnn} reinterpret the episode
+in machine learning terms.
+Section~\ref{sec:conclusions} concludes.
+
+%======================================================================
+\section{Observational Background}
+\label{sec:background}
+
+\subsection{The Concept of the Radial Velocity Method}
+
+The radial velocity (RV) or Doppler wobble method exploits Newton's
+third law.  A planet of mass $m_p$ orbits its host star of mass $M_\star$
+not around the star's centre but around the \emph{barycentre} (centre of
+mass) of the star-planet system.  The star's barycentric velocity has
+a line-of-sight component $v_r(t)$ that oscillates periodically with
+the orbital period~$P$.  By the stellar reflex velocity formula:
+\begin{equation}\label{eq:K_def}
+  K = \frac{28.435}{\sqrt{1-e^2}}
+  \frac{m_p \sin i}{M_J}
+  \left(\frac{M_\star + m_p}{M_\odot}\right)^{-2/3}
+  \left(\frac{P}{1\,\rm yr}\right)^{-1/3}~\text{m/s},
+\end{equation}
+where $K$ is the velocity semi-amplitude (m/s), $e$ the orbital
+eccentricity, $i$ the orbital inclination to the line of sight,
+$m_p\sin i$ the minimum planetary mass (in Jupiter masses $M_J$),
+and $M_\star$ the stellar mass (in solar masses $M_\odot$).
+For 51~Peg~b ($P = 4.23$~days, $m_p\sin i \approx 0.47\,M_J$,
+$M_\star \approx 1.06\,M_\odot$, $e \approx 0$), this gives
+$K \approx 56$~m/s---a velocity detectable by 1990s echelle
+spectrographs.
+
+The Doppler shift converts $v_r$ to a wavelength shift:
+\begin{equation}\label{eq:doppler}
+  \frac{\Delta\lambda}{\lambda_0} = \frac{v_r}{c}.
+\end{equation}
+For $v_r = 56$~m/s and $\lambda_0 = 5500$\,\AA:
+$\Delta\lambda = 5500\times56/(3\times10^8) \approx
+1.0\times10^{-3}$\,\AA\ $= 0.001$\,\AA.
+The resolving power required to detect this shift is
+$R \equiv \lambda/\delta\lambda_{\rm res} \gtrsim
+\lambda/\Delta\lambda = 5{,}500{,}000$---far beyond any
+spectrograph's resolution.  In practice, high-resolution spectrographs
+($R \sim 50{,}000$--$115{,}000$) measure the Doppler shift not by
+resolving individual line shifts but by tracking the \emph{centroid}
+of the stellar cross-correlation function (CCF) over thousands of
+spectral lines simultaneously.  This averaging reduces the
+centroid uncertainty to a small fraction of the resolution element.
+
+\subsection{The Cross-Correlation Method}
+
+Mayor's key technical contribution was adapting and perfecting the
+\emph{cross-correlation function} (CCF) method for precision radial
+velocity work \citep{Baranne1996}.  The procedure is:
+\begin{enumerate}
+  \item Record a high-resolution echelle spectrum of the target star,
+    covering $\sim 5000$--$6800$\,\AA\ over $\sim 60$ spectral
+    orders on a CCD detector.
+  \item Simultaneously record a thorium-argon (ThAr) emission lamp
+    spectrum through a second fibre as a wavelength calibrator.
+    The ThAr lamp provides $\approx 1000$ precisely known emission
+    lines spanning the same wavelength range.
+  \item Cross-correlate the stellar spectrum with a
+    \emph{numerical mask}---a binary template that is ``1'' at the
+    expected positions of $\approx2000$--$5000$ stellar absorption
+    lines (for the appropriate spectral type) and ``0'' elsewhere.
+  \item The CCF is a function of velocity offset $v$:
+    \begin{equation}\label{eq:ccf}
+      C(v) = \int S(\lambda)\, M\!\left(\lambda\sqrt{\frac{1-v/c}{1+v/c}}\right)
+      d\lambda,
+    \end{equation}
+    where $S(\lambda)$ is the stellar spectrum and $M(\lambda)$ is
+    the mask.  The CCF has a deep dip at the true radial velocity of
+    the star; fitting a Gaussian to the dip gives the velocity
+    $v_r$ with a precision $\sigma_{\rm CCF} \propto 1/(C_{\rm
+    depth}\cdot\sqrt{n_{\rm lines}}\cdot R)$ where $C_{\rm depth}$
+    is the fractional depth of the CCF, $n_{\rm lines}$ the number
+    of effective contributing lines, and $R$ the resolving power.
+\end{enumerate}
+For \textsc{Elodie} ($R \approx 42{,}000$, $n_{\rm eff}\approx 3000$~lines),
+this gives $\sigma_{\rm CCF} \approx 6$--$13$~m/s for a solar-type star.
+For \textsc{Harps} ($R \approx 115{,}000$, higher $n_{\rm eff}$, vacuum
+enclosure), $\sigma_{\rm CCF} \approx 0.3$--$1$~m/s.
+
+%======================================================================
+\section{The Doppler Technique: From Photons to Velocities}
+\label{sec:doppler}
+
+\subsection{Converting Photon Counts to a Radial Velocity}
+
+The observational pipeline transforms raw photon counts into a single
+number: the stellar radial velocity $v_r(t_i)$ at observation epoch
+$t_i$, with associated uncertainty $\sigma_i$.  The key steps are:
+
+\paragraph{1.\ Bias subtraction and flat-fielding.}
+CCD frames are corrected for electronic bias (mean offset in absence of
+light) and pixel-to-pixel sensitivity variations using calibration images
+taken each afternoon.
+
+\paragraph{2.\ Wavelength calibration.}
+Each science exposure is bracketed in time by two ThAr lamp exposures.
+The ThAr spectrum delivers $\approx 800$ emission lines with vacuum
+wavelengths known to $\approx 0.001$\,\AA\ from atomic physics tables.
+\textsc{Elodie} used a polynomial wavelength solution of order $5\times4$
+(CCD column and echelle order); \textsc{Harps} uses a simultaneous ThAr
+injection so that wavelength calibration is contemporaneous with the
+stellar observation.
+
+\paragraph{3.\ Cross-correlation and CCF fitting.}
+As described in Section~\ref{sec:background}, the stellar spectrum is
+cross-correlated with a numerical mask to produce the CCF; a Gaussian
+(or Voigt profile) fit gives $v_{\rm CCF}$ with formal uncertainty
+\begin{equation}\label{eq:sigma_ccf}
+  \sigma_{\rm CCF} \approx
+  \frac{\text{FWHM}}{2\sqrt{2\ln 2}\,C_{\rm depth}\,\sqrt{N_{\rm phot}}},
+\end{equation}
+where FWHM is the width of the CCF dip, $C_{\rm depth}$ its fractional
+depth, and $N_{\rm phot}$ the effective number of photons contributing.
+For a $V=5.5$ star (51~Peg) in a 20-minute exposure with a 1.93~m
+telescope, $N_{\rm phot} \approx 3\times10^7$ detecting photons per
+spectral order, giving $\sigma_{\rm CCF} \approx 6$~m/s; the ThAr
+calibration adds $\approx 5$~m/s in quadrature, for a total measurement
+uncertainty of $\approx 8$--$10$~m/s.
+
+\paragraph{4.\ Barycentric correction.}
+The measured velocity is the sum of the star's true radial velocity,
+Earth's heliocentric velocity projection onto the line of sight
+(up to $\pm 30$~km/s), and the observatory's rotational velocity
+($\approx 330$~m/s for the Provence latitude).  All three are subtracted
+using precisely known Earth-Sun ephemerides.  The residual barycentric
+velocity uncertainty is $< 0.1$~m/s and is negligible.
+
+\paragraph{5.\ Instrumental drift correction.}
+Spectrograph temperature, pressure, and mechanical flexure cause the
+wavelength scale to drift over the course of an observing night.
+\textsc{Elodie} calibrated this by ThAr exposures at the start and end
+of each observation; \textsc{Harps} reduced the drift to $\lesssim
+1$~m/s per night through vacuum enclosure and active thermal control,
+rendering a simultaneous reference fibre essential only at the
+sub-meter-per-second level.
+
+After these steps, each epoch yields a single number: the barycentric
+radial velocity $v_r(t_i)$ and its uncertainty $\sigma_i$.
+
+%======================================================================
+\section{The Spectrographs}
+\label{sec:instrument}
+
+\subsection{\textsc{Elodie} (1994--2006)}
+
+\textsc{Elodie} \citep{Baranne1996} was a fiber-fed cross-dispersed
+echelle spectrograph mounted at the Cassegrain focus of the 193~cm
+telescope of the Observatoire de Haute-Provence (OHP) in southern
+France.  Its key specifications were:
+\begin{itemize}
+  \item Spectral range: 3906--6811\,\AA, 67 echelle orders, on a
+    $1024\times1024$ CCD.
+  \item Resolving power: $R \approx 42{,}000$.
+  \item Wavelength calibration: ThAr lamp through a second fibre,
+    recorded simultaneously with the stellar observation.
+  \item Radial velocity precision: $\approx 6$~m/s (photon noise) plus
+    $\approx 6$~m/s (wavelength calibration), in quadrature
+    $\approx 8$--$13$~m/s per epoch.
+  \item Throughput: one stellar observation of $V = 6$ in 5 min.
+\end{itemize}
+The simultaneous ThAr reference was the crucial innovation:
+it eliminated the spectrograph drift that had limited earlier
+instruments to $\approx 100$~m/s precision, crossing the threshold
+needed to detect Jupiter-mass planets.
+
+\subsection{\textsc{Harps} (2003--present)}
+
+\textsc{Harps} \citep{Mayor2003} (High Accuracy Radial velocity Planet
+Searcher) was installed on the ESO 3.6~m telescope at La~Silla
+Observatory, Chile, in 2003.  Its design addressed all identified
+precision limitations of \textsc{Elodie}:
+\begin{itemize}
+  \item Vacuum-enclosed optical bench: eliminates pressure-induced
+    refractive-index fluctuations, reducing wavelength drift from
+    $\sim 100$~m/s/bar to $< 0.1$~m/s per night.
+  \item Active thermal control: $\pm 0.01$~K temperature stability
+    of the bench.
+  \item $R \approx 115{,}000$: nearly three times the \textsc{Elodie}
+    resolving power, sharpening spectral lines and reducing
+    CCF centroid uncertainty.
+  \item Two scientific fibres: simultaneous recording of the star
+    and a ThAr calibration lamp at all times.
+  \item Demonstrated precision: $\approx 0.3$~m/s under the best
+    conditions (bright quiet star, $S/N \approx 200$).
+\end{itemize}
+The factor-of-13 improvement in single-measurement precision over
+\textsc{Elodie} was decisive: the velocity amplitudes of
+Neptune-mass planets ($K \approx 4$~m/s) and super-Earths
+($K \approx 1.9$~m/s) lie well above \textsc{Harps}'s noise floor
+but far below \textsc{Elodie}'s.
+
+%======================================================================
+\section{The Keplerian Model and the Measurement Equation}
+\label{sec:kepler}
+
+\subsection{Kepler's Solution for the Stellar Velocity}
+
+For a star of mass $M_\star$ orbited by a planet of mass $m_p \ll M_\star$
+on an elliptical orbit with eccentricity~$e$ and period~$P$, Newton's
+law of gravity predicts exactly:
+\begin{align}
+  v_r(t) &= K\bigl[\cos(\nu(t)+\omega) + e\cos\omega\bigr] + \gamma,
+  \label{eq:vr}\\[4pt]
+  K &= \frac{2\pi a_\star \sin i}{P\sqrt{1-e^2}},\label{eq:K_def2}
+\end{align}
+where:
+\begin{itemize}
+  \item $\nu(t)$ is the \emph{true anomaly}---the angle in the orbital
+    plane between the direction of periastron and the planet's current
+    position;
+  \item $\omega$ is the \emph{argument of periastron}---the angle
+    between the ascending node and the periastron direction;
+  \item $\gamma$ is the systemic velocity of the star-planet barycentre
+    relative to the Solar System barycentre (a constant);
+  \item $a_\star$ is the semi-major axis of the star's orbit around
+    the barycentre.
+\end{itemize}
+
+The true anomaly $\nu(t)$ is related to time through the
+\emph{eccentric anomaly}~$\mathcal{E}(t)$ via:
+\begin{equation}\label{eq:kepler_eq}
+  \mathcal{E} - e\sin\mathcal{E} = \frac{2\pi}{P}(t - T_0),
+\end{equation}
+known as Kepler's equation, where $T_0$ is the time of periastron
+passage.  The relationship between $\nu$ and $\mathcal{E}$ is:
+\begin{equation}\label{eq:nu_eccentric}
+  \tan\frac{\nu}{2} = \sqrt{\frac{1+e}{1-e}}\,\tan\frac{\mathcal{E}}{2}.
+\end{equation}
+Kepler's equation~\eqref{eq:kepler_eq} is transcendental and must be
+solved numerically for $\mathcal{E}(t)$ at each observation epoch~$t_i$;
+Newton's method applied to $f(\mathcal{E}) = \mathcal{E} - e\sin\mathcal{E}
+- M$ (where $M = 2\pi(t-T_0)/P$ is the mean anomaly) converges in
+$\lesssim 5$ iterations for $e < 0.9$.
+
+\subsection{The Five Keplerian Parameters}
+
+Equations~\eqref{eq:vr}--\eqref{eq:nu_eccentric} show that the
+velocity curve $v_r(t)$ is completely determined by five orbital
+parameters:
+\begin{equation}\label{eq:param_vec}
+  \boldsymbol{\theta}_{\rm Kep} = (P,\,K,\,e,\,\omega,\,T_0),
+\end{equation}
+plus the systemic velocity~$\gamma$ (a sixth parameter that plays the
+role of the intercept in linear regression).
+
+For a circular orbit ($e = 0$), the velocity curve simplifies to a
+pure sinusoid:
+\begin{equation}\label{eq:vr_circular}
+  v_r(t) = K\cos\left(\frac{2\pi}{P}(t-T_0) + \omega\right) + \gamma,
+\end{equation}
+reducing the Keplerian parameters to $(P, K, \phi_0, \gamma)$ where
+$\phi_0 = \omega - \pi/2$ is the combined phase.  For the nearly
+circular orbit of 51~Peg~b this simplification is excellent; for
+eccentricities $e \gtrsim 0.2$ it fails and all five parameters are
+needed.
+
+\subsection{The Measurement Equation}
+
+Adding Gaussian measurement noise and stellar jitter to
+equation~\eqref{eq:vr} gives the fundamental measurement equation:
+\begin{equation}\label{eq:meas}
+  \boxed{v_i = K\bigl[\cos(\nu(t_i;\boldsymbol\theta)) + e\cos\omega\bigr]
+    + \gamma + \varepsilon_i,
+    \quad
+    \varepsilon_i \sim \mathcal{N}(0,\,\sigma_i^2 + \sigma_{\rm jit}^2),}
+\end{equation}
+where~$v_i = v_r(t_i)$ is the observed radial velocity at epoch~$t_i$;
+$\sigma_i$ is the formal photometric uncertainty from the CCF fit
+(equation~\ref{eq:sigma_ccf}); and $\sigma_{\rm jit}$ is the stellar
+jitter, an additional Gaussian noise source representing intrinsic
+stellar velocity variability.
+
+For a system with $N_p$ planets, the model velocity is a
+\emph{sum} of $N_p$ Keplerian terms:
+\begin{equation}\label{eq:meas_Np}
+  v_i = \gamma + \sum_{k=1}^{N_p}
+    K_k\bigl[\cos(\nu_k(t_i;\boldsymbol\theta_k) + e_k\cos\omega_k)\bigr]
+    + \varepsilon_i.
+\end{equation}
+The total number of free parameters is $5N_p + 2$ (five orbital elements
+per planet, plus $\gamma$ and $\sigma_{\rm jit}$).  For the
+three-planet system GJ~581 \citep{UdryBonfils2007}, this is
+$5\times3 + 2 = 17$ parameters---a high-dimensional optimisation problem
+with a severely multimodal likelihood.
+
+%======================================================================
+\section{The Historical Data}
+\label{sec:data}
+
+\subsection{Structure of a Radial Velocity Dataset}
+
+A radial velocity dataset is a time series of velocity measurements.
+Table~\ref{tab:51peg_data} lists a representative subset of Mayor and
+Queloz's original 51~Peg observations from \textsc{Elodie}, illustrating
+the data structure.
+
+\begin{table}[ht]
+\centering
+\caption{Selected radial velocity measurements of 51~Pegasi from
+the \textsc{Elodie} spectrograph, approximately reproduced from
+\citet{Mayor1995}.  The barycentric Julian date (BJD), velocity~$v_r$
+(m/s), and formal $1\sigma$ uncertainty~$\sigma$ (m/s) are listed.
+A constant systemic velocity $\gamma \approx -33{,}250$~m/s has been
+subtracted; the table shows only the residual velocity in a
+star-centred frame.  Negative values indicate the star moving away from
+the observer (receding), positive values indicate approach.}
+\label{tab:51peg_data}
+\medskip
+\begin{tabular}{lcr}
+\toprule
+BJD $-$ 2450000 & $v_r - \gamma$ (m/s) & $\sigma$ (m/s) \\
+\midrule
+ 0.7294 & $-57.0$  & 8.1 \\
+ 1.7329 & $+14.7$  & 8.5 \\
+ 2.7356 & $+55.3$  & 7.9 \\
+ 3.7387 & $+9.0$   & 9.2 \\
+ 4.7318 & $-55.2$  & 8.0 \\
+ 5.7341 & $+15.4$  & 8.3 \\
+ 6.7373 & $+53.8$  & 8.8 \\
+ 7.7301 & $+6.5$   & 8.1 \\
+ 8.7348 & $-52.9$  & 9.0 \\
+ 9.7372 & $+17.1$  & 7.8 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The 4.231-day periodicity is immediately visible in Table
+\ref{tab:51peg_data}: successive observations separated by $\approx 4.23$
+days have nearly the same velocity.  Mayor and Queloz accumulated 51 such
+measurements over 140 days in late 1994; the full dataset spans a wide
+phase coverage of the 4.231-day orbit.
+
+\subsection{Context: The Long Pre-History of RV Monitoring}
+
+Before the 1995 discovery, radial velocity planet searches had been
+under way for more than a decade.  \citet{Walker1995} reported 12 years
+of RV monitoring of 21 stars with the Victoria spectrograph, achieving
+$\approx 13$~m/s precision but finding no convincing detections.  Their
+null result established an upper bound on the frequency of short-period
+Jupiter-mass companions and set the precision target for the next
+generation of instruments.  Mayor and Queloz's \textsc{Elodie} programme
+started in late 1993; within a year of first light they had identified
+51~Peg as harboring a hot Jupiter.
+
+\subsection{Characteristics of a Good Dataset}
+
+Several properties of a RV time series determine the precision of the
+orbital parameter estimates---directly analogous to Millikan's frequency
+range design constraint and the Goobar-Perlmutter redshift coverage
+prescription:
+
+\begin{enumerate}
+  \item \textbf{Time baseline.}  The dataset must span several times the
+    orbital period~$P$ to constrain $P$ through phase wrapping.
+    For 51~Peg ($P = 4.23$~d), 51 observations over 140 days provide
+    $\approx 33$ complete orbits, giving an exquisitely well-determined
+    period.  For a 10-year Jupiter-period planet, a 20-year baseline is
+    needed.
+
+  \item \textbf{Phase coverage.}  Observations scattered uniformly
+    in orbital phase are optimal.  Large gaps (e.g., seasonal
+    inaccessibility of the star) create aliasing: the data are
+    consistent with periods $P$ and $P/(1 + P/1\,\text{yr})$
+    simultaneously.  Aliases cause spurious peaks in the periodogram
+    and additional local maxima in the likelihood landscape.
+
+  \item \textbf{Number of observations.}  The WLS standard error on $K$
+    scales as $\sigma_K \propto \sigma_i/\sqrt{n}$ and
+    $\sigma_P \propto \sigma_i/(K\sqrt{n})$.  Both improve as
+    $1/\sqrt{n}$.  For 51~Peg, $n=51$ observations at $\sigma_i \approx
+    8$~m/s give $\sigma_K \approx 1.1$~m/s, consistent with the
+    reported $K = 56.0 \pm 1.1$~m/s.
+
+  \item \textbf{Measurement precision.}  $\sigma_i \propto (S/N)^{-1}
+    \propto n_{\rm phot}^{-1/2}$, motivating the investment in
+    larger telescopes and vacuumenclosed higher-throughput spectrographs.
+\end{enumerate}
+
+%======================================================================
+\section{Maximum Likelihood Estimation of Keplerian Parameters}
+\label{sec:mle}
+
+\subsection{The Likelihood Function}
+
+Given the measurement model~\eqref{eq:meas}, with independent Gaussian
+errors of variance $\sigma_i^2 + \sigma_{\rm jit}^2 \equiv \tilde\sigma_i^2$,
+the log-likelihood for $n$ observations is:
+\begin{equation}\label{eq:loglik}
+  \ell(\boldsymbol\theta, \gamma, \sigma_{\rm jit}) =
+  -\frac{n}{2}\ln(2\pi)
+  - \sum_{i=1}^n\ln\tilde\sigma_i
+  - \underbrace{\frac{1}{2}\sum_{i=1}^n
+    \frac{\bigl[v_i - v_r(t_i;\boldsymbol\theta) - \gamma\bigr]^2}
+    {\tilde\sigma_i^2}}_{\chi^2(\boldsymbol\theta,\gamma)/2}.
+\end{equation}
+Maximising~\eqref{eq:loglik} over
+$(\boldsymbol\theta, \gamma, \sigma_{\rm jit}) = (P, K, e, \omega,
+T_0, \gamma, \sigma_{\rm jit})$ is the fundamental estimation problem.
+Under Gaussian errors, this is equivalent to minimising the weighted
+chi-squared
+\begin{equation}\label{eq:chi2}
+  \chi^2(\boldsymbol\theta,\gamma,\sigma_{\rm jit}) =
+  \sum_{i=1}^n
+  \frac{\bigl[v_i - K\bigl(\cos\nu_i(\boldsymbol\theta) + e\cos\omega\bigr)
+    - \gamma\bigr]^2}
+  {\sigma_i^2 + \sigma_{\rm jit}^2}.
+\end{equation}
+Note that unlike the photoelectric and supernova cases, $\chi^2$ here is
+a nonlinear function of all five orbital parameters simultaneously.
+There is no closed-form solution analogous to the OLS formulae for
+$\hat\beta = S_{\nu V}/S_{\nu\nu}$.
+
+\subsection{Profiling Out the Linear Parameters}
+
+The systemic velocity $\gamma$ enters~\eqref{eq:chi2} linearly, just as
+$\mathcal{M}$ entered the supernova WLS.  At fixed
+$(\boldsymbol\theta, \sigma_{\rm jit})$:
+\begin{equation}\label{eq:gamma_hat}
+  \hat\gamma = \frac{\displaystyle\sum_i
+    \frac{v_i - K[\cos\nu_i + e\cos\omega]}{\tilde\sigma_i^2}}
+  {\displaystyle\sum_i \tilde\sigma_i^{-2}},
+\end{equation}
+a weighted mean of the velocity residuals.  Substituting
+$\hat\gamma$ into $\chi^2$ gives the profile chi-squared
+$\tilde\chi^2(\boldsymbol\theta, \sigma_{\rm jit})$ that depends
+only on the nonlinear parameters.  In practice, both $\gamma$ and
+$\sigma_{\rm jit}$ are profiled (or marginalised) so that the global
+search operates in $(P, K, e, \omega, T_0)$ space alone.
+
+\subsection{The Periodogram as a First-Pass Filter}
+\label{sec:periodogram}
+
+Before invoking the genetic algorithm, the \textsc{Elodie} pipeline
+applies the \emph{Lomb-Scargle periodogram} \citep{Lomb1976,Scargle1982}
+as a computationally cheap diagnostic.  For a circular-orbit model,
+$v_r(t) = K\cos(2\pi t/P + \phi) + \gamma$, the least-squares
+chi-squared at each trial period $P_{\rm trial}$ can be evaluated
+analytically.  The Lomb-Scargle power at frequency $f = 1/P_{\rm trial}$
+is:
+\begin{equation}\label{eq:lomb}
+  z(f) = \frac{n-1}{2}
+  \frac{[\sum_i v_i\cos\omega(t_i-\tau)]^2/\sum_i\cos^2\omega(t_i-\tau)
+      + [\sum_i v_i\sin\omega(t_i-\tau)]^2/\sum_i\sin^2\omega(t_i-\tau)}
+  {\sum_i (v_i - \bar v)^2},
+\end{equation}
+where $\omega = 2\pi f$ and $\tau$ is defined to make the estimator
+orthogonal.  High power at a given frequency indicates that a sinusoidal
+model with that period significantly reduces the residuals relative
+to a constant model.
+
+The false alarm probability (FAP) under the null hypothesis
+(Gaussian noise, no planet) follows from the result of
+\citet{Scargle1982}: for the maximum power $z_{\rm max}$ over $M$
+independent frequencies,
+\begin{equation}\label{eq:fap}
+  \text{FAP} \approx 1 - (1-e^{-z_{\rm max}})^M.
+\end{equation}
+For 51~Peg, the periodogram has a peak at $f_0 = 0.2364$~d$^{-1}$
+($P_0 = 4.2308$~d) with $z_{\rm max} \approx 40$ and FAP $< 10^{-9}$:
+there is essentially zero probability that the periodogram peak is a
+noise fluctuation.
+
+The periodogram identifies the \emph{period} of the dominant
+signal.  It does not, however, estimate the remaining four Keplerian
+parameters or assess whether the orbit is eccentric.  For that,
+numerical optimisation of the full likelihood~\eqref{eq:loglik}
+is required.
+
+%======================================================================
+\section{The Multimodality Problem}
+\label{sec:multimodal}
+
+\subsection{Why Gradient Methods Fail}
+
+The log-likelihood surface $\ell(P, K, e, \omega, T_0)$ has a complex
+topology.  The dominant source of multimodality is the \emph{period
+aliasing} problem: the observed velocity time series has finite sampling,
+and a sinusoidal signal at period $P^*$ is consistent---up to measurement
+noise---with many other periods.
+
+The Nyquist-like aliasing structure in unevenly sampled data arises
+from the window function of the observing schedule.  If observations
+are taken once per sidereal day (approximately the minimum cadence for
+an OHP programme), the power spectrum of the window function has
+strong peaks at $f_{\rm sid} \pm f_{\rm planet}$ for any planetary
+frequency $f_{\rm planet}$.  These aliases produce local maxima in
+the likelihood at periods
+\begin{equation}\label{eq:aliases}
+  P_{\rm alias} = \frac{P^*}{n \pm P^*/P_{\rm sid}},
+  \quad n = 1, 2, 3, \ldots
+\end{equation}
+For 51~Peg ($P^* = 4.2308$~d, $P_{\rm sid} = 1.0$~d), the principal
+aliases lie at $P_{\rm alias} \approx 0.75$~d (1-day alias), 1.30~d
+(second alias), and so on.  Each alias generates a local maximum of
+$\ell$ that gradient descent discovers preferentially if started nearby.
+
+Beyond period aliases, eccentricity and the argument of periastron
+introduce additional structure.  For $e \neq 0$, the velocity curve
+is an asymmetric waveform; the likelihood surface as a function of
+$(\omega, T_0)$ has a ridge of high likelihood that wraps around a
+torus in the $(T_0\,\text{mod}\,P,\,\omega)$ plane.  For multi-planet
+systems, the total number of local maxima grows exponentially with
+$N_p$: every combination of period aliases across the $N_p$ planets
+generates a distinct local optimum.
+
+Table~\ref{tab:multimodal} illustrates the number of significant local
+maxima in the likelihood for systems of increasing complexity.
+
+\begin{table}[ht]
+\centering
+\caption{Approximate number of significant local maxima in the
+Keplerian log-likelihood as a function of the number of planets,
+dataset size, and eccentricity range.  These estimates are based
+on the alias structure of an OHP-type observation schedule with
+$\Delta t \approx 1$~day and $T_{\rm base} \approx 4$~yr.
+For multi-planet systems, the actual count depends on whether
+any period aliases overlap between planets.}
+\label{tab:multimodal}
+\medskip
+\begin{tabular}{lccc}
+\toprule
+Configuration & Approx.\ local maxima & Gradient descent
+  reliable? & GA needed? \\
+\midrule
+1 planet, $e \approx 0$, period known from periodogram
+  & $\lesssim 10$  & Often & Helpful \\
+1 planet, $e$ free, period unknown
+  & $\sim 100$     & Sometimes & Yes \\
+2 planets, $e$ free
+  & $\sim 10^4$    & Rarely & Yes \\
+3+ planets, $e$ free
+  & $\gg 10^5$     & Almost never & Always \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Levenberg-Marquardt and Its Failure Mode}
+
+The standard tool for nonlinear least-squares fitting is the
+Levenberg-Marquardt (LM) algorithm, which interpolates between
+gradient descent (far from the minimum) and Newton's method (near
+the minimum).  LM is fast---typically $O(10)$--$O(100)$ likelihood
+evaluations---but it is a \emph{local} optimizer.  Given an initial
+parameter vector $\boldsymbol\theta^{(0)}$, LM converges to the
+nearest local minimum of $\chi^2$ unconditionally.
+
+For 51~Peg, if $\boldsymbol\theta^{(0)}$ is started near the true
+period, LM converges correctly.  But for a system whose period is
+unknown---which is the generic case---LM started at a random initial
+point converges to a local minimum with probability
+$\sim 1/N_{\rm local}$, the reciprocal of the number of significant
+local minima.  From Table~\ref{tab:multimodal}, for a two-planet
+eccentric system with $N_{\rm local} \sim 10^4$, the probability of
+a random LM start finding the global minimum is $\sim 0.01\%$.
+
+The operational consequence in the Geneva group's data pipeline was
+that analysts ran LM from a grid of $\sim 1000$ starting points
+covering the $(P, K)$ space and collected the best local minimum
+found.  This grid search improved the success probability to
+$O(10\%)$, but scaled poorly to multi-planet systems and missed
+cases where alias peaks were higher than the true peak.
+
+%======================================================================
+\section{The Genetic Algorithm}
+\label{sec:ga}
+
+\subsection{Holland's Framework}
+
+John Holland's genetic algorithm \citep{Holland1975} is a paradigm for
+adaptive search that mimics Darwinian natural selection.  The key ideas
+are:
+\begin{enumerate}
+  \item \textbf{Population.}  Maintain a population of $N_{\rm pop}$
+    candidate solutions (\emph{individuals}), each represented as a
+    vector of real numbers or a bit string---the \emph{genome} or
+    \emph{chromosome}.  For the Keplerian problem, each individual is
+    a parameter vector
+    $\boldsymbol\theta^{(j)} = (P^{(j)}, K^{(j)}, e^{(j)},
+    \omega^{(j)}, T_0^{(j)})$.
+
+  \item \textbf{Fitness function.}  Assign to each individual a scalar
+    fitness $F^{(j)} = \ell(\boldsymbol\theta^{(j)})$ (the
+    log-likelihood).  Higher fitness is better.
+
+  \item \textbf{Selection.}  Form a mating pool by selecting individuals
+    with probability proportional to fitness (\emph{fitness-proportional
+    selection} or \emph{tournament selection}).  High-fitness individuals
+    reproduce more frequently; low-fitness individuals are weeded out.
+
+  \item \textbf{Crossover.}  Pairs of selected parents exchange portions
+    of their genomes.  For real-valued genomes (\citealt{Goldberg1989};
+    \citealt{Charbonneau1995}), crossover at position~$\kappa$ swaps
+    the subvectors $[\theta_\kappa^{(1)}, \ldots, \theta_5^{(1)}]$ and
+    $[\theta_\kappa^{(2)}, \ldots, \theta_5^{(2)}]$ between two parents.
+    Crossover generates offspring that inherit partial solutions from
+    both parents and can combine locally good components.
+
+  \item \textbf{Mutation.}  With probability $p_m$ (the \emph{mutation
+    rate}), randomly perturb each gene: $\theta_k \leftarrow \theta_k +
+    \delta$, where $\delta$ is drawn from a uniform or Gaussian
+    distribution.  Mutation prevents premature convergence to a local
+    optimum by maintaining population diversity.
+
+  \item \textbf{Replacement / elitism.}  Form the next generation by
+    replacing all or part of the population with offspring.
+    \emph{Elitism} preserves the best individuals from the current
+    generation unchanged, ensuring that the best-found solution never
+    deteriorates.
+\end{enumerate}
+
+\subsection{\textsc{Pikaia}: The Astrophysics Implementation}
+
+\citet{Charbonneau1995} implemented Holland's algorithm specifically for
+astrophysical fitting problems, distributing the \textsc{Pikaia}
+Fortran code freely.  Key design choices in \textsc{Pikaia} for the
+exoplanet application are:
+\begin{itemize}
+  \item \textbf{Real-valued encoding.}  Each parameter is encoded as a
+    floating-point number, not a bit string.  The search domain for
+    each parameter is specified as $[\theta_{\rm min},\,\theta_{\rm max}]$.
+    For Keplerian fitting: $P \in [P_{\rm min}, P_{\rm max}]$
+    (e.g., 1~d to 20~yr), $K \in [0, K_{\rm max}]$,
+    $e \in [0, 0.99]$, $\omega \in [0, 2\pi]$, $T_0 \in [0, P]$.
+
+  \item \textbf{Population size.}  Typically $N_{\rm pop} = 100$--$500$.
+    Larger populations explore the space more thoroughly but require
+    proportionally more likelihood evaluations per generation.
+    \citet{Charbonneau1995} showed that $N_{\rm pop} = 100$--$200$
+    is sufficient for the spectral-fitting problems he considered;
+    multi-planet Keplerian fitting typically uses $N_{\rm pop} = 200$.
+
+  \item \textbf{Number of generations.}  Convergence typically requires
+    $N_{\rm gen} = 500$--$2000$ generations, for a total of
+    $N_{\rm pop} \times N_{\rm gen} = 10^5$--$10^6$ likelihood
+    evaluations.  Each evaluation requires solving Kepler's equation
+    (Newton iteration, $\sim10$ steps) $n$ times and computing the
+    weighted chi-squared: $O(n)$ floating-point operations, fast on
+    modern hardware.
+
+  \item \textbf{Mutation rate.}  $p_m \approx 0.002$--$0.02$ per gene.
+    Too low: premature convergence to local optima.  Too high:
+    random walk with no progress.  The optimal $p_m$ scales as
+    $1/\ell_{\rm genome}$ \citep{Holland1975}, where $\ell_{\rm genome}$
+    is the genome length (number of free parameters).
+\end{itemize}
+
+\subsection{The GA Search as a Machine Learning Procedure}
+
+The genetic algorithm is a specific instance of \emph{evolutionary
+computation}, which is itself a branch of stochastic search that predates
+the term ``machine learning'' by a decade.  In the modern ML vocabulary:
+\begin{itemize}
+  \item \textbf{Hypothesis class:} the set of Keplerian orbits
+    $\{v_r(t;\boldsymbol\theta)\}$ parameterised by
+    $\boldsymbol\theta \in \Theta$, where $\Theta$ is the five-dimensional
+    Kepler parameter space.  Kepler's laws specify $\Theta$ exactly;
+    without them the search would be over an infinite-dimensional
+    function class.
+  \item \textbf{Loss function:} the negative log-likelihood
+    $-\ell(\boldsymbol\theta) = \chi^2(\boldsymbol\theta)/2 + \text{const}$.
+  \item \textbf{Training algorithm:} the genetic algorithm is a
+    population-based stochastic optimiser for this loss.  It is not
+    gradient-based; it discovers good solutions through recombination
+    and evaluation rather than numerical differentiation.
+  \item \textbf{Generalisation:} the fitted orbital parameters form
+    a predictive model: given the estimated $\hat{\boldsymbol\theta}$,
+    the model predicts $v_r(t)$ at any future epoch $t > t_n$.
+    The Keplerian orbit extrapolates far outside the training window
+    because the physical model guarantees the functional form is exact
+    (in the Newtonian two-body limit).
+\end{itemize}
+
+\subsection{Why the GA Succeeds Where Gradient Methods Fail}
+
+The genetic algorithm succeeds because it combines two properties:
+\emph{global exploration} and \emph{local exploitation}.
+
+\paragraph{Global exploration.}
+By initialising a population of 200 individuals uniformly distributed
+across $(P_{\rm min}, P_{\rm max}) \times [0, K_{\rm max}] \times
+[0, 0.99] \times [0, 2\pi] \times [0, P]$, the GA samples every
+significant period alias from the start.  With $N_{\rm pop} = 200$
+and $N_{\rm local} \sim 10^4$ local maxima (two-planet case), the
+probability that at least one initial individual lies in the basin
+of attraction of the global maximum is approximately
+$1 - (1 - 1/N_{\rm local})^{N_{\rm pop}} \approx
+200/10{,}000 = 2\%$.  This may seem low, but the GA's selection
+and crossover amplify this initial advantage: individuals near the
+global maximum produce more offspring, which in turn explore
+the neighbourhood of the global maximum.  After $O(100)$ generations
+the population has coalesced around a few candidate optima.
+
+\paragraph{Local exploitation.}
+Once the population has identified the neighbourhood of the global
+maximum, LM is run from the best GA individual to polish the solution
+to full numerical precision.  The combination GA~$+$~LM achieves both
+global coverage and local precision.
+
+\paragraph{The schema theorem.}
+Holland's \citeyearpar{Holland1975} \emph{schema theorem} provides
+the theoretical basis for why crossover helps.  A \emph{schema}
+$H$ is a pattern in genome space---a set of positions where the
+gene value is specified and other positions are ``don't cares.''
+Schemas with above-average fitness are reproduced exponentially
+rapidly: if the schema $H$ has fitness $F(H) > \bar F$ (above-population-
+average fitness), its representation in the population grows as
+$(F(H)/\bar F)^g$ over $g$ generations.  Crossover propagates
+building blocks (high-fitness short schemas) combinatorially.
+In the Keplerian context, a genome with a good period estimate~$P$
+but poor $e$ will propagate its good $P$ value to offspring that
+inherit a good $e$ from the other parent---building up the global
+solution from locally good components.
+
+%======================================================================
+\section{Results: 51~Pegasi and the First Exoplanet}
+\label{sec:51peg}
+
+\subsection{The Periodogram Phase}
+
+Mayor and Queloz's analysis began with the Lomb-Scargle periodogram
+of 51 velocity measurements spanning 140 days.  The periodogram showed
+a dominant peak at $P_0 = 4.2308$~d with FAP $< 10^{-9}$, identifying
+the putative orbital period with certainty.  A visual phase-folding
+of the velocities at this period revealed a nearly sinusoidal variation
+with amplitude $K \approx 56$~m/s (Figure~1 of \citealt{Mayor1995}).
+
+\subsection{Keplerian Fit}
+
+With the period identified, Mayor and Queloz ran a Keplerian fit using
+a least-squares minimisation initialised from the periodogram period.
+For the case of 51~Peg, with its near-circular orbit and high $K/\sigma$
+ratio ($K/\sigma \approx 7$), the LM starting near the true period
+converged correctly.  The resulting parameter estimates are summarised
+in Table~\ref{tab:51peg_params}.
+
+\begin{table}[ht]
+\centering
+\caption{Keplerian orbital parameters for 51~Pegasi~b from the
+maximum-likelihood fit to the \textsc{Elodie} radial velocity data
+\citep{Mayor1995}.  Uncertainties are $1\sigma$ from the curvature of
+the log-likelihood at the maximum.  The minimum planetary mass
+$m_p\sin i$ follows from equation~\eqref{eq:K_def} with the spectroscopically
+estimated stellar mass $M_\star = 1.06\,M_\odot$
+(Solar composition, $G$-2 spectral type).}
+\label{tab:51peg_params}
+\medskip
+\begin{tabular}{p{4.5cm}cl}
+\toprule
+Parameter & Value & Units \\
+\midrule
+Period $P$              & $4.2308 \pm 0.0006$ & days \\
+Semi-amplitude $K$      & $56.0 \pm 1.1$      & m/s \\
+Eccentricity $e$        & $0.013 \pm 0.012$   & --- (consistent with 0) \\
+$m_p\sin i$             & $0.472 \pm 0.039$   & $M_J$ \\
+Orbital radius $a$      & $0.0527 \pm 0.0015$ & AU \\
+Systemic velocity $\gamma$ & $-33{,}250 \pm 5$ & m/s \\
+RMS residuals           & $11.7$              & m/s \\
+\midrule
+$\chi^2_{\rm min}/\nu$  & $1.33$              & ($\nu = 45$) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textbf{Interpretation of the fit.}  The best-fit model has
+$\chi^2/\nu = 1.33 > 1$, indicating that the Keplerian model does not
+fully account for the variance.  The residual scatter of $11.7$~m/s
+exceeds the photon-noise expectation of $\sim 8$~m/s; the excess
+$\approx 8$~m/s in quadrature is attributed to stellar photospheric
+jitter ($\sigma_{\rm jit}$).  When $\sigma_{\rm jit}$ is included as a
+free parameter in the likelihood, the $\chi^2/\nu$ falls to
+$\approx 1.05$ with $\hat\sigma_{\rm jit} = 7.8 \pm 1.2$~m/s.
+
+\subsection{Likelihood Ratio Test and False Alarm Probability}
+
+To test the null hypothesis that the velocity variations are pure
+noise (no planet), Mayor and Queloz computed the Wilks
+\citeyearpar{Wilks1938} likelihood ratio statistic:
+\begin{equation}\label{eq:lrt}
+  \Lambda_{\rm LR} = 2\bigl[\ell(\hat{\boldsymbol\theta})
+  - \ell(\boldsymbol\theta_0)\bigr],
+\end{equation}
+where $\hat{\boldsymbol\theta} = (P, K, e, \omega, T_0, \gamma)$ is the
+best-fit Keplerian model and $\boldsymbol\theta_0 = (K=0, \gamma_0)$
+is the null model (constant velocity plus noise).  Under $H_0$,
+$\Lambda_{\rm LR} \sim \chi^2_5$ (five additional free parameters in
+the Keplerian model).  For their data,
+$\Lambda_{\rm LR} \approx 180 \gg \chi^2_{5,0.001} \approx 20.5$:
+the planet hypothesis is preferred at a confidence level of
+$\gg 5\sigma$.  The FAP from the Lomb-Scargle periodogram
+($< 10^{-9}$) and the LRT agree on essentially zero probability of a
+noise origin.
+
+%======================================================================
+\section{The Stellar Jitter Identification Problem}
+\label{sec:nuisance}
+
+\subsection{The Contact-EMF Analogy}
+
+In Millikan's photoelectric regression, the contact EMF $v_c$ played
+the role of a nuisance parameter that shifted the intercept of the
+$V_0$--$\nu$ regression without affecting the slope $h/e$.  In the
+supernova problem, $\mathcal{M} = M_B + 5\log_{10}(c/H_0)$ shifted the
+Hubble diagram vertically without affecting $(\Omega_M, \Omega_\Lambda)$.
+In the exoplanet problem, \emph{stellar jitter}~$\sigma_{\rm jit}$
+plays a more disruptive role: it does not merely shift a nuisance
+intercept but inflates the effective noise variance on every observation,
+potentially hiding a planetary signal or creating a spurious one.
+
+Stellar intrinsic RV variability arises from three physical mechanisms
+\citep{Saar1997}:
+\begin{enumerate}
+  \item \textbf{Oscillations.}  Solar-like p-mode oscillations have
+    amplitudes of $\sim 0.3$~m/s (Sun) to $\sim 5$~m/s (low-gravity
+    giants) and timescales of minutes.  Averaged over a 15-minute
+    exposure, p-mode jitter is $\lesssim 0.3$~m/s for Sun-like stars.
+  \item \textbf{Granulation.}  Convective motions on the stellar
+    surface produce a quasi-random RV signal with amplitude $\sim 1$~m/s
+    and timescale $\sim 10$~minutes.  Averaged over a 15-minute
+    exposure, the granulation contribution is $\lesssim 0.5$~m/s.
+  \item \textbf{Activity (spots and plages).}  Magnetic starspots
+    suppress convective blueshift and introduce flux asymmetries that
+    mimic a Doppler shift.  The amplitude scales with the filling
+    factor of active regions: $\sigma_{\rm jit} \approx v\sin i \cdot
+    f_{\rm spot}/2$ where $f_{\rm spot}$ is the spot covering fraction.
+    For an active star with $f_{\rm spot} = 1\%$ and
+    $v\sin i = 5$~km/s, $\sigma_{\rm jit} \approx 25$~m/s.
+    Spot-induced jitter is periodic at the stellar rotation period
+    ($P_{\rm rot} \approx 25$~days for the Sun), which can be confused
+    with a planetary companion if $P_{\rm planet} \approx P_{\rm rot}$.
+\end{enumerate}
+
+\subsection{Identifying and Correcting Jitter}
+
+The standard approach is to include $\sigma_{\rm jit}^2$ in the
+measurement variance as an unknown parameter and estimate it from the
+data:
+\begin{equation}\label{eq:chi2_jit}
+  \chi^2_{\rm jit}(\boldsymbol\theta, \sigma_{\rm jit}) =
+  \sum_{i=1}^n
+  \frac{[v_i - v_r(t_i;\boldsymbol\theta) - \gamma]^2}
+    {\sigma_i^2 + \sigma_{\rm jit}^2}.
+\end{equation}
+In practice, $\sigma_{\rm jit}$ is chosen to make $\chi^2/\nu \approx 1$
+at the best-fit Keplerian model \citep{Marcy2000}.  This is equivalent
+to maximum likelihood estimation of $\sigma_{\rm jit}$ analogous to the
+MLE of the noise variance in the photoelectric problem
+(Section~5 of the Einstein paper).
+
+A more informative approach exploits the known \emph{periodicity} of
+activity-induced jitter: it occurs at $P_{\rm rot}$ and its harmonics.
+If the best-fit Keplerian period equals $P_{\rm rot}$ (known from the
+Ca~{\sc ii} H\,\&K emission index, a chromospheric activity diagnostic),
+the planet hypothesis is suspect \citep{Queloz2001}.  Conversely, if
+the Keplerian period is incompatible with any stellar rotation harmonic,
+jitter is unlikely to be responsible.
+
+%======================================================================
+\section{Extension to Super-Earth Mass Planets with \textsc{Harps}}
+\label{sec:harps}
+
+\subsection{The GJ~581 Planetary System}
+
+The Geneva group's \textsc{Harps} programme demonstrates the full
+power of the Keplerian MLE framework combined with genetic-algorithm
+global search.  The star GJ~581 (a nearby M-dwarf, $d = 6.3$~pc) was
+found to host at least four planets detectable with \textsc{Harps}.
+The discovery proceeded iteratively:
+\begin{enumerate}
+  \item One-planet fit: GA search identifies the $P = 5.37$~d planet
+    (GJ~581b, $K = 12.5$~m/s, $m_p\sin i = 15.7\,M_\oplus$,
+    \citealt{Bonfils2005}).
+  \item Residuals show additional periodic signal; GA rerun on
+    residuals finds $P = 12.93$~d (GJ~581c, $K = 3.2$~m/s,
+    $m_p\sin i = 5.1\,M_\oplus$).
+  \item Residuals of the two-planet fit show $P = 83$~d (GJ~581d,
+    $K = 2.7$~m/s).
+  \item Full three-planet GA fit (15 free parameters) rerun;
+    subsequently \citet{Mayor2009} find a fourth signal at $P = 3.15$~d
+    (GJ~581e, $K = 1.87$~m/s, $m_p\sin i = 1.94\,M_\oplus$)---the
+    lightest exoplanet known at the time of its detection, within a few
+    tenths of an Earth mass of being the first ``Earth-mass'' exoplanet.
+\end{enumerate}
+
+Table~\ref{tab:gj581} summarises the GJ~581 multi-planet system
+parameters from the \textsc{Harps} MLE fit of \citet{Mayor2009}.
+
+\begin{table}[ht]
+\centering
+\caption{Keplerian parameters for the four planets of GJ~581 from the
+simultaneous 17-parameter MLE fit using the genetic algorithm followed
+by Levenberg-Marquardt polishing \citep{Mayor2009}.  The fit to
+$n = 119$ HARPS observations yields $\chi^2_{\rm min}/\nu \approx 1.08$
+with $\hat\sigma_{\rm jit} = 1.1$~m/s.  The planet GJ~581e
+($K = 1.87$~m/s) was the lowest-amplitude detection achievable at the
+time, requiring \textsc{Harps} precision and $>100$ observations.}
+\label{tab:gj581}
+\medskip
+\begin{tabular}{lccccc}
+\toprule
+Planet & $P$ (days) & $K$ (m/s) & $e$ & $m_p\sin i$ ($M_\oplus$)
+  & $a$ (AU) \\
+\midrule
+GJ~581e & $3.149$  & $1.87\pm0.03$ & $0.00\pm0.09$ &  $1.94\pm0.19$ & 0.029 \\
+GJ~581b & $5.369$  & $12.49\pm0.03$& $0.03\pm0.01$ & $15.65\pm0.28$ & 0.041 \\
+GJ~581c & $12.929$ & $3.18\pm0.05$ & $0.07\pm0.06$ &  $5.62\pm0.38$ & 0.073 \\
+GJ~581d & $66.87$  & $2.72\pm0.10$ & $0.25\pm0.09$ &  $7.09\pm0.48$ & 0.218 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Why the Genetic Algorithm Was Necessary for GJ~581}
+
+The 17-parameter likelihood for the GJ~581 system illustrates why the
+genetic algorithm is not merely helpful but \emph{necessary}:
+\begin{itemize}
+  \item The periods of the four planets (3.1, 5.4, 12.9, 66.9~d) span a
+    range of 22:1.  In the periodogram of the full 119-point dataset,
+    each period has its own comb of daily and annual aliases: the
+    four-planet likelihood has $O(10^8)$ local maxima in the 17-dimensional
+    parameter space.
+  \item The amplitude of GJ~581e ($K = 1.87$~m/s) is comparable to
+    the stellar jitter ($\hat\sigma_{\rm jit} = 1.1$~m/s).  The
+    planet's signal-to-noise ratio per observation is $K/\sigma_i
+    \approx 1.87/1.5 \approx 1.25$---far below detectability for a
+    single observation.  The GA must find the combination of period,
+    phase, and amplitude that simultaneously satisfies all 119 velocity
+    residuals, each carrying a signal-to-noise ratio of only 1.25.
+    A grid search over 17 parameters is computationally prohibitive;
+    a gradient search starting at a random point fails with probability
+    $\approx 1 - 10^{-8}$.
+  \item The GA's $10^5$--$10^6$ likelihood evaluations, each requiring
+    only $O(n)$ arithmetic operations, exploit the fact that the likelihood
+    itself is cheap to evaluate even though the optimisation landscape
+    is complex.  This is the regime for which the GA was designed.
+\end{itemize}
+
+%======================================================================
+\section{The Geneva Group as Machine Learners}
+\label{sec:ml}
+
+\subsection{Overview}
+
+The radial velocity exoplanet discovery programme exemplifies the same
+hypothetico-deductive machine learning structure as the photoelectric
+and supernova episodes.  The vocabulary of modern ML maps onto it with
+equal precision.
+
+\subsection{The Hypothesis Class}
+
+The hypothesis class is the set of Keplerian velocity curves:
+\begin{equation}\label{eq:hyp_class}
+  \mathcal{H} = \Biggl\{
+    v(t) = \gamma + \sum_{k=1}^{N_p}
+      K_k\bigl[\cos(\nu_k(t;\boldsymbol\theta_k)) + e_k\cos\omega_k\bigr]
+    \,\Bigg|\,
+    N_p \geq 0,\;
+    \boldsymbol\theta_k \in \Theta,\; \gamma \in \mathbb{R}
+  \Biggr\}.
+\end{equation}
+This class is derived from Newton's law of gravity---it did not arise
+from data exploration.  Without Kepler's laws, the space of possible
+periodic velocity functions is infinite-dimensional; with them, it
+collapses to a $5N_p + 2$-dimensional manifold.  The inductive bias
+embodied in equation~\eqref{eq:hyp_class} is what makes the signal
+detectable with tens to hundreds of RV measurements, rather than the
+$O(10^3)$--$O(10^6)$ measurements a model-free algorithm would
+require.
+
+\subsection{Feature Engineering: The CCF as a Feature Extractor}
+
+The cross-correlation function (CCF) is a feature extraction step
+that transforms the raw high-dimensional input (a $1024\times 2048$
+pixel CCD image containing $\sim 10^6$ pixel values) into a single
+number: the radial velocity $v_r$.  The CCF is not a purely data-driven
+feature extractor; it is based on the physical model of spectroscopic
+Doppler shifts.  The numerical mask against which the spectrum is
+correlated is constructed from a stellar atmospheric model (a line
+list with theoretical depths and widths for the appropriate spectral
+type).  In modern ML language, the CCF is a \emph{model-based feature
+extractor}: the stellar spectral model specifies which features (which
+spectral lines) to look for in the data.
+
+This is the exoplanet analogue of Lenard's discovery that frequency,
+not intensity, controls the photoelectric stopping potential, and of
+the Phillips width--luminosity relation in the supernova problem.  In
+all three cases, the critical insight was to identify the right
+low-dimensional summary of the raw data before fitting a structural model.
+
+\subsection{The Genetic Algorithm as a Training Algorithm}
+
+In the ML framework, the genetic algorithm is a \emph{training
+algorithm}: it minimises the loss function $-\ell(\boldsymbol\theta)$
+over the hypothesis class $\mathcal{H}$.  It is not a gradient-based
+method; it belongs instead to the class of \emph{evolutionary
+algorithms}---population-based stochastic optimisers that find global
+optima in multimodal landscapes.
+
+The exploration--exploitation trade-off in the GA is controlled by the
+mutation rate~$p_m$ and the selection pressure (how strongly
+fitness differences are amplified in the selection step).  High
+selection pressure exploits promising regions greedily; low selection
+pressure with high mutation rate explores broadly.  The optimal balance
+is the analogue, in the Keplerian optimisation context, of the
+learning-rate schedule in stochastic gradient descent.
+
+A modern practitioner would recognise the GA as an instance of
+\emph{evolutionary strategy (ES)}, a family of algorithms popular in
+reinforcement learning and neural architecture search.  The
+Population-Based Training (PBT) algorithm introduced by DeepMind in
+2017 for hyperparameter optimisation is structurally identical to
+Holland's GA: it maintains a population of models, selects the
+best-performing ones, perturbs their hyperparameters, and evolves
+the population toward higher fitness.
+
+\subsection{The Deductive-Inductive Loop for Exoplanets}
+
+Table~\ref{tab:loop} maps the exoplanet discovery onto the
+machine-learning framework, completing the trio of case studies that
+began with Einstein's photoelectric paper.
+
+\begin{table}[ht]
+\centering
+\caption{The hypothetico-deductive loop in the exoplanet radial
+velocity programme, translated into the language of modern
+machine learning.  Compare the analogous tables for the
+photoelectric effect and the supernova cosmology.}
+\label{tab:loop}
+\begin{tabular}{p{3.6cm}p{4.0cm}p{4.0cm}}
+\toprule
+Step & Astrophysical name & ML name \\
+\midrule
+Newton's law of gravity & Theoretical model & Model architecture \\
+Kepler orbit $v_r(t;\boldsymbol\theta)$ & Prediction from Newton &
+  Hypothesis class \\
+CCF: extract $v_r$ from spectrum & Radial velocity measurement &
+  Feature extraction \\
+ThAr wavelength calibration; vacuum enclosure &
+  Instrumental systematics control & Data preprocessing \\
+\textsc{Elodie} / \textsc{Harps} observations &
+  RV time series $\{(t_i, v_i, \sigma_i)\}$ & Training data \\
+Lomb-Scargle periodogram & Period search, FAP &
+  Pre-screening / data exploration \\
+Holland's genetic algorithm & Global $\chi^2$ minimisation &
+  Population-based stochastic training \\
+LM polish from GA best & Local refinement &
+  Fine-tuning after coarse search \\
+$\Lambda_{\rm LR} \gg \chi^2_{5,0.001}$ & Planet confirmed at $>5\sigma$ &
+  Test accuracy (hypothesis test) \\
+GJ~581e: $K = 1.87$~m/s, $m_p\sin i = 1.94\,M_\oplus$ &
+  Super-Earth detection & Extrapolation beyond training distribution \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%======================================================================
+\section{A Deep Neural Network on the Radial Velocity Data}
+\label{sec:dnn}
+
+\subsection{Two Hypothesis Classes Compared}
+
+The Keplerian hypothesis class~\eqref{eq:hyp_class} has $5N_p + 2$
+free parameters.  For the 51~Peg single-planet system, this is
+six parameters (including $\gamma$); for GJ~581, seventeen.
+A DNN designed to regress $v_r(t)$ from $t$ would have the same
+universal-approximation structure as discussed for the photoelectric
+and supernova problems: a three-layer network with 16 ReLU neurons per
+layer has $p = 593$ free parameters and VC dimension $\approx 5{,}700$.
+
+With $n = 51$ RV observations of 51~Peg, the DNN is in the interpolation
+regime: $n = 51 \ll p = 593$.  The specific problems are:
+
+\paragraph{Loss of orbital period.}
+The DNN has no mechanism to impose the periodicity
+$v_r(t + P) = v_r(t)$.  Its learned function passes through all 51
+training points but is arbitrary between and beyond them.  In particular,
+it cannot extrapolate the periodic orbit to an unobserved epoch---the
+primary scientific use of the fitted model.
+
+\paragraph{No identification of the mass.}
+Even if a DNN correctly learned the shape of $v_r(t)$, it would not
+decompose the amplitude into $K = 56$~m/s and hence would not compute
+$m_p\sin i$ from equation~\eqref{eq:K_def}.  The planetary mass
+is identified by the \emph{physical interpretation} of the parameter
+$K$---which requires Kepler's laws as a prior constraint.
+
+\paragraph{The multimodality problem is irrelevant to the DNN.}
+Ironically, the difficulty that motivated the genetic algorithm---
+multimodality of the Keplerian likelihood---is invisible to the DNN:
+instead of navigating a multimodal landscape with known structure, the
+DNN lives in a 593-dimensional loss landscape with a different kind of
+complexity (many saddle points and flat regions), and it has no mechanism
+to identify the physically meaningful global optimum.
+
+\subsection{Summary}
+
+Table~\ref{tab:sample_complexity} compares the Keplerian model and a DNN
+at each epoch of the radial velocity exoplanet programme.
+
+\begin{table}[ht]
+\centering
+\caption{Sample-complexity comparison between the Keplerian model and a
+three-layer DNN at each phase of the exoplanet RV programme.  For the
+17-parameter GJ~581 multi-planet system, even 119 HARPS observations are
+insufficient for a DNN, while the Keplerian model (VC dimension $= 17$)
+achieves a well-constrained fit with residuals $\chi^2/\nu \approx 1.08$.}
+\label{tab:sample_complexity}
+\begin{tabular}{p{2.8cm}rp{2.6cm}p{2.6cm}p{3.0cm}}
+\toprule
+Epoch & $n$ & Keplerian model & DNN (VC$\approx5700$) & DNN outcome \\
+\midrule
+Pre-\textsc{Elodie}, 1 planet & $\sim 30$ &
+  Sufficient ($N_{\rm dof} = 24$) & Insufficient & Interpolates; no period \\
+51~Peg, 1 planet, \textsc{Elodie} & 51 &
+  Sufficient ($N_{\rm dof} = 45$) & Insufficient ($\times 112$) &
+  Overfits; no $m_p$ \\
+GJ~581, 4 planets, \textsc{Harps} & 119 &
+  Sufficient ($N_{\rm dof} = 102$) & Insufficient ($\times 48$) &
+  Cannot separate planets \\
+Modern HARPS archive & $\sim 5000$ &
+  Sufficient& Insufficient ($\times 1.1$) &
+  Borderline: might find period; cannot extract $m_p$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%======================================================================
+\section{Conclusions}
+\label{sec:conclusions}
+
+The radial velocity detection of exoplanets is, at its mathematical core,
+a nonlinear weighted least-squares problem with five parameters per planet.
+The measurement equation
+\[
+  v_i = \gamma + \sum_{k=1}^{N_p}
+    K_k\bigl[\cos(\nu_k(t_i;\boldsymbol\theta_k)) + e_k\cos\omega_k\bigr]
+  + \varepsilon_i
+\]
+is derived directly from Newton's law of gravity via Kepler's two-body
+solution; the Keplerian orbits are the physical hypothesis that specifies
+the functional form.
+
+Three interlocking challenges required three separate innovations:
+\begin{enumerate}
+  \item \textbf{Data quality.}  Achieving $\sim 10$~m/s (and later
+    $\sim 1$~m/s) RV precision required fiber-fed echelle spectrographs
+    with simultaneous wavelength calibration (\textsc{Elodie}) and
+    vacuum-enclosed thermal control (\textsc{Harps}).  Millikan's
+    decade-long ``machine shop in vacuo'' has its analogue in Mayor's
+    fifteen-year programme of spectrograph development.
+
+  \item \textbf{Feature engineering.}  The cross-correlation function
+    reduces a million-pixel CCD image to a single number---the radial
+    velocity---by exploiting the physical constraint that stellar
+    absorption lines shift uniformly with the Doppler effect.  This is
+    the exoplanet counterpart of the Phillips width--luminosity relation
+    in the supernova problem: a model-based dimensionality reduction that
+    discards irrelevant information and retains the scientifically
+    relevant feature.
+
+  \item \textbf{Global optimisation.}  The multimodality of the
+    Keplerian likelihood---caused by period aliasing from non-uniform
+    observation scheduling---makes gradient methods unreliable for
+    multi-planet systems.  John Holland's genetic algorithm, as
+    implemented in Charbonneau's \textsc{Pikaia} code, achieves global
+    exploration through population diversity and crossover, then local
+    precision through Levenberg-Marquardt polishing.  No other
+    mainstream optimisation algorithm of the era combined both
+    properties.
+\end{enumerate}
+
+The MLE results for 51~Peg---$P = 4.2308 \pm 0.0006$~d,
+$K = 56.0 \pm 1.1$~m/s, $e = 0.013 \pm 0.012$, implying
+$m_p\sin i = 0.472 \pm 0.039\,M_J$ at $a = 0.053$~AU---were
+obtained from 51 velocity measurements of a $V = 5.5$ star observed
+on a 1.93~m telescope.  The combination of a physically motivated
+model (Kepler), a precision instrument (\textsc{Elodie}), and a
+global optimiser (the genetic algorithm) made this the most precise
+astronomical measurement of a previously unknown physical system at
+the time of its publication.
+
+The GJ~581e detection ($K = 1.87$~m/s, $m_p\sin i = 1.94\,M_\oplus$)
+represents the asymptote of what the same conceptual framework can
+achieve when the instrumentation is advanced by a factor of 13
+(\textsc{Harps} vs.\ \textsc{Elodie}).  Mayor's use of the genetic
+algorithm bridged the gap from the 56~m/s Jupiter to the 1.87~m/s
+super-Earth: not because the algorithm changed, but because it scaled
+without modification from the 6-parameter 51~Peg problem to the
+17-parameter GJ~581 problem, while gradient methods failed at the
+larger scale.
+
+The three case studies---Einstein's photoelectric regression,
+Riess-Schmidt-Perlmutter's supernova cosmology, and Mayor-Queloz's
+radial velocity programme---share a common lesson.  In each case the
+physicist's structure model---the quantum hypothesis, Friedmann's
+equations, or Kepler's law---supplied a compact hypothesis class that
+reduced a potentially intractable learning problem to a manageable
+parameter estimation exercise.  The statistical estimation then
+proceeded by maximum likelihood, subject to a constraint that the
+number of training examples needed was set by the number of free
+parameters in the physical model, not by the complexity of the raw
+data.  And in each case, the critical innovation that turned the
+programme from aspiration to discovery was a combination of data
+quality, model-informed feature engineering, and a bespoke statistical
+computation---OLS, WLS, or global nonlinear optimisation as appropriate.
+
+%======================================================================
+\appendix
+
+\section{Deriving the Radial Velocity Semi-Amplitude}
+\label{app:K}
+
+For a star of mass $M_\star$ orbited by a planet of mass $m_p$ at
+orbital separation $a$ (semi-major axis) with eccentricity $e$
+and inclination $i$, the star's barycentre velocity semi-amplitude
+is derived from conservation of linear momentum:
+\begin{equation}\label{eq:K_derive}
+  K_\star = \frac{2\pi a_\star \sin i}{P\sqrt{1-e^2}},
+\end{equation}
+where $a_\star = a\,m_p/(M_\star + m_p)$ is the star's semi-major
+axis about the barycentre.  Substituting Kepler's third law
+$a^3 = G(M_\star+m_p)P^2/(4\pi^2)$:
+\begin{equation}\label{eq:K_full}
+  K_\star = \left(\frac{2\pi G}{P}\right)^{1/3}
+  \frac{m_p \sin i}{(M_\star + m_p)^{2/3}}
+  \frac{1}{\sqrt{1-e^2}}.
+\end{equation}
+In convenient astronomical units (with $K$ in m/s, $P$ in years, masses
+in Solar masses):
+\begin{equation}\label{eq:K_units}
+  K_\star = 28.435\,
+  \frac{m_p\sin i\,[M_J]}{(M_\star+m_p)^{2/3}[M_\odot]}
+  \frac{P^{-1/3}[\text{yr}]}{\sqrt{1-e^2}}\;\text{m/s}.
+\end{equation}
+This is equation~\eqref{eq:K_def} of the main text.  Note that only
+the combination $m_p\sin i$ (the \emph{minimum mass}) is measurable
+from the radial velocity alone; the true mass $m_p$ requires knowing
+the inclination~$i$ from independent observations (e.g., astrometry,
+transit photometry, or direct imaging).
+
+\section{Schema Theorem and Its Application to Keplerian Fitting}
+\label{app:schema}
+
+Holland's \citeyearpar{Holland1975} schema theorem states that a schema
+$H$ (a subset of parameter space defined by specifying some genes and
+leaving others free) with fitness $F(H) > \bar F$ (above-average) and
+short defining length $\delta(H)$ (the distance between the leftmost
+and rightmost specified genes) and few specified genes $O(H)$ will grow
+in the population according to:
+\begin{equation}\label{eq:schema}
+  m(H, g+1) \geq m(H,g)\,\frac{F(H)}{\bar F(g)}\,
+  \left[1 - p_c\frac{\delta(H)}{\ell-1} - O(H)\,p_m\right],
+\end{equation}
+where $m(H,g)$ is the number of individuals matching schema $H$ at
+generation~$g$, $p_c$ the crossover rate, $p_m$ the mutation rate,
+and $\ell$ the genome length.  The factor $F(H)/\bar F(g) > 1$
+drives exponential growth; the correction factors in brackets account
+for destruction by crossover and mutation.
+
+In the Keplerian context, a building block such as ``period within 1\%
+of the true period $P^*$'' is a high-fitness schema: any individual
+with a good period estimate has above-average fitness because the
+residuals at the correct period are small regardless of the other
+parameter values.  The schema theorem guarantees that these good-period
+individuals proliferate rapidly, and crossover combines good-period
+parents with good-eccentricity parents to generate offspring that are
+good at both.  This is precisely the mechanism that allows the GA to
+escape the basin of period aliases while converging toward the global
+period.
+
+\bigskip
+\bibliographystyle{plainnat}
+\bibliography{mayor_queloz_exoplanet_ML}
+
+\end{document}

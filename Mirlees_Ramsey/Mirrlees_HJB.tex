@@ -7,6 +7,7 @@
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{mathtools}
+\usepackage{hyperref}
 \geometry{margin=1.2in}
 
 \usepackage[round,comma,authoryear]{natbib}
@@ -39,8 +40,8 @@
 \begin{abstract}
   This note constructs a Hamilton--Jacobi--Bellman (HJB) equation for the
   Mirrlees optimal nonlinear income-tax problem by exploiting a structural
-  parallel with the continuous-time Ramsey tax problem studied in Jiang,
-  Sargent, and Wang (2025).  In the Ramsey problem, decisions are ordered by
+  parallel with the continuous-time Ramsey tax problem studied in
+  \citet{JiangSargentWang2024}.  In the Ramsey problem, decisions are ordered by
   time $t \ge 0$ and a single implementability constraint attaches a constant
   Lagrange multiplier $\Phi_0$ to the planner's problem; the value function is
   linear in a scalar state variable $X_t$.  In the Mirrlees problem, decisions
@@ -63,8 +64,7 @@
 
 \subsection{Environment}
 
-Following Jiang, Sargent, and Wang (2025), hereafter JSW, consider a
-continuous-time version of a special case of a Lucas--Stokey (1983) economy in which there is no initial term debt to be financed.  A representative household and a
+Following \citet{JiangSargentWang2024}, hereafter JSW, consider a continuous-time version of a special case of the \citet{LucasStokey1983} economy in which there is no initial term debt to be financed.  A representative household and a
 benevolent government operate on $t \in [0,\infty)$.  The resource constraint
 is
 \begin{equation}\label{eq:R_resource}
@@ -79,7 +79,8 @@ Throughout this section we impose the special case:
 \begin{equation}\label{eq:R_nodebt}
   b_{0-,t} = 0 \quad \text{for all } t \ge 0,
 \end{equation}
-meaning that the government carries \emph{no} initial term debt.
+meaning that the government carries \emph{no} initial term debt.\footnote{JSW focus on versions of Lucas and Stokey's Ramsey problems in which a non-zero schedule of initial term debts is  central. That part of their analysis is not the focus of this note and would just obscure the connections that we focus on here.  JSW altered the timing protocol relative to \citet{LucasStokey1983} in order to overcome the difficulty identified by \citet{debortoli2021optimal}.  \citet{JiangSargentWang2024} is a continuous-time working paper; a discrete-time companion that incorporates the timing-protocol change but not the dynamic program is forthcoming in the \emph{Journal of Political Economy} as \citet{JiangSargentWang2025} We retain JSW's timing protocol here.}
+
 
 \subsection{The implementability constraint}
 
@@ -93,7 +94,8 @@ equilibrium allocation if and only if it satisfies the resource constraint
 \end{equation}
 The Ramsey planner selects the best feasible allocation by maximizing
 $\int_0^\infty e^{-\rho t} U(C_t, N_t)\, dt$ subject to
-\eqref{eq:R_resource}--\eqref{eq:R_impl}.
+\eqref{eq:R_resource}--\eqref{eq:R_impl}. The tax rate and competitive equilibrium price system can be deduced from
+the allocation.
 
 \subsection{The cumulative-liability state variable}
 
@@ -111,6 +113,10 @@ and $\tau_t$ is the flat labor-income tax rate.  In differential form,
 \end{equation}
 where $r_t = \rho + \dot{C}_t/C_t$ is the equilibrium short rate.
 
+\begin{remark}[Backward-looking character of $\Pi_t$]
+Equation~\eqref{eq:R_Pi} defines $\Pi_t$ as an integral over past primary deficits, making it a purely backward-looking state variable: its value at time $t$ is fully determined by the history of $(G_s, \tau_s, N_s)$ for $s \le t$.
+\end{remark}
+
 JSW define the scalar state variable
 \begin{equation}\label{eq:R_Xt}
   X_t = \Pi_t\, U_{C,t},
@@ -125,6 +131,20 @@ where the $b_{0-,t}$ terms present in the general JSW formula vanish under
 \eqref{eq:R_nodebt}.  Note that the dynamics are \emph{linear} in $X_t$ (the
 $\rho X_t$ term).
 
+\begin{remark}[Timing protocol and $X_t$ as a state variable]
+Because $X_t = \Pi_t U_{C,t}$ depends on the current marginal utility $U_{C,t}$,
+whether it is predetermined requires care.  \citet{JiangSargentWang2024} adopt
+the protocol that for all $t >0$ the tax rate at time $t$ is set at $t-dt$, making $C_t$ (and
+hence $U_{C,t}$) predetermined for all  $t>0$.  This makes $X_t$ a genuine state variable
+for the continuation problem at $t >0$, and is the continuous time instantiation of JSW's key modification of
+\citeauthor{LucasStokey1983}'s original timing protocol. 
+\end{remark}
+
+\begin{remark} (Time $0$ is different)
+The Ramsey planner chooses $C_0$ at time $0$. This makes the Ramsey planner's decision problem different
+from the decision problems of the ``continuation Ramsey planners'' to be introduced soon.
+\end{remark}
+
 \medskip
 
 \noindent\textbf{Initial condition.}  Because $\Pi_0 = 0$, the state starts at
@@ -132,7 +152,7 @@ $X_0 = 0$.
 
 \subsection{The HJB equation}
 
-Define the value function
+Define a value function
 \begin{equation}\label{eq:R_V}
   V(X_t, t) = \max_{\{C_s;\, s \ge t\}} \int_t^\infty e^{-\rho(s-t)} U(C_s, C_s+G_s)\, ds,
 \end{equation}
@@ -143,23 +163,21 @@ programming, $V$ satisfies the HJB equation
   \rho\, V = V_t + \max_{C_t}\Bigl\{U(C_t, C_t+G_t)
   + V_X\,\bigl(\rho X_t - C_t U_{C,t} - N_t U_{N,t}\bigr)\Bigr\}.
 \end{equation}
-We shall regard the choice problem on the right side of equation \eqref{eq:R_HJB} as confronting
-a {\em continuation Ramsey planner} at time $t$ who confronts state variable $X_t$ and chooses $C_t$.
+The optimization problem on the right side of \eqref{eq:R_HJB} is that of a {\em continuation Ramsey planner} at time $t$ who faces state variable $X_t$ and chooses $C_{t+dt}$.
 
 \subsection{The Ramsey planner and the continuation Ramsey planners}
 \label{sub:two_ramsey_planners}
 
-Following Lucas and Stokey (1983) and the QuantEcon lecture on optimal
-taxation, it is instructive to distinguish sharply between two roles in the
-Ramsey problem, each with its own state and choice variables.
+Following \citet{LucasStokey1983} and the QuantEcon lectures on optimal
+taxation,\footnote{See \url{https://python-advanced.quantecon.org/opt_tax_recur.html} and \url{https://python-advanced.quantecon.org/amss.html}} it is instructive to distinguish sharply between two roles in recursive implementations of a Ramsey plan, each with its own state and choice variables.
 
 \medskip
 \noindent\textbf{The Ramsey planner at $t=0$.}
 The Ramsey planner operates once, at $t=0$.
 \begin{itemize}
-  \item \emph{State variable.} There is no initial debt that the Ramsey planner is committed to service.
-  Consequently, it faces state variable $X_0 = 0$ (see 
-    \eqref{eq:R_nodebt}). 
+  \item \emph{State variable.} There is no initial term debt for the Ramsey planner to service;
+    consequently, it faces state variable $X_0 = 0$ (see
+    \eqref{eq:R_nodebt}).
   \item \emph{Choice variables.}  (i) The time-$0$ allocation $(C_0, N_0)$;
     and (ii) the entire trajectory $\{X_s\}_{s>0}$ of promised values to be
     bequeathed to continuation planners at every future instant.  By the
@@ -173,15 +191,14 @@ The Ramsey planner operates once, at $t=0$.
 
 \medskip
 \noindent\textbf{A continuation Ramsey planner at $t>0$.}
-A continuation Ramsey planner arrives at time $t>0$ with a pre-committed
-inherited state.  It cannot re-optimize $\Phi_0$ from scratch.
+A continuation Ramsey planner arrives at time $t>0$ with an
+inherited state.  
 \begin{itemize}
   \item \emph{State variables.} $(X_t, t)$, where $X_t = \Pi_t U_{C,t}$ is
     the marginal-utility-scaled cumulative liability.  The continuation
-    planner is \emph{obligated} to take $X_t$ as given; it records the fiscal
-    promises made on the household's behalf by all previous planners.
+    planner is \emph{obligated} to take $X_t$ as given.
   \item \emph{Choice variable.}  Current consumption $C_t$.  Through the law
-    of motion \eqref{eq:R_dXt}, choosing $C_t$ implies the promised value
+    of motion \eqref{eq:R_dXt}, choosing $C_{t+dt}$ implies the promised value
     $X_{t+dt}$ passed to the next continuation planner.
   \item \emph{Value function.}  $V(X_t, t;\Phi_0) = -\Phi_0 X_t + H(t;\Phi_0)$.
     The shadow price $V_X = -\Phi_0$ is the \emph{same constant} for every
@@ -190,11 +207,11 @@ inherited state.  It cannot re-optimize $\Phi_0$ from scratch.
 
 \medskip
 \noindent\textbf{The time-inconsistency signature.}
-The two planners differ not only in their state variables but in the object
-that determines their first-order conditions.  The Ramsey planner at $t=0$
-faces initial debt $b_0 =0$ and freely chooses $\Phi_0$; the continuation Ramsey
-planner at $t>0$ faces the marginal-utility-scaled debt $X_t = u_c \cdot b_t$
-and treats $\Phi_0$ as a fixed parameter inherited from the Ramsey plan.
+The two planners differ not only in their state variables but in the constraints
+that determine their first-order conditions.  The time-$0$ Ramsey planner
+faces initial state $X_0 = 0$ and  chooses $C_0$ and $\Phi_0$; a continuation Ramsey
+planner at $t>0$ inherits the state $X_t = \Pi_t U_{C,t}$ and chooses $C_{t+ dt}$. 
+%It treats $\Phi_0$ as a fixed parameter bequeathed by the time-$0$ plan.
 
 
 \subsection{Linear value-function guess and verification}
@@ -215,7 +232,7 @@ and the HJB reduces to the following ODE for $H$:
   + \Phi_0\bigl(C_t U_{C,t} + N_t U_{N,t}\bigr)\Bigr\}.
 \end{equation}
 The maximization over $C_t$ on the right side is independent of the state
-$X_t$.  The optimal consumption satisfies
+$X_t$.  Optimal consumption satisfies
 \begin{equation}\label{eq:R_Copt}
   C(\Phi_0;\, G_t) = \argmax_{C} \Bigl\{U(C, C+G_t)
   + \Phi_0\bigl(C\, U_C + (C+G_t) U_N\bigr)\Bigr\}.
@@ -279,7 +296,7 @@ Crucially, $C^*$ and $\tau^*$ are \emph{independent of $G_t$}: the cyclical
 component of fiscal needs does not appear in the optimality condition for
 consumption.  The Ramsey planner therefore imposes a \emph{constant} tax
 rate at every date, even though government expenditures oscillate.  This is
-the HJB incarnation of Barro's (1979) tax-smoothing result.
+the HJB incarnation of the tax-smoothing result of \citet{barro1979determination}.
 
 \medskip
 \begin{remark}[Why $G_t$ drops out]
@@ -376,7 +393,7 @@ policy rule (pinned by $\Phi_0^*$).
 
 \subsection{Environment}
 
-Following the lecture notes on optimal nonlinear taxation, there is a continuum
+Following the lecture notes of \citet{Bhandari2026} on optimal nonlinear taxation, there is a continuum
 of households indexed by productivity $z \in \calZ = [\zlow, \zbar]$ with
 density $f(z) > 0$.  A type-$z$ household produces output
 \begin{equation}\label{eq:M_output}
@@ -451,7 +468,7 @@ the augmented objective is
 Viewing productivity $z$ as the ``index'' along which the planner proceeds
 (just as $t$ indexes the Ramsey planner's decisions), define the
 \emph{continuation value} for the planner who has already assigned allocations
-to types below $z$ and now faces types $[\zlow, \ldots] \to [z, \zbar]$ with
+to types below $z$ and now faces types $\zeta > z$ with
 inherited state $\calU(z) = u$:
 \begin{align}
   V(u, z;\, \mu) = \max_{y(\cdot)}
@@ -462,23 +479,25 @@ inherited state $\calU(z) = u$:
 \end{align}
 subject to \eqref{eq:M_IC2} and $\calU(z) = u$.
 
-\medskip\noindent\textbf{Sequential decision making protocol and  promised values.}
+\medskip\noindent\textbf{Sequential decision-making protocol and promised values.}
 The state variable $u = \calU(z)$ is the utility that has already been
 \emph{promised} to type $z$ by the assignments made to all lower types
-$\zeta < z$.  A continuation planner starting at $z$ is therefore bound to
+$\zeta < z$.  A continuation planner starting at $z$ is obliged to
 deliver exactly $u$ to type $z$.  Types already processed ($\zeta < z$) have
-received their allocations and cannot be changed.  This is the Mirrlees analogue of the Ramsey planner's commitment to
-an initial household budget constraint: just as the state variable $X_t =
-\Pi_t U_{C,t}$ in the Ramsey HJB records the cumulative fiscal obligation
-that continuation  Ramsey planners must finance, the promised utility $u$ in the
-Mirrlees HJB records the incentive obligation to type $z$ that continuation  Mirrlees
-planners must honor. 
+received their allocations and cannot be changed.  This is the Mirrlees analogue of the commitment structure in the Ramsey problem: just as $X_t = \Pi_t U_{C,t}$ records the cumulative fiscal obligation inherited by each continuation Ramsey planner, the promised utility $u$ records the incentive obligation inherited by each continuation Mirrlees planner.
+
+\begin{remark} (Productivity $\zlow$ is different)
+The Mirrlees planner at $z = \zlow$ chooses $y(\zlow)$ and the initial promised
+utility $u(\zlow)$.  This makes the $\zlow$-planner's decision problem different
+from those of the ``continuation Mirrlees planners'' to be introduced soon.
+\end{remark}
 
 \subsection{The Mirrlees planner and the continuation Mirrlees planners}
 \label{sub:two_mirrlees_planners}
 
-Paralleling the LS treatment, we distinguish the Mirrlees planner at the
-bottom of the type distribution from all continuation Mirrlees planners.
+Paralleling the Ramsey treatment in Section~\ref{sub:two_ramsey_planners}, we
+distinguish the Mirrlees planner at the bottom of the type distribution from
+all continuation Mirrlees planners.
 
 \medskip
 \noindent\textbf{The Mirrlees planner at $z=\zlow$.}
@@ -487,8 +506,8 @@ The planner at $\zlow$ faces no inherited commitment.
   \item \emph{State variable.}  The initial promised utility $u(\zlow)$, which
     is a \emph{free endpoint} in problem~\eqref{eq:M_obj}; no prior type has
     imposed an obligation.  The participation constraint pins a floor on
-    $u(\zlow)$, playing the role that the initial debt $b_0$ plays in the
-    Ramsey problem.
+    $u(\zlow)$, playing the role that the initial government debt plays in the
+    general Ramsey problem (set to zero here under \eqref{eq:R_nodebt}).
   \item \emph{Choice variables.}  (i) The output $y(\zlow)$ for the lowest
     type; and (ii) the entire schedule $\{\calU(\zeta)\}_{\zeta>\zlow}$ of
     promised utilities to bequeath to continuation planners.  By the structure
@@ -503,8 +522,8 @@ The planner at $\zlow$ faces no inherited commitment.
 
 \medskip
 \noindent\textbf{The continuation Mirrlees planner at $z>\zlow$.}
-A continuation Mirrlees planner at $z$ arrives with a pre-committed inherited
-state and cannot revise it.
+A continuation Mirrlees planner at $z$ arrives with an inherited
+state.
 \begin{itemize}
   \item \emph{State variables.}  $(u, z)$, where $u = \calU(z)$ is the
     promised utility inherited from all types below $z$.  The continuation
@@ -617,7 +636,7 @@ where $n = y/z$.  Rearranging using $v'(n) = z(1-T'(y))$:
   = \Bigl[1 + \frac{n\, v''(n)}{v'(n)}\Bigr]\cdot
   \frac{\lambda(z)}{z\, f(z)\, \mu}.
 \end{equation}
-This is the Diamond (1998) ABC formula.
+This is the \citet{diamond1998optimal} ABC formula.
 
 \subsection{Boundary conditions and determination of $\mu$}
 
@@ -709,8 +728,8 @@ Value function: $V = \lambda(z)\, \calU + K(z;\, \mu)$\newline
 HJB shadow price: $V_X = -\Phi_0$ \emph{(constant)} &
 HJB shadow price: $V_\calU = \lambda(z)$ \emph{(varies with $z$)} \\
 
-Costate dynamics:
-$-\Phi_0 = \text{const}$ &
+Costate equation:
+$V_X = -\Phi_0$ constant; $\dot{V}_X = 0$ &
 Costate ODE:
 $\lambda'(z) = [\mu - \psi(z)] f(z)$ \\
 
@@ -812,7 +831,7 @@ constraint closes the Ramsey problem and pins $\Phi_0^*$.
 
 For general preferences, the HJB \eqref{eq:M_HJBcompact} still governs the
 value function, but $V$ is a nonlinear function of $u$.  The optimality
-conditions derived from the Hamiltonian approach in the lecture notes---the
+conditions derived from the Hamiltonian approach of \citet{Bhandari2026}---the
 $H_y = 0$ condition and the costate equation---are exactly the first-order
 conditions of the HJB: they arise from differentiating the maximand in
 \eqref{eq:M_HJBcompact} with respect to $y$ and equating the $z$-derivative
@@ -863,7 +882,7 @@ In Ramsey, the implementability constraint \eqref{eq:R_impl} attaches the
 constant $\Phi_0$.  In Mirrlees, the resource constraint \eqref{eq:M_RC}
 attaches the constant $\mu$.  In both cases, this multiplier folds the global
 constraint into the flow payoff and turns the problem into a standard
-(undiscounted or discounted) calculus-of-variations problem.
+calculus-of-variations problem (discounted in the Ramsey problem, undiscounted in the Mirrlees problem).
 
 \item \textbf{A Hamilton--Jacobi--Bellman equation.}  Once the global
 constraint is Lagrangianized, the problem admits a value function that
@@ -891,7 +910,7 @@ guess works in both problems.
 \label{app:hamilton_hjb}
 %% ===========================================================================
 
-The Hamiltonian approach of the lecture notes defines
+The Hamiltonian approach of \citet{Bhandari2026} defines
 \begin{equation}\label{eq:M_Hamilton}
   \mathcal{H}(\calU, y, \lambda;\, z) =
   \bigl[\psi(z)\,\calU + \mu(y - C(\calU, y))\bigr] f(z)
@@ -920,7 +939,7 @@ with the tax formula \eqref{eq:M_taxformula}: at the top, $(1-F(\zbar)) = 0$
 so the costate is zero and the distortion vanishes.  A large empirical
 literature documents that the upper tail of the earnings distribution is
 well-approximated by a Pareto distribution, not a distribution with bounded
-support.  Diamond and Saez (2011) argue that the zero-top-rate result is an
+support.  \citet{diamond2011case} argue that the zero-top-rate result is an
 artifact of bounded support and derive a formula for the optimal \emph{limiting}
 marginal tax rate under an unbounded Pareto tail.
 
@@ -1122,15 +1141,18 @@ Costate: $\lambda(z)$ turns negative for large $z$ \\
 \begin{remark}[Empirical calibration]
 The Diamond--Saez formula \eqref{eq:DS} requires two empirical inputs:
 $\alpha_y$ (the Pareto shape of the earnings distribution) and $e$ (the
-compensated elasticity of taxable income).  Saez (2001) surveys estimates
+compensated elasticity of taxable income).  \citet{saez2001using} surveys estimates
 suggesting $\alpha_y \approx 2$ for the United States, and a benchmark value
 of $e \approx 0.25$ for broad income, giving $T'_\infty \approx 1/(1+2\times
 0.25) = 2/3 \approx 67\%$.  With higher elasticity, say $e = 0.5$, the
-formula gives $T'_\infty = 1/(1+1) = 50\%$.  Diamond and Saez (2011)
+formula gives $T'_\infty = 1/(1+1) = 50\%$.  \citet{diamond2011case}
 conclude that $T'_\infty$ in the range $50$--$70\%$ is consistent with the
 empirical evidence, well above the top marginal rates prevailing in most
 countries at the time.
 \end{remark}
 
+
+\bibliographystyle{plainnat}
+\bibliography{Mirrlees_HJB_refs}
 
 \end{document}
