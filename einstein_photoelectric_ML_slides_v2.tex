@@ -18,10 +18,9 @@
 
 \hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue}
 
-\title{Einstein Was Doing Machine Learning \\
+\title{Einstein and Machine Learning \\
 {\normalsize The Photoelectric Effect as Statistical Inference}}
-\author{Thomas J.\ Sargent \\
-New York University \& Hoover Institution}
+\author{Thomas J.\ Sargent \\ PHBS  Business School, Peking University Shenzhen }
 \date{2026}
 
 %----------------------------------------------------------------------
@@ -47,7 +46,7 @@ Three acts:
   \item \textbf{Theory} (1905): Einstein proposes the model that defines
     the hypothesis class
   \item \textbf{Data quality} (1887--1916): experimenters spend 29 years
-    collecting clean training data
+    collecting good training data
   \item \textbf{Estimation} (1916): Millikan runs the regression and
     recovers Planck's constant to 0.5\%
 \end{enumerate}
@@ -60,7 +59,7 @@ Three acts:
 The phenomenon (Hertz, 1887; Hallwachs, 1888):
 \begin{itemize}
   \item Shine light on a metal surface; electrons are ejected
-  \item Apply a \emph{stopping potential} $V_0$ to just halt the
+  \item Apply a \emph{stopping potential} $V_0$ to  halt just the
     fastest electrons
 \end{itemize}
 
@@ -132,7 +131,7 @@ Energy conservation gives:
 \medskip
 \begin{block}{The Prediction}
 \[
-  \boxed{V_0 = \frac{h}{e}\,\nu - \frac{W}{e}}
+  V_0 = \frac{h}{e}\,\nu - \frac{W}{e}
 \]
 \begin{itemize}
   \item Linear in frequency
@@ -163,8 +162,8 @@ Affine functions of $\nu$ alone (Einstein) & 2-dimensional & $\sim 5$ \\
 \end{center}
 
 \bigskip
-The key intellectual act was not fitting the line---it was
-knowing which line to fit.
+The human intelligence (HI)  action  was not fitting a curve  line---it was
+guessing which curve to fit.
 
 \end{frame}
 
@@ -191,13 +190,13 @@ Parameters of interest:
 Nuisance parameter: $v_c$, the contact EMF between emitter and collector.
 \begin{itemize}
   \item Can be as large as 3\,V---comparable to $V_0$ itself
-  \item Shifts intercept; \textbf{does not bias slope} if constant within a run
-\end{itemize}
+  \item Shifts intercept; \textbf{does not bias slope} if constant within an epoch
+  \end{itemize}
 
 \end{frame}
 
 %----------------------------------------------------------------------
-\begin{frame}{The Supervised Learning Problem}
+\begin{frame}{Supervised Learning Problem}
 
 \begin{itemize}
   \item \textbf{Training data:} $\{(\nu_i, V_{0i})\}_{i=1}^n$
@@ -208,7 +207,7 @@ Nuisance parameter: $v_c$, the contact EMF between emitter and collector.
 \end{itemize}
 
 \bigskip
-The regression is trivial once you have clean data.
+The regression is trivial once you have good data.
 
 \bigskip
 \textbf{The 29-year delay reflects data engineering, not statistical
@@ -256,7 +255,7 @@ Key data-quality innovations (``a machine shop in vacuo''):
 \end{itemize}
 
 \medskip
-Why the wide frequency range matters (Cram\'er--Rao bound):
+Having a  wide frequency range matters (Cram\'er--Rao bound):
 \[
   \mathrm{SE}(\hat\beta) = \frac{\sigma}{\sqrt{S_{\nu\nu}}},
   \quad S_{\nu\nu} = \sum_i(\nu_i - \bar\nu)^2
@@ -291,7 +290,7 @@ True stopping potential $= V_{0,\text{obs}} + v_c$
 \medskip
 \begin{itemize}
   \item 6 labeled training examples per metal; two metals
-  \item Points span nearly a factor of two in frequency
+  \item Data span nearly a factor of two in frequency
 \end{itemize}
 
 \end{frame}
@@ -348,13 +347,13 @@ Log-likelihood:
 
 Maximising $\ell$ over $(\alpha,\beta)$ minimises RSS---exactly OLS:
 \[
-  \boxed{(\hat\alpha_{\mathrm{MLE}},\hat\beta_{\mathrm{MLE}}) =
-         (\hat\alpha_{\mathrm{OLS}},\hat\beta_{\mathrm{OLS}})}
+  (\hat\alpha_{\mathrm{MLE}},\hat\beta_{\mathrm{MLE}}) =
+         (\hat\alpha_{\mathrm{OLS}},\hat\beta_{\mathrm{OLS}})
 \]
-
-\medskip
-The MSE training loss used in neural-network regression \emph{is} the
-Gaussian log-likelihood---the physics and the ML objective coincide.
+%
+%\medskip
+%The MSE training loss used in neural-network regression \emph{is} the
+%Gaussian log-likelihood---the physics and the ML objective coincide.
 
 \end{frame}
 
@@ -395,7 +394,7 @@ than Millikan's full range.
 \begin{frame}{Universality: Zero-Shot Transfer Across Metals}
 
 The quantum hypothesis predicts $\beta = h/e$ is the same for
-\emph{all} metals---a strong, falsifiable structural restriction.
+\emph{all} metals. %---a strong, falsifiable structural restriction.
 
 \medskip
 Separate regressions:
@@ -413,7 +412,7 @@ In ML language:
 \begin{itemize}
   \item \textbf{Pre-training:} fit slope on sodium
   \item \textbf{Zero-shot transfer:} apply slope to lithium
-  \item \textbf{Fine-tuning needed:} only the intercept (work function)
+  \item \textbf{Fine-tuning needed:} only the intercept % (work function)
   \item \textbf{Transfer error:} 0.2\%
 \end{itemize}
 
@@ -444,9 +443,9 @@ Modern NIST 2022    & 2022 & 6.6261            & 0                \\
 \medskip
 Pre-Millikan estimates: biased downward 10--47\%.
 
-Three causes: stray UV, narrow $\Delta\nu$, uncontrolled $v_c$.
+Three sources: stray UV, narrow $\Delta\nu$, uncontrolled $v_c$.
 
-Millikan solved all three.
+Millikan eliminated all three.
 
 \end{frame}
 
@@ -473,14 +472,14 @@ He had hoped the experiment would \textbf{refute} the equation.
   \item Confirming a regression equation is \textbf{not} the same as
     confirming the structural model that generated it
   \item Compton scattering (1923) finally convinced him
-  \item Nobel acceptance (1923): ``\ldots first direct experimental proof
+  \item Millikan's 1923 Nobel prize: ``\ldots first direct experimental proof
     \ldots of the complete validity of the Einstein equation''
 \end{itemize}
 
 \end{frame}
 
 %----------------------------------------------------------------------
-\begin{frame}{The ML-to-Physics Dictionary}
+\begin{frame}{ML-to-Physics Dictionary}
 
 \begin{center}
 \small
@@ -523,7 +522,7 @@ Properties:
 \begin{itemize}
   \item VC dimension $= 2$
   \item One-parameter family of parallel lines
-  \item Derived \emph{deductively} from $E = h\nu$
+  \item Deduced  from $E = h\nu$
   \item Five training points are more than sufficient
 \end{itemize}
 
@@ -592,8 +591,8 @@ OLS with $n=5$, $p=2$:
 \end{itemize}
 
 \medskip
-Einstein's theory---not more data, not a better algorithm---is what made
-five training points sufficient.
+Einstein's theory made
+five training points sufficient (not more data, not a better algorithm)
 
 \medskip
 DNNs win for problems without a known parsimonious parametric family
@@ -623,11 +622,10 @@ Na and Li: same $\hat\beta$     & Universality test      & Zero-shot transfer \\
 \end{center}
 
 \bigskip
-Modern AI systems can \emph{induce} the linear law from data by
-exhaustive search over a large function space.
+Modern AI systems  \emph{induce} a linear law from lots of data and
+search over many parameters of a DNL.
 
-Einstein's deductive step encoded the result of that search in one
-paragraph.
+Einstein's HI system  deduced  an affine law (no data?)
 
 \end{frame}
 
@@ -676,7 +674,7 @@ Three principles:
   \item \textbf{Theoretical priors guide design.} $E=h\nu$ fixes the
     functional form; only 5 training points suffice for 0.1\% precision.
   \item \textbf{Data quality is the binding constraint.} The regression
-    is trivial; cleaning the data took 29 years.
+    is trivial; assembling good data took 29 years.
   \item \textbf{Confirming an equation $\neq$ endorsing the model.}
     Millikan confirmed the slope to 0.5\% while rejecting the
     light-quantum interpretation.
