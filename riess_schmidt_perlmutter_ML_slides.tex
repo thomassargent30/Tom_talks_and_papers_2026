@@ -1,0 +1,626 @@
+% riess_schmidt_perlmutter_ML_slides.tex
+% Beamer presentation: "Physicists as Machine Learners:
+%   The Accelerating Universe as Statistical Inference"
+% Thomas J. Sargent, 2026
+
+\documentclass[aspectratio=169]{beamer}
+
+\usetheme{default}
+\setbeamertemplate{navigation symbols}{}
+
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{graphicx}
+
+\hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue}
+
+\title{Physicists as Machine Learners:\\
+{\normalsize Inferring an  Accelerating Universe}}
+%\author{Thomas J.\ Sargent}
+\author{Thomas J.\ Sargent \\ PHBS  Business School, Peking University Shenzhen }
+%\institute{New York University \& Hoover Institution}
+\date{2026}
+
+%----------------------------------------------------------------------
+\begin{document}
+%----------------------------------------------------------------------
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}{Claim}
+
+\begin{block}{}
+When Riess, Schmidt, and Perlmutter discovered that the universe's
+expansion is \emph{accelerating}, they were doing \textbf{machine learning}
+and \textbf{statistical inference}.
+\end{block}
+
+\bigskip
+%Three acts---the same structure as Einstein and the photoelectric effect:
+\begin{enumerate}
+  \item \textbf{Hypothesis class} (Friedmann, 1922; Einstein, 1917):
+    general relativity specifies the regression function up to two
+    density parameters
+  \item \textbf{Feature engineering} (Phillips, 1993):
+    the width--luminosity relation standardizes Type Ia supernovae
+    as distance indicators
+  \item \textbf{Estimation} (Riess et al.\ 1998; Perlmutter et al.\ 1999):
+    weighted least squares recovers $\Omega_M \approx 0.28$,
+    $\Omega_\Lambda \approx 0.72$, and $q_0 \approx -0.58 < 0$
+    (acceleration)
+\end{enumerate}
+
+\bigskip
+Shared  2011 Nobel Prize in Physics.
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}{Background: The Expanding Universe}
+
+Hubble (1929): recession velocity $v = H_0\,d$ for nearby galaxies.
+
+\medskip
+Friedmann (1922, 1924): expanding cosmological solutions follow from
+Einstein's field equations.  The scale factor $a(t)$ satisfies
+\[
+  H^2(z) = \left(\frac{\dot a}{a}\right)^2
+  = H_0^2\Bigl[\Omega_M(1+z)^3 + \Omega_k(1+z)^2 + \Omega_\Lambda\Bigr]
+\]
+
+\medskip
+Three dimensionless density parameters:
+\begin{itemize}
+  \item $\Omega_M$ --- matter density (slows expansion)
+  \item $\Omega_\Lambda$ --- cosmological constant / dark energy
+    (drives acceleration)
+  \item $\Omega_k$ --- spatial curvature; $\Omega_k = 0$ for flat
+    universe
+\end{itemize}
+
+\medskip
+The deceleration parameter:
+\[
+  q_0 \equiv -\frac{\ddot a\,a}{\dot a^2}\bigg|_{t_0}
+  = \frac{\Omega_M}{2} - \Omega_\Lambda
+\]
+$q_0 < 0$ means the expansion is \emph{accelerating}.
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}{Type Ia Supernovae as Standard Candles}
+
+Type Ia supernovae: thermonuclear explosions of white dwarfs near the
+Chandrasekhar mass $M_{\rm Ch} \approx 1.4\,M_\odot$.
+
+\medskip
+Because the exploding mass is near a universal critical value, peak
+luminosity is nearly the same across all events.
+
+\medskip
+\textbf{The problem:} before standardization, the scatter in peak $B$-band
+absolute magnitude is $\sigma_{M_B} \approx 0.4$~mag---40\% distance
+uncertainty.  Too large for cosmology.
+
+\bigskip
+\textbf{Phillips (1993)---feature engineering:}
+
+The rate of post-peak decline $\Delta m_{15}(B)$ predicts peak luminosity:
+\[
+  M_B^{\rm peak} \approx M_B^{\rm ref} + \alpha\bigl(\Delta m_{15} - 1.1\bigr),
+  \qquad \alpha \approx 0.75~\text{mag}
+\]
+After this correction: $\sigma_{M_B} \approx 0.17$~mag.
+
+\medskip
+\textbf{ML translation:} feature-importance analysis selects $\Delta m_{15}$
+(light-curve width) over raw peak magnitude---the same logic as
+Lenard's selection of frequency~$\nu$ over intensity~$I$ in the
+photoelectric problem.
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}{The Hypothesis Class}
+
+The Friedmann equations fix the \emph{luminosity distance}
+$d_L(z;\Omega_M,\Omega_\Lambda)$.
+
+\medskip
+For a flat universe ($\Omega_k = 0$, $\Omega_\Lambda = 1 - \Omega_M$):
+\[
+  d_L(z;\Omega_M) =
+  \frac{c(1+z)}{H_0}\int_0^z\frac{dz'}
+  {\sqrt{\Omega_M(1+z')^3 + (1-\Omega_M)}}
+\]
+
+\medskip
+The hypothesis class for the supernova regression ($m_B$ is observed
+apparent magnitude; ``$\mapsto$'' means ``is predicted by''):
+\[
+  \mathcal{H} = \Bigl\{
+    m_B \mapsto \mathcal{M} + 5\log_{10}\tilde d_L(z;\Omega_M,\Omega_\Lambda)
+    \Bigm|
+    \mathcal{M}\in\mathbb{R},\;
+    \Omega_M \geq 0,\;
+    \Omega_\Lambda \in\mathbb{R}
+  \Bigr\}
+\]
+
+\medskip
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Hypothesis class & Dimension & Data needed \\
+\midrule
+All smooth functions of $z$ & Infinite & $\gg 10^4$ \\
+Friedmann family (general relativity) & 3 parameters & $\sim 40$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+The inductive bias---from general relativity (GR), the cosmological
+principle, and $\rho_M \propto a^{-3}$---collapses an infinite-dimensional
+problem to three scalar parameters.
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}{The Measurement Equation}
+
+The distance modulus: $\mu \equiv m_B - M_B =
+5\log_{10}(d_L/10~\text{pc})$.
+
+\medskip
+The regression:
+\[
+  \boxed{m_{B,i} = \underbrace{\mathcal{M}}_{\text{nuisance}}
+    + \underbrace{5\log_{10}\tilde d_L(z_i;\Omega_M,\Omega_\Lambda)}_{\text{shape from GR}}
+    + \varepsilon_i,
+    \quad \varepsilon_i \sim \mathcal{N}(0,\sigma_i^2)}
+\]
+
+\medskip
+The nuisance parameter:
+\[
+  \mathcal{M} = M_B + 5\log_{10}\!\left(\frac{c}{H_0\,\text{Mpc}}\right) + 25
+\]
+
+\begin{itemize}
+  \item $\mathcal{M}$ shifts the entire Hubble diagram vertically
+  \item $(\Omega_M, \Omega_\Lambda)$ are identified by the
+    \emph{curvature} of $\mu(z)$, not its level
+  \item Identical structure to Millikan's photoelectric regression:
+    contact EMF~$v_c$ shifts the intercept; slope $h/e$ is
+    identified from the gradient
+\end{itemize}
+
+\medskip
+\textbf{Supervised learning:}\quad
+training data $\{(z_i,\, m_{B,i})\}$,\quad
+loss = weighted squared error,\quad
+parameters $= (\mathcal{M}, \Omega_M, \Omega_\Lambda)$.
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}{The Training Data}
+
+\textbf{Low-$z$ calibration (training set):}
+Cal\'an/Tololo survey, 29 Type Ia SNe at $z = 0.01$--$0.10$.
+
+\medskip
+At low $z$: $d_L \approx cz/H_0$ (Hubble's law)---only $\mathcal{M}$
+is constrained; shape parameters enter at order $z^2$.
+
+\bigskip
+\textbf{High-$z$ sample (test set):} events at $z = 0.18$--$0.83$
+where $\mu(z)$ predictions diverge across models.
+
+\medskip
+\begin{center}
+\small
+\begin{tabular}{lrrc}
+\toprule
+Supernova & $z$ & $m_B^{\rm eff}$ (mag) & $\sigma$ (mag) \\
+\midrule
+SN 1994H  & 0.374 & 22.17 & 0.15 \\
+SN 1995az & 0.450 & 22.79 & 0.20 \\
+SN 1996cg & 0.490 & 23.38 & 0.18 \\
+SN 1993O  & 0.583 & 23.57 & 0.13 \\
+SN 1997ck & 0.830 & 24.23 & 0.23 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+SCP (Perlmutter et al.): 42 high-$z$ SNe.\quad
+HZT (Riess et al.): 16 high-$z$ + 34 low-$z$ SNe.
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}{WLS $=$ MLE Under Gaussian Errors}
+
+Log-likelihood:
+\[
+  \ell(\mathcal{M},\Omega_M,\Omega_\Lambda) =
+  \text{const} - \frac{1}{2}
+  \underbrace{\sum_{i=1}^n
+    \frac{\bigl[m_{B,i} - \mathcal{M}
+    - 5\log_{10}\tilde d_L(z_i;\Omega_M,\Omega_\Lambda)\bigr]^2}
+    {\sigma_i^2}}_{\displaystyle \chi^2(\mathcal{M},\Omega_M,\Omega_\Lambda)}
+\]
+
+\medskip
+Maximising $\ell$ $\Leftrightarrow$ minimising $\chi^2$
+$\Leftrightarrow$ weighted least squares (WLS).
+
+\[
+  (\hat{\mathcal{M}},\,\hat\Omega_M,\,\hat\Omega_\Lambda)
+  = \operatornamewithlimits{arg\,min}\; \chi^2
+\]
+
+\medskip
+$\mathcal{M}$ enters linearly $\Rightarrow$ profile it out analytically
+at any fixed $(\Omega_M,\Omega_\Lambda)$:
+\[
+  \hat{\mathcal{M}} =
+  \frac{\sum_i \bigl[m_{B,i} - 5\log_{10}\tilde d_L(z_i)\bigr]/\sigma_i^2}
+  {\sum_i 1/\sigma_i^2}
+\]
+
+Then minimise the \emph{profile} $\tilde\chi^2(\Omega_M,\Omega_\Lambda)$
+on a two-dimensional grid.
+
+\medskip
+Unlike the photoelectric case, $\tilde d_L$ is a numerical integral---
+no closed-form solution; grid search over $(\Omega_M,\Omega_\Lambda)$.
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}{What the Models Predict}
+
+\begin{center}
+\begin{tabular}{lcccc}
+\toprule
+$z$ & Flat $\Lambda$CDM & Open matter & $\Delta\mu_\Lambda$ \\
+    & $(0.3,\,0.7)$ & $(0.3,\,0.0)$ & ($\Lambda$ minus open) \\
+\midrule
+0.10 & 38.44 & 38.42 & $+0.02$~mag \\
+0.25 & 40.51 & 40.45 & $+0.06$~mag \\
+0.50 & 42.26 & 42.05 & $+0.21$~mag \\
+0.75 & 43.33 & 43.06 & $+0.27$~mag \\
+1.00 & 44.10 & 43.83 & $+0.27$~mag \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+At $z \approx 0.5$: flat $\Lambda$CDM predicts SNe that are $0.21$~mag
+\emph{fainter} (further away) than the matter-only model.
+
+\medskip
+After Phillips standardization: $\sigma_{\rm int} \approx 0.15$~mag.
+
+\medskip
+Each SN at $z \approx 0.5$ contributes $\approx 1.4\sigma$ of signal.
+With 10--15 events: combined SNR $\approx 3$--$4\sigma$.
+
+\medskip
+\textbf{Observed:} $\overline{\Delta\mu}_{\rm obs}(z \approx 0.3\text{--}0.7)
+\approx +0.25 \pm 0.06$~mag.  This is $4\sigma$ from zero.
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}{Fisher Information and the Cram\'er--Rao Bound}
+
+The precision of $(\Omega_M,\Omega_\Lambda)$ is governed by the Fisher
+information matrix:
+\[
+  \mathcal{I}_{jk} =
+  \sum_{i=1}^n \frac{1}{\sigma_i^2}
+  \frac{\partial\mu(z_i)}{\partial\theta_j}
+  \frac{\partial\mu(z_i)}{\partial\theta_k}
+\]
+
+\medskip
+At $z \approx 0.5$:
+\[
+  \frac{\partial\mu/\partial\Omega_M}{\partial\mu/\partial\Omega_\Lambda}
+  \approx -\frac{3}{4}
+\]
+The two parameters are nearly degenerate: the confidence ellipses are
+elongated along $0.8\,\Omega_M - 0.6\,\Omega_\Lambda = \text{const}$.
+
+\medskip
+\textbf{Breaking the degeneracy requires wide redshift coverage}---the
+same principle as Millikan's wide frequency range:
+
+\begin{itemize}
+  \item Events at $z \approx 0.5$ trace the degeneracy direction
+  \item Events at $z \approx 0.8$--$1.0$ rotate the constraint direction
+  \item SN~1997ck at $z = 0.83$ (SCP) and HST events at $z > 0.8$
+    (HZT) were critical for this reason
+\end{itemize}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}[shrink=5]{Results: Cosmic Acceleration}
+
+Both teams: $\hat\Omega_M \approx 0.28$, $\hat\Omega_\Lambda \approx 0.72$.
+
+\medskip
+\begin{center}
+\begin{tabular}{p{4.2cm}ccc}
+\toprule
+Analysis & $\hat\Omega_M$ & $\hat\Omega_\Lambda$ & $\hat q_0$ \\
+\midrule
+Perlmutter et al.\ (SCP), flat & $0.28\pm0.09$ & $0.72\pm0.09$ & $-0.58$ \\
+Riess et al.\ (HZT), MLCS, flat & $0.28\pm0.10$ & $0.72\pm0.10$ & $-0.58$ \\
+\midrule
+Planck 2018 (CMB+BAO) & $0.315\pm0.007$ & $0.685\pm0.007$ & $-0.528$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+Deceleration parameter:
+\[
+  \hat q_0 = \frac{\hat\Omega_M}{2} - \hat\Omega_\Lambda
+           = 0.14 - 0.72 = \mathbf{-0.58} < 0
+\]
+\textbf{The universe's expansion is accelerating.}
+
+\medskip
+Deceleration--acceleration transition:
+\[
+  z_t = \left(\frac{2\hat\Omega_\Lambda}{\hat\Omega_M}\right)^{1/3} - 1
+  \approx 0.73
+\]
+At $z \lesssim 0.73$: dark energy dominates; expansion accelerates.
+At $z \gtrsim 0.73$: matter dominates; expansion decelerates.
+
+\medskip
+$\Omega_\Lambda = 0$ rejected at $> 3\sigma$ by both teams independently.
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}{Universality: Two Teams, Same Answer}
+
+The two groups used different telescopes, different observing strategies,
+and different standardization pipelines:
+
+\medskip
+\begin{center}
+\small
+\begin{tabular}{p{3.5cm}p{4.2cm}p{4.2cm}}
+\toprule
+Feature & HZT (Riess et al.) & SCP (Perlmutter et al.) \\
+\midrule
+High-$z$ sample & 16 SNe at $z = 0.16$--$0.62$ &
+  42 SNe at $z = 0.18$--$0.83$ \\
+Standardization & MLCS ($\Delta$ parameter) &
+  Stretch factor ($s$) \\
+Colour correction & Multi-colour fit & $B-V$ at peak \\
+$\hat\Omega_M$ (flat) & $0.28 \pm 0.10$ & $0.28 \pm 0.09$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+\textbf{ML language:} pre-train on low-$z$ calibration sample $\Rightarrow$
+zero-shot transfer to high-$z$ events $\Rightarrow$ both models agree
+on slope to 0\%.
+
+\medskip
+Same logic as Millikan's sodium and lithium: $\hat\beta_{\rm Na}$ and
+$\hat\beta_{\rm Li}$ agreed to 0.19\%.
+
+\medskip
+Cross-group agreement is the key robustness check: the result is not
+an artifact of any one team's pipeline.
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}{The Nuisance Parameter Analogy}
+
+\begin{center}
+\begin{tabular}{p{5.5cm}p{6.5cm}}
+\toprule
+\textbf{Photoelectric (Millikan, 1916)} & \textbf{Supernovae (1998--1999)} \\
+\midrule
+Stopping potential $V_{0i} = \alpha + (h/e)\nu_i + \varepsilon_i$ &
+  Apparent magnitude $m_{B,i} = \mathcal{M} + 5\log_{10}\tilde d_L(z_i) + \varepsilon_i$ \\[6pt]
+Nuisance $\alpha = -W/e + v_c$ (contact EMF) &
+  Nuisance $\mathcal{M} = M_B + 5\log_{10}(c/H_0\,{\rm Mpc}) + 25$ \\[6pt]
+Shifts intercept; does not bias slope $h/e$ &
+  Shifts Hubble diagram; does not bias $(\Omega_M,\Omega_\Lambda)$ \\[6pt]
+Physics identified from gradient of $V_0$-vs-$\nu$ &
+  Physics identified from curvature of $\mu(z)$ \\[6pt]
+Controlled by Kelvin balance measurement &
+  Anchored by Cal\'an/Tololo low-$z$ sample \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}{Epistemic Reluctance}
+
+Both groups were aware that $\Omega_\Lambda > 0$ was unexpected.
+Three alternative explanations were tested:
+
+\begin{enumerate}
+  \item \textbf{Grey dust:} wavelength-independent absorption at high $z$.
+    \emph{Test:} no correlation between colour excess and magnitude
+    offset found.
+
+  \item \textbf{Luminosity evolution:} high-$z$ SNe intrinsically
+    fainter.
+    \emph{Test:} Riess et al.\ (2004) found SNe at $z > 1$ are
+    \emph{brighter} than $\Lambda$CDM---consistent with past
+    deceleration, not evolution bias.
+
+  \item \textbf{Malmquist bias:} magnitude-limited surveys select
+    bright events.
+    \emph{Test:} bias negligible compared to signal in both datasets.
+\end{enumerate}
+
+\medskip
+The acceleration signal survived all tests.
+
+\medskip
+\textbf{Parallel with Millikan:} he confirmed Einstein's slope to 0.5\%
+while publicly rejecting the light-quantum interpretation.
+Riess, Schmidt, and Perlmutter confirmed $\Omega_\Lambda \approx 0.72$
+without explaining what dark energy is.
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}{ML-to-Physics Dictionary}
+
+\begin{center}
+\small
+\begin{tabular}{p{5.0cm}p{4.5cm}p{2.5cm}}
+\toprule
+\textbf{Scientific step} & \textbf{ML name} & \textbf{Who} \\
+\midrule
+Friedmann $+$ $\Lambda$ $\Rightarrow$ $d_L(z;\Omega_M,\Omega_\Lambda)$
+  & Hypothesis class & Friedmann, Einstein \\
+Use $\Delta m_{15}$, not raw $m_B$
+  & Feature engineering & Phillips (1993) \\
+Cal\'an/Tololo low-$z$ survey
+  & Training data (calibration) & Hamuy et al.\ (1996) \\
+High-$z$ SN searches
+  & Training-data extension & SCP, HZT (1998--99) \\
+Minimise $\chi^2(\Omega_M,\Omega_\Lambda)$
+  & WLS / MLE training & Riess; Perlmutter \\
+$\Omega_\Lambda > 0$ at $3\sigma$
+  & Out-of-sample test & Riess; Perlmutter \\
+SCP and HZT same $\hat\Omega_M$
+  & Zero-shot transfer & Both teams \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}{Physicists vs.\ a Deep Neural Network}
+
+\begin{center}
+\small
+\begin{tabular}{p{2.8cm}rp{2.8cm}p{2.5cm}p{3.8cm}}
+\toprule
+Epoch & $n$ & Friedmann model & DNN (VC $\approx 5900$) & DNN outcome \\
+\midrule
+Before Phillips (pre-1993)
+  & $\sim 20$ & No$^\dagger$
+  & No & Signal $<$ noise; cannot detect \\
+Discovery (1998--99)
+  & 42--50 & Yes
+  & No ($\times 140$) & Overfits; no inference on $q_0$ \\
+Modern (2020s)
+  & $\sim 2000$ & Yes
+  & Borderline & Recovers $\mu(z)$ shape;
+    cannot identify $q_0$ \\
+\bottomrule
+\multicolumn{5}{p{14cm}}{\small $^\dagger$ Without high-$z$ data,
+  $(\Omega_M,\Omega_\Lambda)$ are not identified from low-$z$ data alone.}
+\end{tabular}
+\end{center}
+
+\medskip
+A DNN trained on $n = 42$ events can memorise the training data but
+cannot estimate $\hat q_0$ or its standard error.
+
+\medskip
+Even with $n = 2000$, a DNN recovers the shape of $\mu(z)$ but cannot
+identify that the learned curve equals $5\log_{10}\tilde d_L(z)$, extract
+$(\Omega_M,\Omega_\Lambda)$, or compute $q_0 = \Omega_M/2 - \Omega_\Lambda$.
+
+\medskip
+\textbf{Physical meaning requires physical theory.}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}{Summary}
+
+\begin{block}{The Thesis}
+Riess, Schmidt, and Perlmutter were doing machine learning in 1998--1999.
+The step no ML system has automated is \textbf{specifying the hypothesis
+class}.
+\end{block}
+
+\bigskip
+\begin{enumerate}
+  \item \textbf{Theory specifies the hypothesis class.}
+    The Friedmann equations reduce an infinite-dimensional function class
+    to three parameters; $\approx 40$ supernovae suffice for a
+    $3\sigma$ result.
+  \item \textbf{Feature engineering is the binding constraint.}
+    The Phillips relation---not the telescopes---transformed Type Ia SNe
+    from noisy candles to distance indicators.  Without it, the
+    acceleration signal is buried in scatter.
+  \item \textbf{Confirming a regression curve $\neq$ explaining dark
+    energy.}
+    $\hat\Omega_\Lambda \approx 0.72$ is confirmed at $>3\sigma$.
+    What dark energy is remains one of the unsolved problems in physics.
+\end{enumerate}
+
+\bigskip
+A DNN given only $(z_i, m_{B,i})$ pairs can recover the shape of the
+Hubble diagram but cannot report $\hat q_0 = -0.58$ or know that the
+universe is accelerating.
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\begin{frame}{References}
+
+\small
+\begin{itemize}
+  \item Riess, A.\,G.\ et al.\ (1998). ``Observational Evidence from
+    Supernovae for an Accelerating Universe and a Cosmological Constant.''
+    \textit{Astron.\ J.}, 116, 1009--1038.
+  \item Perlmutter, S.\ et al.\ (1999). ``Measurements of $\Omega$ and
+    $\Lambda$ from 42 High-Redshift Supernovae.''
+    \textit{Astrophys.\ J.}, 517, 565--586.
+  \item Phillips, M.\,M.\ (1993). ``The Absolute Magnitudes of Type Ia
+    Supernovae.'' \textit{Astrophys.\ J.\ Lett.}, 413, L105--L108.
+  \item Hamuy, M.\ et al.\ (1996). ``The Cal\'an/Tololo Supernova Survey.''
+    \textit{Astron.\ J.}, 112, 2408.
+  \item Friedmann, A.\ (1922). ``\"Uber die Kr\"ummung des Raumes.''
+    \textit{Z.\ Phys.}, 10, 377--386.
+  \item Goodbar, A.\ \& Perlmutter, S.\ (1995). ``Feasibility of Measuring
+    the Cosmological Constant $\Lambda$ and Mass Density $\Omega$ Using
+    Type Ia Supernovae.'' \textit{Astrophys.\ J.}, 450, 14--18.
+  \item Riess, A.\,G.\ et al.\ (2004). ``Type Ia Supernova Discoveries
+    at $z > 1$ from the Hubble Space Telescope.''
+    \textit{Astrophys.\ J.}, 607, 665--687.
+  \item Planck Collaboration (2020). ``Planck 2018 Results VI.''
+    \textit{Astron.\ Astrophys.}, 641, A6.
+  \item Vapnik, V.\ (1998). \textit{Statistical Learning Theory}. Wiley.
+\end{itemize}
+
+\end{frame}
+
+%----------------------------------------------------------------------
+\end{document}
