@@ -54,13 +54,13 @@ Gaussian errors recovers the same point estimates and establishes that OLS
 achieves the Cram\'er-Rao bound; the bound also provides a formal justification
 for Millikan's design choice to use a wide frequency range.  Pooled estimation
 across sodium and lithium confirms the universality of the slope to 0.2\%.
-The episode is reinterpreted through the lens of modern machine learning:
+I interpret the episode through the lens of modern machine learning:
 Einstein's quantum hypothesis supplied the hypothesis class and inductive
 bias; Lenard's feature-importance finding eliminated intensity as a relevant
 input; and the final regression is a textbook supervised-learning problem
 in which five training points suffice because the physics has already fixed
 the functional form.  The contrast with a purely data-driven learner
-illuminates both the power and the limits of theory-free AI for scientific
+illuminates both the promises  and the limits of theory-free AI for scientific
 discovery.
 \end{abstract}
 %
@@ -72,26 +72,24 @@ discovery.
 In December 1900, Max Planck introduced the energy quantum $h\nu$ as ``an act
 of desperation'' to fit the blackbody spectrum.  Five years later, Einstein
 borrowed that quantum and applied it to a second phenomenon---the photoelectric
-effect---in a paper that would earn him the 1921 Nobel Prize.  The photoelectric
-paper achieved two things whose connection took twenty more years to become
-clear.  First, it supplied a falsifiable linear equation relating the stopping
+effect---in a paper that would earn him the 1921 Nobel Prize.  Einstein's paper 
+posited a falsifiable linear equation relating the stopping
 potential of emitted electrons to the incident frequency, with slope $h/e$---a
-prediction that Millikan confirmed to 0.5\% in 1916.  Second, it implicitly
+prediction that Millikan confirmed to 0.5\% in 1916.  It also 
 introduced \emph{probability} into physics: if light consists of discrete quanta
 whose average spatial density tracks the classical wave intensity $|E|^2$, then
 $|E|^2$ functions as a probability density---not merely a classical energy
 density.  Max Born made this logic the cornerstone of quantum mechanics in 1926
 \citep{Born1926}: his rule $|\psi|^2 = \text{probability density}$, now called
 Born's rule, was---as Born stated explicitly---an extension of Einstein's photon
-reasoning to the general Schr\"odinger wave function.  Thus the same paper that
-launched the precision measurement effort documented here also planted the seed
-of Born's rule---an interpretation that Einstein, with characteristic irony,
-spent the rest of his life opposing.
+reasoning to the general Schr\"odinger wave function.  The paper that launched
+the precision measurement effort documented here thus led to Born's rule.
+Einstein spent the rest of his life opposing it.
 
 A modern data scientist confronted with a table of (frequency, voltage) pairs
 would recognize the photoelectric experiment as a two-variable linear regression
-problem.  The interesting history is that the regression came \emph{after}
-the theoretical insight.  Albert Einstein in 1905 wrote down the model
+problem.  The regression came after the theoretical insight.  Albert
+Einstein in 1905 wrote down the model
 \begin{equation}\label{eq:einstein}
   V_0 = \frac{h}{e}\,\nu - \frac{W}{e}
 \end{equation}
@@ -116,53 +114,38 @@ in high vacuum and narrow-band filtered spectral lines from a mercury arc.
 His data, assembled in Table~\ref{tab:millikan_data} below, allow a textbook
 OLS regression that recovers $h$ to within 1\% of its modern value.
 
-The episode is a microcosm of scientific inference:
+The episode provides a microcosm of scientific inference:
 \begin{enumerate}
   \item \textbf{Model specification.}  Einstein's quantum hypothesis imposes
-    a very precise functional form---linearity of $V_0$ in $\nu$, a \emph{universal}
-    slope $h/e$ independent of metal, and a metal-specific intercept.
-  \item \textbf{Experimental design as data quality control.}  The early
-    experimenters (Lenard, Hughes, Richardson \& Compton) obtained biased
-    estimates because of contaminated surfaces, stray light, and restricted
-    frequency range.  Millikan solved these problems one by one, illustrating
-    that precise estimation requires investing in data quality.
-  \item \textbf{Parameter identification.}  The slope $h/e$ is identified
-    by variation in $\nu$ across widely separated spectral lines; the work
-    function $W$ is identified by the intercept, but is confounded with the
-    contact electromotive force (EMF) between the photoemitter and the
-    collector---a nuisance parameter that shifts the intercept but not the
-    slope.
+    linearity of $V_0$ in $\nu$, a slope $h/e$ that is the same for every
+    metal, and a metal-specific intercept.
+  \item \textbf{Experimental design as data quality control.}  Contaminated
+    surfaces, stray light, and a restricted frequency range biased the
+    estimates of Lenard, Hughes, and Richardson \& Compton.  Millikan solved
+    these problems one by one.
+  \item \textbf{Parameter identification.}  Variation in $\nu$ across widely
+    separated spectral lines identifies the slope $h/e$.  The intercept
+    identifies the work function $W$ only up to the contact electromotive
+    force (EMF) between the photoemitter and the collector, a nuisance
+    parameter that shifts the intercept but not the slope.
   \item \textbf{Reluctance to accept the model.}  Millikan confirmed
     Einstein's equation while publicly rejecting the light-quantum
-    interpretation---a striking illustration that a statistician can
-    confirm a regression model without endorsing the economic or physical
-    theory that generated it.
+    interpretation.
   \item \textbf{Unintended conceptual consequences.}  The light-quantum
-    hypothesis carried an implication Einstein did not fully embrace: the
-    classical wave intensity $|E|^2$, reinterpreted as a photon density,
-    is a \emph{probability density}.  Max Born (1926) explicitly traced
-    his probabilistic interpretation of the Schr\"odinger wave
-    function---$|\psi|^2$ as probability density, now called Born's
-    rule---to this Einsteinian precedent \citep{Born1926}.  Einstein won
-    the 1921 Nobel Prize for a paper whose logic seeded Born's rule, which
-    Einstein himself rejected as a complete description of reality; Born
-    won the 1954 Nobel Prize for the interpretation that built on
-    Einstein's own reasoning.
+    hypothesis makes the classical wave intensity $|E|^2$, reinterpreted as a
+    photon density, a probability density.  Born traced his probabilistic
+    interpretation of the Schr\"odinger wave function to this precedent
+    \citep{Born1926}.
 \end{enumerate}
 
-Beyond the precision measurement, the episode carries a broader lesson about
-theoretical priors and their unintended reach.  Einstein's quantum
-hypothesis---proposed to explain Lenard's qualitative findings---committed him
-to a view in which the wave intensity $|E|^2$ governs the \emph{statistical}
-behavior of photons, not the energy of a continuous wave.  In private
-correspondence Einstein called this a \emph{Gespensterfeld} (ghost field): a
-wave that guides probabilities without itself being physically real in the
-classical sense.  Born's 1926 paper \citep{Born1926} formalised exactly this
-idea for the Schr\"odinger wave function, giving quantum mechanics its
-probabilistic backbone.  Millikan's meticulous regression---confirming the
-slope $h/e$ to 0.5\%---thus sits at the pivot between two Nobel Prize stories:
-the 1921 prize that rewarded the equation, and the 1954 prize that rewarded the
-probabilistic interpretation the equation made inevitable.
+Einstein's quantum hypothesis committed him to a view in which $|E|^2$ governs
+the statistical behavior of photons rather than the energy of a continuous
+wave.  In private correspondence Einstein called this a \emph{Gespensterfeld}
+(ghost field): a wave that guides probabilities without itself being
+physically real in the classical sense.  Born's 1926 paper \citep{Born1926}
+formalised that idea for the Schr\"odinger wave function.  Einstein won the
+1921 Nobel Prize for the equation.  Born won the 1954 Nobel Prize for the
+probabilistic interpretation that the equation implied.
 
 Section~\ref{sec:history} sketches the experimental history.
 Section~\ref{sec:equation} develops the regression framework.
@@ -173,13 +156,12 @@ parameters and derives the Cram\'er-Rao bound.
 Section~\ref{sec:contact} discusses the contact-EMF identification problem.
 Section~\ref{sec:twopoint} analyses Millikan's nine two-point determinations.
 Section~\ref{sec:comparison} compares historical estimates of~$h$.
-Section~\ref{sec:millikan_reluctance} reflects on inference versus
+Section~\ref{sec:millikan_reluctance} distinguishes inference from
 interpretation.
 Section~\ref{sec:ml} reinterprets the episode in the language of machine
 learning and AI.
-Section~\ref{sec:dnn} contrasts Einstein's theory-driven regression with
-what a deep neural network would learn from the historical data at each
-epoch from 1902 to the modern era.
+Section~\ref{sec:dnn} contrasts Einstein's regression with what a deep
+neural network would learn from the data available at each epoch.
 Section~\ref{sec:conclusions} concludes.
 
 %======================================================================
@@ -229,7 +211,7 @@ There were, however, no quantitative measurements of the $V_0$--$\nu$ slope.
 The predicted slope $h/e$ is a precise, falsifiable number: $4.136\times
 10^{-15}$\,V$\cdot$s (using modern constants).
 
-\subsection{Intermediate Experiments (1907--1914)}
+\subsection{Early Experiments (1907--1914)}
 
 Between 1907 and 1914 three groups attempted quantitative verification.
 Table~\ref{tab:comparison} summarises their estimates of $h$.
@@ -301,21 +283,19 @@ and one unknown intercept ($\alpha$).
 \subsection{Identification}
 
 \paragraph{The slope.}
-$\beta = h/e$ is identified by any variation in $\nu$ across spectral lines.
-Precision requires a \emph{wide} range of $\nu$: the standard error of the
-OLS slope estimator is $(s/S_{xx})$ where $S_{xx} = \sum(\nu_i - \bar\nu)^2$.
-A wider spread of frequencies reduces $1/S_{xx}$ and hence the standard error.
-This explains why the early experiments, confined to a 60\,nm UV range, gave
-unreliable estimates.
+Variation in $\nu$ across spectral lines identifies $\beta = h/e$.  The
+standard error of $\hat\beta$ is $s/\sqrt{S_{\nu\nu}}$, where
+$S_{\nu\nu} = \sum_i(\nu_i - \bar\nu)^2$; spreading the $\nu_i$ apart raises
+$S_{\nu\nu}$ and shrinks the standard error.  The early experiments were
+confined to a 60\,nm UV range and gave unreliable estimates.
 
 \paragraph{The intercept and the contact-EMF problem.}
 The intercept $\alpha$ conflates the work function $W$ and the contact EMF
 $v_c$.  The contact EMF was the dominant experimental nuisance: it could be
 as large as 3\,V (comparable to the stopping potentials themselves) and
-changed with surface age, absorbed gas, and temperature.  Crucially, $v_c$
-enters \emph{additively}---it shifts \emph{all} stopping potentials by the
-same amount---so the \emph{slope} $\beta$ is unaffected if $v_c$ remains
-constant during a single run.  Millikan verified this by monitoring $v_c$
+changed with surface age, absorbed gas, and temperature.  The term $v_c$
+enters additively and shifts all stopping potentials by the same amount.  A
+$v_c$ that stays constant during a run leaves $\beta$ unaffected.  Millikan verified this by monitoring $v_c$
 continuously; he found it stable to $\pm 0.01$\,V over several hours.
 
 \paragraph{The universal slope as a cross-metal restriction.}
@@ -530,8 +510,7 @@ $\lambda$ (\AA) & $V_{0i}$ (V) & $\hat V_{0i}$ (V) & $\hat\varepsilon_i$ (V) \\
 \end{tabular}
 \end{center}
 
-\noindent The five points lie virtually on a straight line.
-$R^2 = 1 - \hat\sigma^2 n/(n-1)/S_{VV} \approx 0.99999$.
+\noindent $R^2 = 1 - \hat\sigma^2 n/(n-1)/S_{VV} \approx 0.99999$.
 Residuals are below 2\,mV, consistent with Millikan's stated uncertainty
 of $\pm 0.01$\,V.
 
@@ -639,9 +618,8 @@ For $n$ independent observations the log-likelihood is
 \begin{equation}\label{eq:loglik}
   \ell(\alpha,\beta,\sigma) =
   -\frac{n}{2}\ln(2\pi) - n\ln\sigma
-  - \frac{1}{2\sigma^2}\underbrace{\sum_{i=1}^n(V_{0i}-\alpha-\beta\nu_i)^2}_{\displaystyle\text{RSS}(\alpha,\beta)},
+  - \frac{1}{2\sigma^2}\underbrace{\sum_{i=1}^n(V_{0i}-\alpha-\beta\nu_i)^2}_{\displaystyle\text{RSS}(\alpha,\beta)}.
 \end{equation}
-where $\mathrm{RSS}(\alpha,\beta)$ is the residual sum of squares.
 
 \subsection{MLE Equals OLS Under Gaussian Errors}
 
@@ -652,11 +630,7 @@ Therefore:
   \boxed{(\hat\alpha_{\mathrm{MLE}},\,\hat\beta_{\mathrm{MLE}})
          = (\hat\alpha_{\mathrm{OLS}},\,\hat\beta_{\mathrm{OLS}}).}
 \end{equation}
-This equivalence holds regardless of the value of $\sigma$.  Every
-claim in Section~\ref{sec:regression} about the OLS estimates carries
-over unchanged to the MLE.  The values $\hat\beta = 4.129\times10^{-15}$\,V$\cdot$s
-and $\hat\alpha = -1.813$\,V are simultaneously the least-squares and the
-maximum-likelihood estimates of the signal parameters.
+The equivalence holds for any $\sigma$.
 
 \subsection{MLE for the Noise Variance}
 
@@ -687,9 +661,9 @@ the tabulated stopping potentials rather than by true measurement scatter.
 \subsection{Fisher Information and the Cram\'er-Rao Bound}
 \label{sec:fisher}
 
-The Fisher information matrix encodes the maximum precision attainable by
-\emph{any} unbiased estimator of $(\alpha,\beta)$.  For
-model~\eqref{eq:para_model} with $\sigma$ known, the Fisher information is
+The Fisher information matrix bounds the precision attainable by any
+unbiased estimator of $(\alpha,\beta)$.  For model~\eqref{eq:para_model} with
+$\sigma$ known, the Fisher information is
 \begin{equation}\label{eq:fisher}
   \mathcal{I}(\alpha,\beta) =
   \frac{1}{\sigma^2}\,X^\top X =
@@ -697,7 +671,8 @@ model~\eqref{eq:para_model} with $\sigma$ known, the Fisher information is
   \begin{pmatrix} n & \sum_i\nu_i \\[4pt] \sum_i\nu_i & \sum_i\nu_i^2
   \end{pmatrix},
 \end{equation}
-where $X$ is the $n\times2$ design matrix with rows $(1,\,\nu_i)$.
+where the row $(1,\,\nu_i)$ of the $n\times2$ design matrix $X$ maps
+$(\alpha,\beta)$ into the conditional mean of $V_{0i}$.
 The Cram\'er-Rao bound on the variance of any unbiased estimator of $\beta$ is
 \begin{equation}\label{eq:crb}
   \mathrm{Var}(\tilde\beta) \geq
@@ -717,11 +692,10 @@ For the five-point sodium regression (using $s$ as a plug-in for $\sigma$):
 \end{equation}
 corresponding to a relative precision of $0.11\%$, which OLS achieves exactly.
 
-\paragraph{Design implications.}  Equation~\eqref{eq:crb} shows that
-$\mathrm{SE}(\hat\beta) \propto 1/\sqrt{S_{\nu\nu}}$: spreading the
-frequencies further apart (larger $S_{\nu\nu}$) shrinks the standard error,
-independent of $n$.  This is the formal justification for Millikan's choice
-to span nearly a factor of two in $\nu$ (5461\,\AA\ to 2535\,\AA), rather
+\paragraph{Design implications.}  By~\eqref{eq:crb},
+$\mathrm{SE}(\hat\beta) \propto 1/\sqrt{S_{\nu\nu}}$.  Spreading the
+frequencies further apart shrinks the standard error whatever the value of
+$n$.  This justifies Millikan's choice to span nearly a factor of two in $\nu$ (5461\,\AA\ to 2535\,\AA), rather
 than the narrow 60\,nm UV ranges used by Hughes and Richardson \& Compton.
 
 Table~\ref{tab:crb_comparison} quantifies the improvement.  Restricting
@@ -757,8 +731,8 @@ is universal.  The pooled model is
   V_{0im} = \alpha_m + \beta\,\nu_i + \varepsilon_{im},
   \quad m\in\{\mathrm{Na},\mathrm{Li}\},
 \end{equation}
-with metal-specific intercepts $\alpha_m$ and a common slope~$\beta$.  This is
-a two-way fixed-effects panel regression.  The pooled OLS slope estimator is
+where the intercept $\alpha_m$ is specific to metal $m$ and the slope $\beta$
+is common to Na and Li.  The pooled OLS slope estimator is
 \begin{equation}\label{eq:pool_beta}
   \hat\beta_{\mathrm{pool}} =
   \frac{S_{\nu V}^{\mathrm{Na}} + S_{\nu V}^{\mathrm{Li}}}
@@ -789,15 +763,14 @@ quantum hypothesis.
 \section{The Contact-EMF Identification Problem}
 \label{sec:contact}
 
-The contact EMF $v_c$ between the photoemitting metal and the collector is
-a classic \emph{nuisance parameter}.  In the language of regression,
-equation~\eqref{eq:reg} has an intercept $\alpha = -W/e + v_c$ that
-conflates physics ($W/e$, the work function) with apparatus ($v_c$).
+The contact EMF $v_c$ between the photoemitting metal and the collector is a
+nuisance parameter.  The intercept $\alpha = -W/e + v_c$ of \eqref{eq:reg}
+conflates the work function $W/e$ with the apparatus term $v_c$.
 
 \paragraph{Pre-Millikan experiments.}  The early experiments did not measure
 or control $v_c$.  If $v_c$ drifted between measurements at different
-frequencies, the apparent stopping potentials would shift inconsistently,
-biasing \emph{both} slope and intercept.  Hughes and Richardson \& Compton
+frequencies, the apparent stopping potentials would shift inconsistently and
+bias both slope and intercept.  Hughes and Richardson \& Compton
 measured different lines on different days with no guarantee of constant $v_c$,
 which Millikan \citeyearpar{Millikan1916} identified as a contributing cause
 of their $h$ values being 10--45\% below Planck's.
@@ -899,8 +872,8 @@ Modern NIST 2022     & 2022 & --- & 6.6261 & 0 \\
 \end{tabular}
 \end{table}
 
-The pattern is striking: all pre-Millikan estimates are biased downward by
-10--47\%, with a bias attributable entirely to stray short-wavelength light
+All pre-Millikan estimates are biased downward by
+10--47\%.  The bias is attributable to stray short-wavelength light
 (raises apparent $V_0$ at long-wavelength lines, flattening the slope),
 restricted frequency range (enlarges SE of slope), and uncontrolled contact
 EMF (adds noise and possible trend bias to the intercept).  Millikan's
@@ -908,11 +881,8 @@ engineering solutions---fresh surfaces, filtered lines, wide frequency range,
 Kelvin $v_c$ measurement---removed all three sources of bias simultaneously.
 
 %======================================================================
-\section{Millikan's Epistemic Reluctance}
+\section{Millikan's Reluctance}
 \label{sec:millikan_reluctance}
-
-Perhaps the most instructive aspect of this episode for a statistician is
-the gap between \emph{confirming an equation} and \emph{accepting a model}.
 
 Millikan's 1916 paper confirmed Einstein's equation~\eqref{eq:einstein} to
 within 0.5\%.  Yet Millikan wrote:
@@ -935,13 +905,8 @@ evidence for the particulate nature of light---Millikan conceded:
   \quad (Nobel address, 1923; quoted by \citealt{Holton1999})
 \end{quote}
 
-The lesson for statistical inference: a sufficiently precise measurement of
-a regression coefficient can confirm a \emph{specific functional form} while
-leaving the \emph{causal or structural interpretation} contested.  Millikan
-confirmed the slope $h/e$ to 0.5\% without accepting the physical model
-that gives it meaning.  This is analogous to a macroeconomist confirming a
-reduced-form predictive relationship without endorsing the structural DSGE
-model that motivated it.
+A macroeconomist likewise can confirm a reduced-form predictive relationship
+without endorsing the structural model that motivated it.
 
 %======================================================================
 \section{Einstein as Machine Learner}
@@ -951,12 +916,9 @@ model that motivated it.
 
 The vocabulary of modern machine learning---supervised learning, hypothesis
 class, loss function, inductive bias, feature engineering, transfer
-learning---did not exist in 1905.  Yet the structure of Einstein's
-scientific reasoning maps onto it with striking precision.  This section
-makes the correspondence explicit.  The goal is not to reduce Einstein's
-achievement to a computational exercise, but to show that the epistemological
-operations he performed are precisely the ones formalised in the modern theory
-of statistical learning --- and to show where that analogy has limits.
+learning---did not exist in 1905.  The operations Einstein performed are the
+ones that statistical learning theory formalises.  This section states the
+correspondence and its limits.
 
 \subsection{Supervised Learning and Labeled Data}
 
@@ -974,11 +936,6 @@ estimate the slope $h/e$ to 0.5\%.
 \subsection{The Hypothesis Class and Inductive Bias}
 \label{sec:hyp_class}
 
-In statistical learning theory, a \emph{hypothesis class} $\mathcal{H}$ is the
-set of functions the learner considers.  The choice of $\mathcal{H}$ encodes
-the learner's \emph{inductive bias}: prior knowledge about the structure of
-the true function.
-
 Einstein's hypothesis class is:
 \begin{equation}\label{eq:hyp_class}
   \mathcal{H} = \bigl\{f_{\alpha,\beta}:\nu\mapsto\alpha+\beta\nu
@@ -992,32 +949,28 @@ The restriction to $\mathcal{H}$ was not ad hoc.  It followed deductively
 from the quantum hypothesis $E=h\nu$ and energy conservation for photoemission.
 The quantum hypothesis \emph{is} the inductive bias: it restricts the
 hypothesis class from all possible functions of $(\nu, I, \lambda, \ldots)$
-to a specific affine form in $\nu$ alone.  Without this bias, five data points
-are hopelessly insufficient --- infinitely many smooth functions pass through
-five points.  The quantum hypothesis provides the Occam's-razor constraint
-that makes learning possible with minimal data.
+to a specific affine form in $\nu$ alone.  Without this bias five data points
+are hopelessly insufficient: infinitely many smooth functions pass through
+five points.
 
 \subsection{Feature Engineering: Choosing $\nu$ Over Intensity
 and Wavelength}
 
-A critical step before any learning occurs is choosing the \emph{input features}.
-Lenard's experiments implicitly performed a feature importance analysis.  He
+Learning begins with a choice of input features.
+Lenard's experiments performed a feature importance analysis.  He
 measured $V_0$ as a function of both frequency (colour) and intensity~$I$.  His
 result was unambiguous: $V_0$ varies strongly with $\nu$ but not at all with~$I$.
-Intensity had zero feature importance; $\nu$ had all the importance.
 
 Classical wave theory predicted the opposite: wave amplitude $A \propto
 \sqrt{I}$ should determine energy delivered to an electron, so $V_0$ should
 grow with $I$.  The empirical irrelevance of $I$ was the anomaly that
-motivated Einstein's model.  In modern ML language, Lenard performed an
-experiment that eliminated $I$ from the feature set and selected $\nu$---the
-correct and sufficient input feature---before any parametric fitting was done.
+motivated Einstein's model.  Lenard's experiment eliminated $I$ from the
+feature set and selected $\nu$ before any parametric fitting was done.
 
 \subsection{The Loss Function and Training}
 
-Once the hypothesis class~\eqref{eq:hyp_class} and the feature $\nu$ are
-fixed, the learning objective is to choose $(\alpha,\beta)$ to minimise the
-empirical risk under squared-error loss:
+Given the hypothesis class~\eqref{eq:hyp_class} and the feature $\nu$, choose
+$(\alpha,\beta)$ to minimise the empirical risk under squared-error loss:
 \[
   \hat{R}(\alpha,\beta) = \frac{1}{n}\sum_{i=1}^n(V_{0i} - \alpha - \beta\nu_i)^2.
 \]
@@ -1042,11 +995,9 @@ probability.
 \paragraph{Transfer learning.}
 A model trained on sodium data successfully predicts lithium stopping
 potentials up to an intercept shift.  The slope $\hat\beta = h/e$ is
-\emph{transferred exactly} from one metal to another: it is a universal
-representation.  In modern parlance, training on sodium provides a
-pre-trained feature extractor (the slope); the lithium task requires only
-fine-tuning the intercept $\alpha_{\mathrm{Li}}$, which is the metal-specific
-work-function parameter.  The Wald test of
+transferred exactly from one metal to another.  Training on sodium provides a
+pre-trained feature extractor, the slope; the lithium task fine-tunes the
+intercept $\alpha_{\mathrm{Li}}$, the metal-specific work-function parameter.  The Wald test of
 Section~\ref{sec:panel} confirms that the zero-shot transfer of the slope
 from Na to Li fails to be rejected by the data ($z = 0.87$).
 
@@ -1068,8 +1019,8 @@ quantum model over the classical alternative.
 
 \subsection{What a Naive Machine Learning System Would Miss}
 
-It is instructive to ask what a purely data-driven ML system, given only
-the table of $(\nu_i, V_{0i})$ pairs, would learn.
+A purely data-driven system, given only the table of $(\nu_i, V_{0i})$
+pairs, would learn the following.
 
 \begin{enumerate}
   \item A linear regression package would correctly recover
@@ -1090,17 +1041,15 @@ the table of $(\nu_i, V_{0i})$ pairs, would learn.
     unexplained numerical coefficient.
 \end{enumerate}
 
-Einstein's irreplaceable contribution was precisely where modern ML is
-weakest: supplying the theoretical framework that gives regression
+Einstein supplied the theoretical framework that gives the regression
 coefficients their physical meaning.  Specifying the hypothesis class required
 more intellectual effort than fitting the line.
 
 \subsection{The Deductive--Inductive Loop}
 
 Modern discussions of ``AI for science'' often describe a purely inductive
-paradigm: given enough data, learn the law.  The photoelectric episode
-illustrates a more powerful paradigm that has driven physical science since
-Newton: the \emph{hypothetico-deductive loop}.
+paradigm: given enough data, learn the law.  The photoelectric episode follows
+the hypothetico-deductive loop that has driven physical science since Newton.
 
 \begin{table}[ht]
 \centering
@@ -1125,19 +1074,10 @@ Na and Li: same $\hat\beta$ & Universality & Zero-shot transfer \\
 \end{tabular}
 \end{table}
 
-The deductive step is the engine of efficiency: because the physics
-prescribes the functional form, the number of free parameters ($\alpha, \beta$),
-and even the units of the slope, five training points are sufficient to
-estimate $h$ to 0.1\%.  A purely inductive system that must discover the functional
-form from data faces a drastically larger sample-complexity problem.
-
-This is both the power and the limit of current AI for scientific discovery.
-Systems such as AI Feynman or neural-network-based symbolic regression can
-\emph{in principle} induce the linear law from data, but they do so by
-exhaustive search over a combinatorially large space of functional forms,
-requiring far more data and computation than Einstein's one-paragraph
-derivation.  The human contribution --- theory construction --- remains
-indispensable.
+Five training points estimate $h$ to 0.1\% because the physics prescribes the
+functional form, the number of free parameters $(\alpha,\beta)$, and the units
+of the slope.  A purely inductive system that must discover the functional form
+from data faces a far larger sample-complexity problem.
 
 %======================================================================
 \section{A Deep Neural Network on the Photoelectric Data}
@@ -1164,9 +1104,9 @@ hidden layers with 16 ReLU neurons each---has approximately
     = 593
 \]
 free parameters.  The VC dimension of this network is of order $p\log p
-\approx 5{,}700$ \citep{Vapnik1998}, meaning that reliable generalisation
-to unseen frequencies requires on the order of $n\gtrsim 5{,}700$
-labeled training examples for 1\% accuracy with high probability.  The
+\approx 5{,}700$ \citep{Vapnik1998}.  Reliable generalisation to unseen
+frequencies then requires $n\gtrsim 5{,}700$ labeled training examples for
+1\% accuracy with high probability.  The
 five points Millikan assembled in 1916 fall short by three orders of
 magnitude.
 
@@ -1198,11 +1138,9 @@ without a held-out validation set; with $n=30$ this is statistically
 isolated.
 
 \paragraph{Restricted frequency range.}
-Over a 60\,nm UV band ($\Delta\nu \approx 0.7\times10^{14}$\,Hz), any
-smooth function is locally indistinguishable from a polynomial of any
-degree.  The DNN has no mechanism to infer that the global functional
-form is linear rather than quadratic or square-root; all three fit
-equally well on so narrow an interval.
+A linear, a quadratic, and a square-root form fit equally well over a 60\,nm
+UV band ($\Delta\nu \approx 0.7\times10^{14}$\,Hz).  The DNN has no mechanism
+to infer which of them is the global functional form.
 
 \paragraph{Systematic label contamination.}
 Uncontrolled contact EMFs imply that the effective label for observation
@@ -1215,7 +1153,7 @@ absorbs both, producing a biased and uninterpretable output.
 \subsection{Epoch III---Millikan's Data (1916)}
 
 Millikan's five-point sodium dataset is the cleanest photoelectric
-dataset of the era.  What does a DNN find?
+dataset of the era.
 
 \paragraph{The interpolation regime.}
 With $n=5$ and any DNN with $p>5$ (which includes every
@@ -1317,22 +1255,16 @@ Modern era    & $\sim 5000$  & Sufficient
 \end{tabular}
 \end{table}
 
-The lesson is not that DNNs are poor learners in general.  For
-high-dimensional problems where no parsimonious parametric family is
-known---image recognition, protein structure prediction, language
-modelling---the DNN's universal-approximation capacity is an enormous
-advantage.  The photoelectric problem sits at the opposite extreme: a
-one-dimensional input, a one-dimensional output, and five to thirty
-training examples.  In this setting the DNN's flexibility is a liability,
-not an asset.
+DNNs are good learners for high-dimensional problems in which no
+parsimonious parametric family is known: image recognition, protein
+structure prediction, language modelling.  The photoelectric problem sits at
+the opposite extreme: a one-dimensional input, a one-dimensional output, and
+five to thirty training examples.
 
-Einstein's theoretical act---proposing $E=h\nu$---reduced the effective
-hypothesis space from the infinite-dimensional function class of a DNN to
-a two-dimensional manifold of parallel lines.  This compression reduced
-the required number of training examples by three orders of magnitude.
-No architectural innovation or training algorithm can replicate that
-compression without importing the physics; it was achieved entirely in the
-mind of a 26-year-old patent clerk, before a single labeled example was
+Einstein's proposal $E=h\nu$ reduced the hypothesis space from the
+infinite-dimensional function class of a DNN to a two-dimensional manifold of
+parallel lines, and with it the required number of training examples by three
+orders of magnitude.  He did so before a single labeled example was
 available.
 
 %======================================================================
@@ -1348,7 +1280,7 @@ spectrally pure light (eliminates bias from stray UV), a wide frequency range
 (reduces SE of slope), and control of the nuisance parameter $v_c$ (enables
 identification of both slope and intercept).
 
-Millikan's decade-long experimental program was, in essence, a campaign to
+Millikan's decade-long experimental program was a campaign to
 raise data quality until the OLS standard errors were small enough to
 distinguish a specific value of the slope ($h/e = 4.136\times10^{-15}$\,V$\cdot$s)
 from the alternatives implied by earlier, discrepant theories.
@@ -1361,13 +1293,6 @@ The final five-point sodium regression gives
              \quad (W_{\mathrm{Na}}/e \approx 4.3\text{ eV given } v_c=2.51\text{ V}), \\
   R^2 &\approx 0.99999.
 \end{align*}
-
-The episode illustrates three principles that recur across scientific
-disciplines: (i) theoretical priors guide experimental design by specifying
-the functional form to be estimated; (ii) data quality---not statistical
-sophistication---is the binding constraint for precision; and (iii) confirming
-a regression equation is not the same as confirming the theoretical model
-that produced it.
 
 %======================================================================
 \appendix
@@ -1434,17 +1359,12 @@ energies exceeding the single-photon threshold by integer multiples of
 $h\nu$---was first observed by \citet{Agostini1979}.  The resulting
 photoelectron spectrum displays a comb of peaks separated by $h\nu$,
 each satisfying equation~\eqref{eq:multiphoton} for the corresponding
-$n$.  In the language of Section~\ref{sec:ml}, ATI extends Einstein's
-hypothesis class to allow non-unit photon multiplicity; the slope remains
+$n$.  ATI extends hypothesis class~\eqref{eq:hyp_class} to allow non-unit
+photon multiplicity; the slope remains
 $h/e$ and the universal structure is preserved across metals.
 
 \subsection{Does the Photoelectric Effect Prove the Quantisation of Light?}
 \label{app:lamb_scully}
-
-Section~\ref{sec:millikan_reluctance} noted Millikan's epistemic reluctance
-to accept the light-quantum hypothesis despite confirming its equation.
-Modern physics provides a more precise statement of what Millikan's
-regression actually proves.
 
 \citet{Lamb1969} showed that the photoelectric stopping-potential equation
 can be derived from a \emph{semiclassical model}: the electromagnetic
@@ -1456,16 +1376,10 @@ equation~\eqref{eq:einstein} follows from energy conservation and the
 quantised \emph{atomic} level structure alone; it does not require the
 radiation field itself to be quantised.
 
-This observation does not diminish Einstein's achievement.  He identified
-the correct hypothesis class~\eqref{eq:hyp_class} and the correct
-functional form, and the slope $h/e$ encodes Planck's constant whether
-or not the field is ``really'' composed of quanta.  But the
-Lamb--Scully result clarifies what Millikan's regression \emph{proves}:
-it confirms the functional form $V_0 \propto \nu$ and measures $h/e$
-to 0.5\%, and it is consistent with the photon hypothesis---but it does
-not distinguish the quantised-field hypothesis from semiclassical
-alternatives.  Millikan's epistemic reluctance was, ironically, more
-defensible than the standard narrative suggests.
+Millikan's regression confirms the functional form $V_0 \propto \nu$ and
+measures $h/e$ to 0.5\%.  It does not distinguish the quantised-field
+hypothesis from semiclassical alternatives.  The slope $h/e$ gives Planck's
+constant whether or not the field is composed of quanta.
 
 \subsection{Photon Antibunching: Definitive Evidence for Field Quantisation}
 \label{app:antibunching}
@@ -1494,12 +1408,11 @@ sub-Poissonian photon-number statistics in the resonance fluorescence of
 individual sodium atoms.  Antibunching is impossible in any classical or
 semiclassical model of the electromagnetic field: a classical field,
 however modulated or noisy, always produces at minimum Poissonian
-coincidences.  The antibunching experiment is therefore the decisive
-model-selection test---in the language of Section~\ref{sec:ml}---that
-rules out the semiclassical hypothesis of \citeauthor{Lamb1969} and
-establishes that the radiation field must be quantised.
+coincidences.  The antibunching experiment rules out the semiclassical
+hypothesis of \citeauthor{Lamb1969} and establishes that the radiation field
+is quantised.
 
-The historical sequence is instructive.  Einstein's 1905 paper introduced
+Einstein's 1905 paper introduced
 the photon as a \emph{heuristic}---his own word in the title---and
 Millikan confirmed its equation to 0.5\% in 1916.  Definitive experimental
 evidence that the radiation field is itself quantised arrived only in 1977,
@@ -1511,7 +1424,7 @@ years later confirmed the physical interpretation.
 \subsection{Implications for the Machine Learning Reinterpretation}
 \label{app:ml_implications}
 
-The modern results above sharpen several points from Section~\ref{sec:ml}.
+The modern results above bear on Section~\ref{sec:ml}.
 
 \paragraph{Depth of the hypothesis class.}
 Einstein chose hypothesis class~\eqref{eq:hyp_class} by a heuristic
@@ -1519,21 +1432,16 @@ argument whose full justification---QED, Fermi's golden rule, the
 Fermi-Dirac distribution of electrons in a metal---emerged over the
 following three decades.  The class proved correct for reasons deeper
 than those available in 1905, and it extends over a five-order-of-magnitude
-range of photon energies (visible UV to hard X-rays) without modification.
-The ``inductive bias'' encoded in the two-parameter linear model is even
-more powerful than Section~\ref{sec:ml} indicates.
+range of photon energies, from visible UV to hard X-rays, without
+modification.
 
 \paragraph{What the regression tests.}
-Millikan's regression tests the \emph{functional form} $V_0 \propto \nu$
-and estimates the slope $h/e$.  The Lamb--Scully result shows that this
-functional form and this slope are consistent with both quantised-field
-and semiclassical models of radiation.  Distinguishing these model
-classes requires a different observation---photon-number variance---and a
-different experimental design.  In the language of Section~\ref{sec:ml}:
-the regression identifies the best-fitting model \emph{within} a given
-hypothesis class, but selecting \emph{between} hypothesis classes (quantised
-vs.\ semiclassical field) requires a different objective function and a
-different experiment.
+Millikan's regression tests the functional form $V_0 \propto \nu$ and
+estimates the slope $h/e$.  Both are consistent with the quantised-field and
+with the semiclassical model of radiation.  The regression identifies the
+best-fitting model within a hypothesis class; selecting between the two
+classes requires a different observation, photon-number variance, and a
+different experimental design.
 
 \paragraph{Theory specificity in experimental design.}
 The antibunching experiments of \citet{Kimble1977} were designed
@@ -1541,13 +1449,11 @@ specifically to test the quantised-field hypothesis; the relevant
 observable (photon-number variance) follows directly from
 Glauber's coherence theory.  Without the quantised-field hypothesis and
 its prediction of sub-Poissonian statistics, there was no reason to
-measure photon-number correlations at all.  This repeats the lesson of
-Millikan's experiment: theory specifies the hypothesis class and, from
-it, the decisive test.  The progression from Millikan (1916) to
-\citeauthor{Kimble1977} (1977) illustrates how each theoretical
-refinement generates a new, more discriminating experimental test---a
-chain of hypothetico-deductive loops (Table~\ref{tab:loop}) whose links
-are forged by theory, not by data alone.
+measure photon-number correlations at all.  Theory specifies the hypothesis
+class and, from it, the decisive test.  Each theoretical refinement between
+Millikan (1916) and \citeauthor{Kimble1977} (1977) generated a new and more
+discriminating experiment, a chain of hypothetico-deductive loops
+(Table~\ref{tab:loop}) whose links are forged by theory, not by data alone.
 
 \bigskip
 \bibliographystyle{plainnat}

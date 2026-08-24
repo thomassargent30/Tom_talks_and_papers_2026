@@ -29,7 +29,16 @@
 \title{The Accelerating Universe as Statistical Inference:\\
        Type Ia Supernovae, Maximum Likelihood,\\
        and the Cosmological Constant, 1988--1999}
-\author{Thomas J.\ Sargent}
+\author{Thomas J.\ Sargent\thanks{%
+  In 2011 my good friend Christopher A.\ Sims and I shared the Nobel Prize in
+  economics.  That good luck let us meet and become friends with winners of
+  prizes in physics and other fields.  Our conversations with the physics
+  winners were especially interesting.  Adam Riess had majored partly in
+  economics as an undergraduate and told us about his very interesting
+  undergraduate thesis.  I have kept in contact with Adam Riess and Brian
+  Schmidt, who have taught me the nuts and bolts of the computer programs that
+  they used to compute and climb the likelihood function that led to their
+  remarkable discovery.}}
 \date{April 2026}
 
 \begin{document}
@@ -92,68 +101,50 @@ energy.''  For this discovery, Saul Perlmutter received one half of
 the 2011 Nobel Prize in Physics, and Adam Riess and Brian Schmidt
 shared the other half.
 
-The discovery is a triumph of precision measurement under a theoretical
-model---precisely the structure analysed by modern statistical inference.
 A twenty-first-century statistician confronted with tables of
 (redshift, apparent magnitude) pairs would recognise the problem as a
-\emph{weighted nonlinear regression} with two scientifically meaningful
-parameters and a nuisance intercept.  The surprising history is that the
-theoretical model---the Friedmann equations with a cosmological
-constant---was well established before the data were collected, and the
-discovery consisted in determining the \emph{sign and magnitude} of the
-coefficient $\Omega_\Lambda$ in that model.
+weighted nonlinear regression with two scientifically meaningful
+parameters and a nuisance intercept.  The Friedmann equations with a
+cosmological constant were well established before the data were collected.
+The discovery consisted in determining the sign and magnitude of
+$\Omega_\Lambda$.
 
-The story has five features of particular interest to a statistician.
+The story has five features of interest to a statistician.
 \begin{enumerate}
   \item \textbf{Model specification: the hypothesis class from the
-    Friedmann equations.}  General relativity provides an exact
-    prediction for the luminosity-distance--redshift relation
-    $d_L(z;\Omega_M,\Omega_\Lambda)$; the cosmological standard model
-    fixes the functional form and reduces the estimation problem to
-    two dimensionless density parameters.
-  \item \textbf{Standardizing a noisy standard candle.}  Raw Type Ia
-    supernovae are not perfect standard candles: their peak $B$-band
-    luminosities scatter by $\approx 0.4$~magnitudes.
-    \citet{Phillips1993} discovered that the rate of post-peak
-    decline~$\Delta m_{15}$ predicts peak luminosity, reducing the
-    dispersion to $\approx 0.17$~mag.  This is the supernova
-    analogue of Lenard's discovery that frequency, not intensity,
-    controls the photoelectric stopping potential.
-  \item \textbf{The nuisance parameter~$\mathcal{M}$.}  The combination
-    of absolute magnitude~$M_B$ and Hubble constant~$H_0$ enters
-    the measurement equation as a pure intercept shift that moves
-    the entire Hubble diagram vertically.  Like the contact EMF in
-    Millikan's photoelectric regression, $\mathcal{M}$ is not
-    individually identified by the observational data alone; it is
-    profiled out of the likelihood.  The shape of the $\mu(z)$
-    curve---which encodes $\Omega_M$ and $\Omega_\Lambda$---is
-    identified from the \emph{relative} distance moduli of high-$z$
-    versus low-$z$ supernovae.
+    Friedmann equations.}  General relativity predicts the
+    luminosity-distance--redshift relation
+    $d_L(z;\Omega_M,\Omega_\Lambda)$ exactly.  The functional form is
+    fixed, and the estimation problem reduces to two dimensionless density
+    parameters.
+  \item \textbf{Standardizing a noisy standard candle.}  The peak $B$-band
+    luminosities of raw Type~Ia supernovae scatter by
+    $\approx 0.4$~magnitudes.  \citet{Phillips1993} found that the rate of
+    post-peak decline~$\Delta m_{15}$ predicts peak luminosity, which
+    reduces the dispersion to $\approx 0.17$~mag.
+  \item \textbf{The nuisance parameter~$\mathcal{M}$.}  The combination of
+    absolute magnitude~$M_B$ and Hubble constant~$H_0$ shifts the entire
+    Hubble diagram vertically.  The observations do not identify
+    $\mathcal{M}$ on its own; it is profiled out of the likelihood.  The
+    relative distance moduli of high-$z$ and low-$z$ supernovae identify
+    the shape of $\mu(z)$ and with it $\Omega_M$ and $\Omega_\Lambda$.
   \item \textbf{Independent replication with different methods.}
     The High-Z Supernova Search Team used the MLCS
     (Multi-Light-Curve Shape) standardization method of
     \citet{RiessPress1996}; the Supernova Cosmology Project used the
-    stretch-factor method of \citet{Perlmutter1997}.  Both groups
-    analysed different sets of supernovae, yet reached the same
-    conclusion to within their measurement uncertainties, providing a
-    powerful robustness check.
-  \item \textbf{Reluctance to accept the model.}  Many physicists
-    were initially sceptical of $\Omega_\Lambda > 0$ because it
-    violated the prevailing theoretical expectation that the vacuum
+    stretch-factor method of \citet{Perlmutter1997}.  The two groups
+    analysed different supernovae and reached the same conclusion to
+    within their measurement uncertainties.
+  \item \textbf{Reluctance to accept the model.}  Many physicists doubted
+    $\Omega_\Lambda > 0$ because the prevailing theory held that the vacuum
     energy density should be negligible \citep{Weinberg1989}.
-    The pattern mirrors Millikan's confirmatory measurement of the
-    photoelectric slope while publicly rejecting the light-quantum
-    interpretation.
 \end{enumerate}
 
-Beyond the precision cosmology, the episode carries a lesson about
-theory-guided inference in an era of big data.  Both teams had access
-to roughly 40--60 high-quality supernovae---a dataset that would seem
-meagre by modern standards.  The Friedmann equations, however,
-specified the regression function completely up to three free
-parameters, collapsing the estimation problem from a high-dimensional
-function-approximation task to a low-dimensional fitting problem that
-could be solved definitively with the available data.
+Both teams had roughly 40--60 high-quality supernovae, a meagre dataset by
+modern standards.  The Friedmann equations specified the regression function
+up to three free parameters and so collapsed a high-dimensional
+function-approximation task into a low-dimensional fitting problem that the
+available data could settle.
 
 Sections~\ref{sec:background}--\ref{sec:data} set the observational and
 theoretical stage.
@@ -165,8 +156,8 @@ problem.
 Section~\ref{sec:results} presents the main results and the inference
 of acceleration.
 Section~\ref{sec:twogroups} compares the two teams.
-Section~\ref{sec:reluctance} reflects on epistemic scepticism and
-robustness tests.
+Section~\ref{sec:reluctance} describes the scepticism that greeted the
+result and the robustness tests that answered it.
 Sections~\ref{sec:ml}--\ref{sec:dnn} reinterpret the episode in the
 language of machine learning.
 Section~\ref{sec:conclusions} concludes.
@@ -244,14 +235,12 @@ where $M_B^{\rm ref}$ is the absolute magnitude of a ``normal'' event
 with $\Delta m_{15} = 1.1$.  After applying this correction, the
 intrinsic dispersion falls to $\sigma_{M_B} \approx 0.17$~mag.
 
-The Phillips relation is the supernova analogue of Lenard's discovery
-that the stopping potential in the photoelectric effect depends on
-frequency, not intensity.  Just as Lenard's finding allowed Einstein to
-specify the correct input variable~$\nu$, the Phillips relation identifies
-the correct feature~$\Delta m_{15}$ (or equivalent light-curve shape
-parameter) for standardizing Type Ia peak magnitudes.  Without it, the
-scatter is large enough to mask cosmological signals; with it, the
-$\mu(z)$ residuals can distinguish a decelerating from an accelerating
+The Phillips relation is the supernova analogue of Lenard's discovery that
+the photoelectric stopping potential depends on frequency, not intensity.
+Lenard's finding let Einstein specify the input variable~$\nu$; the Phillips
+relation identifies $\Delta m_{15}$ as the feature that standardizes Type Ia
+peak magnitudes.  Without it the scatter masks the cosmological signal.  With
+it the $\mu(z)$ residuals distinguish a decelerating from an accelerating
 universe.
 
 \subsection{The Two Teams}
@@ -293,8 +282,8 @@ dust, and cosmological constant~$\Lambda$ is
 \end{equation}
 where $z$ is evaluated on the past light cone and the present-day
 normalisation $E(0) = 1$ implies $\Omega_M + \Omega_k + \Omega_\Lambda = 1$.
-The \emph{dimensionless Hubble function}~$E(z)$ encodes how the expansion
-rate changes with redshift.  For $\Omega_\Lambda = 0$ and matter-only
+The dimensionless Hubble function $E(z)$ gives the expansion rate at
+redshift $z$ in units of $H_0$.  For $\Omega_\Lambda = 0$ and matter-only
 content, $E(z) = (1+z)^{3/2}$ (the Einstein-de Sitter solution); for
 the best-fit flat $\Lambda$CDM model, $E(z)$ passes through intermediate
 values between these extremes.
@@ -380,11 +369,9 @@ so the measurement equation~\eqref{eq:meas} becomes
     \displaystyle\mathcal{M}}
     + 5\log_{10}\tilde d_L(z_i;\Omega_M,\Omega_\Lambda) + \varepsilon_i.
 \end{equation}
-The combination $\mathcal{M}$ is a single scalar nuisance parameter that
-shifts the entire Hubble diagram vertically.  The shape of $\mu(z)$---and
-hence the constraints on $\Omega_M$ and $\Omega_\Lambda$---is encoded
-entirely in $5\log_{10}\tilde d_L(z;\Omega_M,\Omega_\Lambda)$, which
-is independent of $\mathcal{M}$.  Crucially:
+The scalar $\mathcal{M}$ shifts the Hubble diagram vertically; the term
+$5\log_{10}\tilde d_L(z;\Omega_M,\Omega_\Lambda)$ determines its shape and
+does not depend on $\mathcal{M}$.
 \begin{itemize}
   \item $\mathcal{M}$ is not identified by the shape of the Hubble
     diagram.  Any vertical shift of the entire $m_B$ sequence can be
@@ -393,16 +380,10 @@ is independent of $\mathcal{M}$.  Crucially:
     \emph{curvature} of $\mu(z)$: the way the slope of the $m_B$--$z$
     diagram changes between low-$z$ and high-$z$ supernovae.
 \end{itemize}
-This identification structure is the exact supernova analogue of
-Millikan's contact-EMF problem.  There, the contact potential $v_c$
-shifted the intercept of the $V_0$--$\nu$ regression without affecting
-the slope~$h/e$.  Here, $\mathcal{M}$ shifts the intercept of the
-$m_B$--$[\log\tilde d_L]$ regression without affecting~$(\Omega_M,
-\Omega_\Lambda)$.  The physics-of-interest parameter in both cases is
-the one identified by the \emph{slope or curvature} of the measurement
-relation, not its level.
+Section~\ref{sec:nuisance} compares this identification structure with
+Millikan's contact-EMF problem.
 
-The estimating model therefore has three effective parameters:
+The estimating model has three effective parameters:
 \begin{equation}\label{eq:param_set}
   \boldsymbol\theta = (\mathcal{M},\,\Omega_M,\,\Omega_\Lambda),
 \end{equation}
@@ -615,9 +596,8 @@ was discussed in Section~\ref{sec:data}.  The log-likelihood is
     - 5\log_{10}\tilde d_L(z_i;\Omega_M,\Omega_\Lambda)\bigr]^2}
     {\sigma_i^2}}_{\displaystyle\chi^2(\boldsymbol\theta)/2}.
 \end{equation}
-Maximising~\eqref{eq:loglik} over $\boldsymbol\theta$ is equivalent to
-minimising $\chi^2(\boldsymbol\theta)$, the weighted sum of squared
-residuals.
+Maximising~\eqref{eq:loglik} over $\boldsymbol\theta$ minimises
+$\chi^2(\boldsymbol\theta)$.
 
 \subsection{MLE Equals WLS Under Gaussian Errors}
 
@@ -630,7 +610,6 @@ $(\mathcal{M},\Omega_M,\Omega_\Lambda)$ requires minimising
   \frac{\bigl[m_{B,i} - \mathcal{M}
     - 5\log_{10}\tilde d_L(z_i;\Omega_M,\Omega_\Lambda)\bigr]^2}{\sigma_i^2}.
 \end{equation}
-This is a weighted least squares (WLS) objective with weights $1/\sigma_i^2$.
 
 Unlike the photoelectric case---where OLS had a closed-form solution---
 minimising \eqref{eq:chi2} over $(\Omega_M, \Omega_\Lambda)$ requires
@@ -638,7 +617,7 @@ numerical optimisation because $\tilde d_L(z;\Omega_M,\Omega_\Lambda)$
 involves a numerical integral rather than an algebraic formula.  Both
 groups used grid search over a fine $(\Omega_M, \Omega_\Lambda)$ lattice,
 evaluating $\chi^2$ at each grid point via numerical quadrature.
-The key analogy with the photoelectric case still holds:
+The estimator is still the minimiser:
 
 \begin{equation}\label{eq:mle_wls}
   \boxed{(\hat{\mathcal{M}}_{\rm MLE},\,\hat\Omega_{M,\rm MLE},\,
@@ -649,9 +628,8 @@ The key analogy with the photoelectric case still holds:
 
 \subsection{Profiling Out the Nuisance Parameter}
 
-Because~$\mathcal{M}$ enters~\eqref{eq:chi2} linearly (it is simply an
-overall vertical shift of the Hubble diagram), it can be eliminated
-analytically at any fixed $(\Omega_M,\Omega_\Lambda)$:
+$\mathcal{M}$ can be eliminated analytically at any fixed
+$(\Omega_M,\Omega_\Lambda)$, because it enters~\eqref{eq:chi2} linearly:
 \begin{equation}\label{eq:Mhat}
   \hat{\mathcal{M}} =
   \frac{\displaystyle\sum_i \frac{m_{B,i} - 5\log_{10}\tilde d_L(z_i)}
@@ -673,9 +651,7 @@ profiled over intrinsic scatter $\sigma_{\rm int}$.
 Table~\ref{tab:mu_predictions} computes the theoretical distance modulus
 $\mu^{\rm th}(z;\Omega_M,\Omega_\Lambda,H_0)$ for four cosmological models
 at representative redshifts, using $H_0 = 70$\,km\,s$^{-1}$\,Mpc$^{-1}$.
-This table illustrates why supernovae at $z \approx 0.3$--$0.8$ have
-the most discriminating power: the model predictions diverge most
-strongly in this range.
+The model predictions diverge most strongly at $z \approx 0.3$--$0.8$.
 
 \begin{table}[ht]
 \centering
@@ -752,12 +728,9 @@ derivatives are
   \frac{5}{\ln 10}\,\frac{1}{\tilde d_L}\,
   \frac{\partial\tilde d_L}{\partial\Omega_\Lambda}.
 \end{equation}
-These are computed numerically.  The key qualitative point is that
-$\partial\mu/\partial\Omega_M < 0$ (more matter slows expansion, bringing
-the SN closer, reducing $\mu$) and $\partial\mu/\partial\Omega_\Lambda
-> 0$ (more $\Lambda$ accelerates expansion, pushing the SN farther,
-increasing $\mu$).  Furthermore, at moderate redshifts
-$z\sim 0.5$, numerical calculation shows that
+These are computed numerically.  The parameter $\Omega_M$ slows the
+expansion and reduces $\mu$; the parameter $\Omega_\Lambda$ accelerates the
+expansion and raises $\mu$.  At moderate redshifts $z\sim 0.5$,
 \begin{equation}\label{eq:degeneracy}
   \frac{\partial\mu/\partial\Omega_M}{\partial\mu/\partial\Omega_\Lambda}
   \approx -\frac{3}{4},
@@ -781,19 +754,11 @@ is well constrained by the data.
 
 \subsection{The Value of Wide Redshift Coverage}
 
-\citet{GoobarPerlmutter1995} showed that to break the degeneracy
-\eqref{eq:deg_line} substantially, one needs supernovae at at
-least two well-separated redshifts.  A sample restricted to
-$z\approx 0.5$ traces a near-degenerate path in the
-$(\Omega_M,\Omega_\Lambda)$ plane; combining $z\approx 0.5$ events
-with $z\approx 0.8$--1.0 events rotates the constraint direction
-significantly.  This is the \emph{direct analogue of Millikan's
-choice to span nearly a factor of two in frequency}
-($\lambda = 5461$--$2535$\,\AA), rather than the narrow 60\,nm range
-used by Hughes (1912): in both cases, the Cram\'er-Rao bound scales
-as $[\sum_i S_{xx,i}]^{-1/2}$, where the ``design spread'' is
-$S_{xx} = \sum(\nu_i - \bar\nu)^2$ for frequencies and the analogous
-quantity for supernova redshifts.
+\citet{GoobarPerlmutter1995} showed that breaking the degeneracy
+\eqref{eq:deg_line} requires supernovae at two well-separated redshifts.
+A sample restricted to $z\approx 0.5$ traces a near-degenerate path in the
+$(\Omega_M,\Omega_\Lambda)$ plane.  Adding $z\approx 0.8$--1.0 events rotates
+the constraint direction.
 
 The SCP's highest-redshift event, SN~1997ck at $z = 0.83$, was
 particularly important: it lay nearly orthogonal to the degeneracy
@@ -807,12 +772,10 @@ same role.
 as $\Delta\chi^2 = \tilde\chi^2 - \tilde\chi^2_{\rm min}$ contours.
 The 68\% and 95\% confidence ellipses for one free parameter correspond
 to $\Delta\chi^2 = 1$ and $4$, respectively; for two parameters, to
-$\Delta\chi^2 = 2.30$ and $5.99$.  The striking feature of the
-published confidence plots (Figure~2 of \citealt{Perlmutter1999};
-Figure~7 of \citealt{Riess1998}) is that the best-fit region lies in
-the quadrant $\Omega_\Lambda > 0$ and is separated from the no-$\Lambda$
-line ($\Omega_\Lambda = 0$) by more than $3\sigma$ in the constraint
-direction.
+$\Delta\chi^2 = 2.30$ and $5.99$.  In the published confidence plots
+(Figure~2 of \citealt{Perlmutter1999}; Figure~7 of \citealt{Riess1998}) the
+best-fit region lies in the quadrant $\Omega_\Lambda > 0$, more than
+$3\sigma$ from the line $\Omega_\Lambda = 0$ in the constraint direction.
 
 %======================================================================
 \section{The $\mathcal{M}$ Identification Problem}
@@ -863,11 +826,11 @@ the Cal\'an/Tololo low-$z$ sample then determines $M_B \approx -19.3$~mag,
 confirming that Type~Ia supernovae are among the most luminous
 transient phenomena in the universe.
 
-The key point is that $M_B$ (or equivalently $H_0$) is a \emph{nuisance
-parameter for the cosmological inference}: its uncertainty propagates
-into $\mathcal{M}$ but not into $(\Omega_M,\Omega_\Lambda)$.  A 10\%
-error in $H_0$ shifts the entire Hubble diagram by $\approx 0.22$~mag
-but leaves the best-fit $\Omega_M$ and $\Omega_\Lambda$ unchanged.
+$M_B$, equivalently $H_0$, is a nuisance parameter for the cosmological
+inference.  Its uncertainty propagates into $\mathcal{M}$ but not into
+$(\Omega_M,\Omega_\Lambda)$.  A 10\% error in $H_0$ shifts the Hubble diagram
+by $\approx 0.22$~mag and leaves the best-fit $\Omega_M$ and $\Omega_\Lambda$
+unchanged.
 
 %======================================================================
 \section{Results: The Deceleration Parameter and Cosmic Acceleration}
@@ -907,16 +870,13 @@ Planck 2018 (CMB+BAO, flat)      & $0.315\pm0.007$ & $0.685\pm0.007$
 \end{tabular}
 \end{table}
 
-Both groups found $\hat\Omega_\Lambda \approx 0.7$ using completely
-independent datasets and different standardization pipelines.  The
-concordance is remarkable: the two teams' central estimates agree to
-within their stated statistical uncertainties.
+Both groups found $\hat\Omega_\Lambda \approx 0.7$ from independent
+datasets and different standardization pipelines.
+Section~\ref{sec:twogroups} compares them.
 
 \subsection{The Deceleration Parameter}
 
-The cosmic deceleration parameter~$q_0$ quantifies whether the
-universe's expansion is slowing down ($q_0 > 0$) or speeding up
-($q_0 < 0$) at the present epoch.  From the second Friedmann equation:
+From the second Friedmann equation,
 \begin{equation}\label{eq:q0}
   q_0 \equiv -\frac{\ddot a\,a}{\dot a^2}\bigg|_{t=t_0}
   = \frac{\Omega_M}{2} - \Omega_\Lambda.
@@ -926,8 +886,7 @@ $\hat\Omega_\Lambda = 0.72$):
 \begin{equation}\label{eq:q0_num}
   \hat q_0 = \frac{0.28}{2} - 0.72 = 0.14 - 0.72 = \mathbf{-0.58}.
 \end{equation}
-Since $\hat q_0 < 0$, the universe is accelerating: the rate of
-expansion is increasing.  The transition from deceleration to
+The universe is accelerating.  The transition from deceleration to
 acceleration occurred at the redshift $z_t$ satisfying
 $\Omega_M(1+z_t)^3 = 2\Omega_\Lambda$, which gives
 \begin{equation}\label{eq:zt}
@@ -943,9 +902,8 @@ $z_t \approx 0.46$ (accounting for parameter revisions from later CMB data).
 
 \subsection{The Residual Hubble Diagram}
 
-The key observational diagnostic is the \emph{residual Hubble diagram}:
-the difference between observed distance moduli and those predicted by
-the best-fit matter-only open model.  Define
+The residual Hubble diagram is the difference between observed distance
+moduli and those predicted by the best-fit matter-only open model.  Define
 \begin{equation}\label{eq:Deltamu}
   \Delta\mu_{\rm obs,i} \equiv
   \mu_{\rm obs,i} - \mu^{\rm th}(z_i;\Omega_M=0.3, \Omega_\Lambda=0).
@@ -963,10 +921,8 @@ This observed excess faintness is $\approx 4\sigma$ away from
 $\Delta\mu = 0$ (the null model with $\Omega_\Lambda = 0$), and it matches
 the prediction of the flat $\Lambda$CDM model to within $1\sigma$.
 
-The sign is critical: the supernovae are \emph{fainter} (further away)
-than expected, meaning the universe expanded \emph{more} between then
-and now than a decelerating universe would have.  The dark energy
-``stretched'' space faster than matter alone could have.
+The supernovae are fainter, hence further away, than expected.  The universe
+expanded more between then and now than a decelerating universe would have.
 
 \subsection{Statistical Significance}
 
@@ -974,7 +930,7 @@ For Perlmutter et al.\ (1999):
 \begin{itemize}
   \item $\chi^2_{\rm min}/\nu \approx 1.03$ for the best-fit flat
     model (42 SNe, 2 free parameters after profiling $\mathcal{M}$, so
-    $\nu = 39$ degrees of freedom), indicating a good fit.
+    $\nu = 39$ degrees of freedom).
   \item The no-$\Lambda$ hypothesis ($\Omega_\Lambda = 0$) gives
     $\Delta\chi^2 \approx 10.8$ (1 d.o.f.), corresponding to
     $p < 0.001$, i.e., rejected at $3.3\sigma$.
@@ -987,17 +943,16 @@ For Riess et al.\ (1998), the MLCS method gave:
   \item $q_0 < 0$ at $3.0\sigma$ confidence using the MLCS method
     (``golden'' + all-high-$z$ sample).
   \item $q_0 < 0$ at $2.8\sigma$ using the template-fitting method.
-  \item The two methods' agreement across independent analysis pipelines
-    was cited as key evidence that the result was not an artifact of the
-    MLCS standardization.
+  \item The two methods agreed across independent analysis pipelines, so the
+    result is not an artifact of the MLCS standardization.
 \end{itemize}
 
 %======================================================================
 \section{Comparing the Two Teams}
 \label{sec:twogroups}
 
-Table~\ref{tab:comparison_teams} summarises the key differences and
-agreements between the two groups.
+Table~\ref{tab:comparison_teams} summarises the differences and agreements
+between the two groups.
 
 \begin{table}[ht]
 \centering
@@ -1033,14 +988,11 @@ $q_0$ significance & $q_0<0$ at $3.0\sigma$ &
 \end{tabular}
 \end{table}
 
-The agreement between the teams is striking: different telescopes,
-different observing strategies, different standardization algorithms,
-different statistical analysis packages---yet the best-fit
-$\hat\Omega_M$ agrees to two significant figures.  This is the
-supernova analogue of the universality test in the photoelectric
-problem: just as Millikan showed that sodium and lithium yield the
-same slope $h/e$ to 0.2\%, the two supernova teams' analyses yield
-the same $\hat\Omega_M$ to 0\%.
+The teams used different telescopes, observing strategies,
+standardization algorithms, and statistical analysis packages.  Their
+best-fit $\hat\Omega_M$ agree to two significant figures.  Millikan's
+sodium and lithium slopes agreed to 0.2\%; the two supernova teams'
+$\hat\Omega_M$ agree more closely than that.
 
 %======================================================================
 \section{Epistemic Scepticism and Robustness Tests}
@@ -1088,13 +1040,7 @@ The principal alternative explanations advanced were:
     bias was found to be negligible compared to the acceleration signal for
     their survey depths.
 \end{enumerate}
-Taken together, these tests constitute a battery of specification checks
-analogous to Millikan's tests of his photoelectric regression: the
-sensitivity analysis over multiple spectral lines, the cross-metal
-universality test, and the monitoring of contact EMF showed that his
-slope estimate was not an artifact of any one experimental decision.
-The supernova teams performed the analogous battery of robustness checks,
-and the acceleration signal survived all of them.
+The acceleration signal survived all of these checks.
 
 \subsection{CMB and Large-Scale Structure Evidence}
 
@@ -1105,17 +1051,12 @@ confirmed that the total energy density satisfies $\Omega_{\rm tot}
 \approx 1$ (flat universe).  Combined with Hubble-constant and
 large-scale-structure constraints that independently fix $\Omega_M \approx
 0.3$, this independently implies $\Omega_\Lambda \approx 0.7$---consistent
-with the supernova result at the 1\% level.  The
-cross-disciplinary confirmation removed the last serious statistical
-doubt about the reality of cosmic acceleration.
+with the supernova result at the 1\% level.
 
 By 2020 the Planck satellite's CMB measurements \citep{Planck2020}
 had raised the precision on $\Omega_\Lambda$ to the sub-percent level,
 confirming the 1998--1999 supernova estimates with more than $100\sigma$
-evidence against $\Omega_\Lambda = 0$.  The regression confirmed by
-Riess, Schmidt, and Perlmutter in 1998--1999 was thus, like Millikan's
-1916 measurement, the beginning of a decades-long program of precision
-parameter estimation, not its end.
+evidence against $\Omega_\Lambda = 0$.
 
 %======================================================================
 \section{The Physicists as Machine Learners}
@@ -1126,16 +1067,13 @@ parameter estimation, not its end.
 The vocabulary of modern machine learning---supervised learning, hypothesis
 class, loss function, inductive bias, feature engineering, transfer
 learning---did not circulate in the astrophysics community of the 1990s.
-Yet the structure of the two teams' reasoning maps onto it with the same
-precision as Einstein's 1905 reasoning in the photoelectric case.
-This section makes the correspondence explicit.
+The two teams' reasoning maps onto it as Einstein's 1905 reasoning does.
+This section states the correspondence.
 
 \subsection{The Hypothesis Class}
 
-In statistical learning theory, the hypothesis class $\mathcal{H}$ is the
-set of functions the learner considers.  The Friedmann equations and the
-definition of luminosity distance fix the hypothesis class for the supernova
-problem:
+The Friedmann equations and the definition of luminosity distance fix the
+hypothesis class for the supernova problem:
 \begin{equation}\label{eq:hyp_class}
   \mathcal{H} = \bigl\{
     m_B \mapsto \mathcal{M} + 5\log_{10}\tilde d_L(z;\Omega_M,\Omega_\Lambda)
@@ -1146,9 +1084,9 @@ problem:
   \bigr\}.
 \end{equation}
 This is a three-parameter family of smooth curves on the $(z,\,m_B)$ plane.
-The \emph{inductive bias} is enormous: without the Friedmann equations,
-the space of possible $m_B(z)$ functions is infinite-dimensional; with them,
-it collapses to three real numbers $({\mathcal M}, \Omega_M, \Omega_\Lambda)$.
+Without the Friedmann equations the space of possible $m_B(z)$ functions is
+infinite-dimensional; with them it collapses to the three real numbers
+$({\mathcal M}, \Omega_M, \Omega_\Lambda)$.
 
 The theoretical restriction to $\mathcal{H}$ was not arbitrary.  It follows
 deductively from three independent bodies of physics:
@@ -1164,17 +1102,11 @@ The Friedmann hypothesis class was well-motivated, not curve-fitted.
 
 \subsection{Feature Engineering: The Phillips Width--Luminosity Relation}
 
-Every machine learning pipeline begins with feature engineering:
-choosing the input representation for the learning algorithm.
-Raw photometry of Type~Ia supernovae involves hundreds of photometric
-measurements at different epochs and wavelengths.  The key insight
-of \citet{Phillips1993}---that the \emph{post-peak decline rate}
-$\Delta m_{15}$ encodes the peak luminosity---reduced this
-high-dimensional representation to a one-dimensional correction.
-
-This is directly parallel to Lenard's discovery that the \emph{frequency}
-$\nu$, not the intensity~$I$, determines the stopping potential.
-Without the Phillips relation:
+Raw photometry of Type~Ia supernovae involves hundreds of measurements at
+different epochs and wavelengths.  \citet{Phillips1993} found that the
+post-peak decline rate $\Delta m_{15}$ predicts the peak luminosity, which
+reduces that high-dimensional representation to a one-dimensional
+correction.  Without the Phillips relation:
 \begin{itemize}
   \item Type~Ia scatter is $\approx 0.4$~mag, yielding SNR $\approx 1$
     per supernova.  With 40 high-$z$ events, the acceleration signal
@@ -1184,10 +1116,9 @@ Without the Phillips relation:
     the same 40 events achieve SNR $\approx 2.7\sigma$ per independent
     combination, and the full analysis reaches $>3\sigma$.
 \end{itemize}
-The Phillips relation is the \emph{key feature transformation} that made the
-discovery possible.  A data-driven learner given raw light curves without
-the luminosity--width insight would face a much harder task of extracting
-the right feature representation from the data alone.
+The Phillips relation is the feature transformation that made the discovery
+possible.  A data-driven learner given raw light curves would have to extract
+that representation from the data alone.
 
 \subsection{Training Data and Generalisation}
 
@@ -1198,9 +1129,8 @@ $\mathcal{M}$ (and, via $H_0$, the absolute magnitude $M_B$).
 
 The \emph{test data}---the supernovae that contribute most of the
 cosmological information---were the high-$z$ events at $z = 0.3$--$0.8$.
-The key ``generalisation'' step was that the MLCS or stretch
-standardization learned from low-$z$ supernovae was \emph{applied
-unchanged} to high-$z$ events.  Specifically:
+Both teams applied the MLCS or stretch standardization learned from
+low-$z$ supernovae unchanged to the high-$z$ events.
 \begin{itemize}
   \item The HZT's MLCS templates and the coefficient $\eta = 0.91$~mag
     were learned from low-$z$ training data and then used to correct
@@ -1216,11 +1146,9 @@ both teams found that the optical spectra of high-$z$ events were,
 within measurement uncertainty, identical to those of low-$z$ events
 of the same light-curve shape.
 
-The cross-$z$ universality of the shape--luminosity relation is the
-supernova analogue of the cross-metal universality of the slope
-$\hat\beta = h/e$ in the photoelectric problem.  Both are universality
-constraints that reduce the effective degrees of freedom and make the
-inference tractable with a small sample.
+The cross-$z$ universality of the shape--luminosity relation reduces the
+effective degrees of freedom and makes the inference tractable with a small
+sample.
 
 \subsection{Model Selection: Accelerating versus Decelerating Universes}
 
@@ -1246,15 +1174,12 @@ evidence for the dark-energy model.
 \subsection{The Deductive-Inductive Loop}
 
 Table~\ref{tab:loop} translates the supernova discovery into the language
-of modern machine learning, directly paralleling the photoelectric episode
-in Table~3 of \citet{Riess1998}.
+of modern machine learning.
 
 \begin{table}[ht]
 \centering
 \caption{The hypothetico-deductive loop in the supernova episode,
-translated into the language of modern machine learning.  Compare the
-analogous table for the photoelectric effect in
-\citep[Table~3]{Riess1998}.}
+translated into the language of modern machine learning.}
 \label{tab:loop}
 \begin{tabular}{p{3.6cm}p{4.0cm}p{4.0cm}}
 \toprule
@@ -1307,8 +1232,7 @@ an $n=O(20)$ dataset with $\sigma_{\rm noise} \approx 0.4$~mag.
 With $n = 20$ and $p = 593$, the DNN is massively overparameterised.
 Gradient descent finds a minimum-norm interpolant that passes through
 all 20 training points but is unconstrained between them
-\citep{Belkin2019}.  Applied to high-$z$ test points, it would produce
-meaningless predictions.
+\citep{Belkin2019}.
 
 \paragraph{Loss of the discrimination.}
 The cosmological signal is $\approx 0.25$~mag at $z \approx 0.5$---
@@ -1342,7 +1266,7 @@ high-$z$ observations to pin it down.
 \subsection{Epoch III: The 1998--1999 Discovery Datasets}
 
 The SCP's 42-SN and HZT's 50-SN samples are the operative training sets
-for the discovery.  What can a DNN learn from them?
+for the discovery.
 
 \paragraph{Overfitting in the interpolation regime.}
 With $n = 42$ and $p = 593$, the DNN still operates in the interpolation
@@ -1353,25 +1277,23 @@ physically meaningful separation $\hat q_0 = -0.58$ from the overfit
 weights.
 
 \paragraph{No Cramér-Rao bound.}
-The cosmological analysis produced confidence ellipses via
-$\Delta\chi^2$ contours, which are valid because the Friedmann model
-reduces the fit to $n - 3 = 39$ degrees of freedom.  A DNN has no
+The cosmological analysis produced confidence ellipses from
+$\Delta\chi^2$ contours; the Friedmann model reduces the fit to
+$n - 3 = 39$ degrees of freedom.  A DNN has no
 analogue: because its residuals are zero by construction (interpolation),
 there is no estimate of $\sigma_{\rm int}$, no prediction interval,
-and no confidence surface over $(\Omega_M, \Omega_\Lambda)$.  The DNN
-\emph{cannot} reproduce the central scientific outcome, the error bars.
+and no confidence surface over $(\Omega_M, \Omega_\Lambda)$.
 
 \paragraph{No physical interpretation of weights.}
 Even if the DNN happened to learn a curve close to $\mu(z;0.28,0.72)$,
 the weights of the network would not decompose into $(\hat\Omega_M,
 \hat\Omega_\Lambda)$.  The connection between the learned function and
-the deceleration parameter $q_0 = \Omega_M/2 - \Omega_\Lambda$ would
-be entirely opaque; there is no mechanism by which the DNN could report
-$\hat q_0 = -0.58$ and assign it a physical meaning.
+the deceleration parameter $q_0 = \Omega_M/2 - \Omega_\Lambda$ would be
+opaque.
 
 \subsection{The Modern Era: Large Supernova Compilations}
 
-By the 2010s, supernova compilations exceeded $n = 1{,}000$ events
+By the 2010s, supernova compilations reached several hundred events
 (e.g., \citealt{Conley2011}, Joint Light-Curve Analysis).  In this
 regime a DNN with appropriate architecture and regularisation could,
 in principle, learn the shape of $\mu(z)$ from the data alone and
@@ -1400,7 +1322,7 @@ Friedmann model and a DNN at each epoch of the supernova program.
 \centering
 \caption{Sample-complexity comparison between the three-parameter
 Friedmann model (VC dimension $= 3$) and a three-layer DNN
-($p = 593$ parameters, VC dim $\approx 5{,}900$).  ``Sufficient $n$''
+($p = 593$ parameters, VC dim $\approx 5{,}700$).  ``Sufficient $n$''
 for $\approx 1\sigma$ determination of $q_0$ at 95\% confidence is
 $O(\text{VC dim}/\epsilon^2)$ for the DNN; 3 for the Friedmann model
 (one more than the number of free parameters).}
@@ -1408,7 +1330,7 @@ $O(\text{VC dim}/\epsilon^2)$ for the DNN; 3 for the Friedmann model
 \begin{tabular}{p{2.6cm}rp{2.4cm}p{2.4cm}p{3.8cm}}
 \toprule
 Epoch & $n$ available & Friedmann model & DNN
-  (VC$\approx 5900$) & DNN outcome \\
+  (VC$\approx 5700$) & DNN outcome \\
 \midrule
 Pre-Phillips (before 1993) & $\sim 20$ raw & Insufficient$^\dagger$
   & Insufficient & Cannot detect signal (noise $> $ signal) \\
@@ -1427,15 +1349,14 @@ Modern era 2020s & $\sim 2000$ & Sufficient
 \end{tabular}
 \end{table}
 
-The lesson is precisely that of the photoelectric episode.  Einstein
-reduced an infinite-dimensional function-learning problem to a
-two-parameter line-fitting problem by proposing the quantum hypothesis.
-Friedmann, Einstein, and the cosmological principle jointly reduced the
-supernova distance-magnitude relationship to a three-parameter curve,
-and Phillips reduced the scatter enough to make that curve measurable
-from $\approx 40$ events.  In both cases, the theorists' contribution
-was to specify the \emph{smallest useful hypothesis class}; data then
-constrained the free parameters within it.
+The photoelectric episode has the same structure.  Einstein's quantum
+hypothesis reduced an infinite-dimensional function-learning problem to a
+two-parameter line-fitting problem.  Friedmann's equations and the
+cosmological principle reduced the supernova distance-magnitude relation to a
+three-parameter curve, and Phillips reduced the scatter enough to make that
+curve measurable from $\approx 40$ events.  In both cases the theorists
+specified the smallest useful hypothesis class; the data then constrained the
+free parameters within it.
 
 %======================================================================
 \section{Conclusions}
@@ -1474,41 +1395,16 @@ $\Omega_\Lambda \approx 0.72$---give:
            \quad (\text{dark energy confirmed by both teams}).
 \end{align*}
 
-The episode illustrates three principles that echo the photoelectric story:
-\begin{enumerate}
-  \item \textbf{Theory specifies the hypothesis class.}  Without the
-    Friedmann equations, the supernova $m_B$--$z$ relation is a
-    free function of an unconstrained smooth curve.  With them, it is a
-    two-parameter shape labelled by $(\Omega_M,\Omega_\Lambda)$, and
-    $\approx 40$ supernovae suffice for a $3\sigma$ measurement of those
-    parameters.  A purely data-driven DNN would need $O(10^3)$ examples
-    to approach the same shape accuracy, and still could not extract
-    $q_0$.
-  \item \textbf{Feature engineering is the binding constraint.}  The
-    Phillips width--luminosity relation---not the telescopes, not the
-    teams' computing resources---was the key innovation that transformed
-    Type~Ia supernovae from noisy candles into precision distance
-    indicators.  Like Lenard's discovery that frequency (not intensity)
-    controls the photoelectric stopping potential, the Phillips relation
-    selected the right feature and discarded the wrong ones.
-  \item \textbf{Confirming a regression curve is not the same as
-    explaining dark energy.}  Riess, Schmidt, and Perlmutter confirmed
-    $\Omega_\Lambda \approx 0.72$ by measuring the curvature of the
-    Hubble diagram; they did not explain what dark energy is.  The
-    cosmological constant remains, in Weinberg's
-    \citeyearpar{Weinberg1989} phrase, one of the deepest unsolved
-    problems in physics.  Millikan confirmed $h/e$ to 0.5\% without
-    explaining why light consists of quanta; the supernova teams confirmed
-    $\Omega_\Lambda$ to 10\% without explaining why the vacuum has the
-    energy density it does.  In both cases the regression confirmed a
-    number; the interpretation of that number remained---and remains---
-    an open problem.
-\end{enumerate}
+Riess, Schmidt, and Perlmutter measured the curvature of the Hubble diagram
+and found $\Omega_\Lambda \approx 0.72$.  They did not explain what dark
+energy is.  The cosmological constant remains, in Weinberg's
+\citeyearpar{Weinberg1989} phrase, one of the deepest unsolved problems in
+physics.
 
 %======================================================================
 \appendix
 
-\section{The Deceleration Parameter and the Second Accelerates Equation}
+\section{The Deceleration Parameter and the Second Friedmann Equation}
 \label{app:q0}
 
 The deceleration parameter $q_0$ follows from the second Friedmann equation.
@@ -1555,9 +1451,7 @@ constrain $q_0$: the cosmological information is concentrated in the
 second-order term, which first becomes measurable for $z \gtrsim 0.3$.
 
 The expansion also shows that the optimal experimental design places
-supernovae far into the nonlinear regime $z > 0.3$---the supernova
-analogue of Millikan's insight that a wide frequency range
-minimises $\operatorname{SE}(\hat\beta)$ in the photoelectric regression.
+supernovae far into the nonlinear regime $z > 0.3$.
 
 \section{The Low-Temperature Equation of State and Dark Energy}
 \label{app:eos}
