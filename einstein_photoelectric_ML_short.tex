@@ -1,0 +1,643 @@
+% einstein_photoelectric_ML_short.tex
+% Short newsletter version of einstein_photoelectric_ML.tex
+% Thomas J. Sargent, 2026
+
+\documentclass[11pt]{article}
+
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage[margin=1.15in]{geometry}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{natbib}
+\usepackage{parskip}
+
+\hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue}
+
+\title{Five Data Points and a Constant of Nature\\[2pt]
+       \large Einstein's Photoelectric Equation as a Regression, 1905--1916}
+\author{Thomas J.\ Sargent\thanks{%
+  This paper is one of five that read episodes in the
+  history of physics and astronomy as exercises in statistical inference and
+  machine learning.  \citet{sargent2025sources} sets out the theme: what is
+  now called artificial intelligence names practices that scientists have used
+  for centuries.  The other four treat Kepler and Newton, Pauli's exclusion principle, the
+  exoplanet discovery of Mayor and Queloz, and the accelerating universe of
+  Riess, Schmidt and Perlmutter.}}
+\date{March 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+In 1905 Einstein wrote down a linear equation relating a measurable voltage to
+the frequency of light, with a slope fixed in advance by Planck's blackbody
+constant.  In 1916 Millikan measured the slope with five observations and got
+it right to under one percent.  I run the regression, price its standard
+error, and ask why so few observations sufficed.  The answer is that the
+physics had already fixed the functional form, the number of free parameters,
+and the units of the slope.  A learner starting from the data alone would have
+needed thousands of observations and would still not have known what it had
+found.  A shorter lesson also emerges: the regression settled the equation and
+not the physics behind it, and the physics waited another sixty years for a
+different measurement.  A longer version of this note carries the derivations
+and the full data.
+\end{abstract}
+
+%======================================================================
+\section{The Setup}
+
+In December 1900 Max Planck introduced the energy quantum $h\nu$ to fit the
+blackbody spectrum.  He called the step ``an act of desperation.''  Five years
+later Einstein borrowed the quantum and applied it to a second phenomenon.
+
+Shine light on a metal in a vacuum and electrons come off.  Apply a retarding
+voltage and you can stop them.  The voltage that just stops the fastest
+electron is the \emph{stopping potential} $V_0$.  Einstein proposed that light
+arrives in discrete quanta of energy $h\nu$, that one quantum is absorbed by
+one electron, and that the electron escapes if $h\nu$ exceeds the energy $W$
+binding it to the metal.  Energy conservation then gives
+\begin{equation}\label{eq:einstein}
+  V_0 = \frac{h}{e}\,\nu - \frac{W}{e},
+\end{equation}
+where $e$ is the electron's charge.  A line.  Slope $h/e$, intercept $-W/e$.
+
+Three features of \eqref{eq:einstein} would interest anyone who estimates
+equations for a living.
+
+The slope is a universal constant.  It does not depend on which metal you use.
+Every metal must lie on a line of the same gradient, differing only in
+intercept.  Economists will recognise a cross-equation restriction: one deep
+parameter is required to appear identically in the reduced form of every
+experiment.
+
+The slope was known before the experiment.  Planck had already fitted $h$ to
+the blackbody spectrum.  Einstein's equation therefore made a prediction with
+no free parameter to adjust, which is a rarer thing than a good fit.
+
+The intercept is contaminated.  Between the metal emitting the electrons and
+the electrode collecting them sits a contact electromotive force $v_c$, a
+voltage difference of purely instrumental origin.  It could reach 3 volts,
+comparable to the stopping potentials themselves, and it drifted with surface
+age and adsorbed gas.  It enters the observed reading additively:
+\begin{equation}\label{eq:obs}
+  V_0^{\rm obs} = \underbrace{-W/e - v_c}_{\text{intercept}}
+    + \frac{h}{e}\,\nu + \varepsilon .
+\end{equation}
+A nuisance parameter that shifts the level and leaves the slope alone.  The
+slope is identified from variation in $\nu$; the intercept is not identified
+without an independent measurement of $v_c$.
+
+One more thread runs out of the 1905 paper, and it took twenty years to
+surface.  Einstein's route to the light quantum was thermodynamic.  He showed that in one regime the entropy of
+radiation depends on volume as the entropy of an ideal gas of $n$ independent
+particles does.  He inferred that radiation behaves, for those purposes, as a
+collection of independent localised quanta.  The step
+from there to treating the classical wave intensity as a probability density
+for finding a quantum came later, in the 1920s, when Einstein called the wave
+a \emph{Gespensterfeld}, a ghost field guiding probabilities without carrying
+energy.  Max Born generalised the idea from photons to the Schr\"odinger wave
+function in 1926 \citep{Born1926} and made it the interpretive core of quantum
+mechanics.  Einstein won the 1921 Nobel Prize for the photoelectric equation.
+Born won the 1954 Prize for the probabilistic reading that the equation's
+underlying picture had suggested.  Einstein spent the rest of his life
+opposing it.
+
+\subsection*{The harder case, in the note that follows}
+
+The note that follows applies this anatomy to the discovery of cosmic
+acceleration by Riess, Schmidt and Perlmutter in 1998.  General relativity
+fixes the functional form there, in place of the quantum hypothesis.  A
+combination of the Hubble constant and the supernovae's absolute magnitude
+plays the part of Millikan's contact voltage, shifting the level of the
+diagram and leaving its shape alone.  The fit again settles a functional form
+without settling the physics behind it.
+
+The photoelectric case is the easy one, and worth taking first for that
+reason.  Millikan wanted a single number, and removing the nuisance parameter
+left that number identified.  The Friedmann model has two shape parameters.  Removing the nuisance
+parameter there leaves them entangled with each other, and the second note
+takes up what becomes of identification when it does.
+
+%======================================================================
+\section{Why It Took Eleven Years}
+
+Einstein's equation was published in 1905 and confirmed in 1916.  The delay
+was not a failure of statistics.  Three groups tried in between and got
+answers scattered over a factor of two.
+
+\citet{Hughes1913} used three ultraviolet lines spanning 69 nanometres and
+about a dozen metals, and reported values of $h$ ranging from
+$3.55$ to $5.85 \times 10^{-27}$ erg$\cdot$s.  \citet{RichardsonCompton1912}
+measured eight metals and did no better.  Every pre-1916 estimate was low by
+between 12 and 47 percent.
+
+A discrepancy of that size is not sampling error.  Three systematic
+mechanisms produced it.  Stray short-wavelength light raised the apparent
+$V_0$ at long-wavelength lines and flattened the slope.  Contact potentials
+drifted between sessions, contaminating observations one at a time instead of
+shifting a common intercept.  And the frequency range was too narrow, which
+inflated the standard error and left the estimate hostage to a single bad
+line.
+
+Only the third of these is a statistical problem.  Estimation theory cannot
+repair the other two after the fact.
+
+Robert Millikan spent a decade building an apparatus that removed all three.
+An electromagnetically driven knife shaved a fresh sodium surface inside the
+vacuum.  Filters passed only mercury-arc lines with no short-wavelength
+companions.  A Kelvin double-balance monitored $v_c$ continuously.  And the
+spectral lines spanned 293 nanometres rather than 69.
+
+%======================================================================
+\section{The Regression}
+
+Millikan's sodium data, corrected for the contact EMF he measured
+independently, are in Table~\ref{tab:data}.
+
+\begin{table}[ht]
+\centering
+\caption{Millikan's sodium stopping potentials, corrected for a contact EMF
+of $2.51$~V measured by the Kelvin method.  Five of the six values are
+reconstructions read off the line Millikan fitted to his Figure~5 and rounded
+to three decimals; only the 2535~\AA\ entry is a directly printed figure.}
+\label{tab:data}
+\medskip
+\begin{tabular}{rrr}
+\toprule
+$\lambda$ (\AA) & $\nu$ ($10^{14}$ Hz) & $V_0$ (V) \\
+\midrule
+5461 &  5.490 & 0.454 \\
+4339 &  6.908 & 1.039 \\
+4047 &  7.409 & 1.246 \\
+3650 &  8.213 & 1.578 \\
+3126 &  9.591 & 2.147 \\
+2535 & 11.827 & 3.030 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Ordinary least squares on the first five points gives
+\begin{equation}\label{eq:fit}
+  \hat\beta = \frac{S_{\nu V}}{S_{\nu\nu}} = \frac{3.830}{9.277}
+    = 4.128\times10^{-15}~\text{V}\cdot\text{s},
+  \qquad \hat\alpha = -1.813~\text{V},
+\end{equation}
+where $S_{\nu\nu} = \sum_i (\nu_i - \bar\nu)^2$ measures how widely the
+frequencies are spread and $S_{\nu V} = \sum_i (\nu_i - \bar\nu)(V_{0i} -
+\bar V_0)$ their covariation with the voltages.  $S_{\nu\nu}$ carries the whole
+design argument of Section~\ref{sec:design}.
+
+The residuals from this fit are all smaller than a quarter of a millivolt,
+forty times below Millikan's stated reading precision of $\pm10$~mV.  That is
+not evidence of a very precise experiment.  The reconstruction noted in
+Table~\ref{tab:data} produced it.  Five of these numbers were read off a
+fitted line and rounded to three decimals, so the residuals measure
+rounding.  Taken at face value they give a
+relative standard error of $0.0015\%$, three hundred times finer than Millikan
+himself claimed.
+
+The defensible procedure takes $\sigma$ from the instrument rather than from
+the residuals.  Millikan's balance points were reproducible to about
+$10$~mV, and
+\begin{equation}\label{eq:se}
+  \mathrm{SE}(\hat\beta) = \frac{\sigma}{\sqrt{S_{\nu\nu}}}
+  = \frac{0.010}{\sqrt{9.277}\times10^{14}} = 3.3\times10^{-17}~
+  \text{V}\cdot\text{s},
+\end{equation}
+a relative uncertainty of $0.8\%$ for the five-line design and $0.5\%$ for the
+six-line design.
+
+Millikan also determined the slope nine separate times, pairing one spectral
+line with 5461~\AA\ in nine sessions with a freshly shaved surface each time.
+Those nine values are genuine replications.  Their mean is
+$4.131\times10^{-15}$, their standard deviation $0.087$, and the standard
+error of the mean $0.029$, or $0.71\%$.
+
+Two routes, one from replication and one from the information matrix, agree to
+within a tenth of a percent.  That agreement, and not the spurious $0.0015\%$,
+is what the uncertainty on $h$ rests on.
+
+\subsection*{The cross-metal restriction}
+
+Because $h/e$ is universal, every metal must give the same slope.  Millikan
+also ran lithium.  Fitting five lithium lines gives
+$\hat\beta_{\rm Li} = 4.127\times10^{-15}$, differing from the sodium slope by
+$0.04\%$.  Pooling the two metals with a common slope and separate intercepts
+gives $4.127\times10^{-15}$ with a standard error of $0.49\%$, since pooling
+enlarges $S_{\nu\nu}$ in the same way that adding the sixth sodium line does.
+The Wald statistic for equality of the two slopes is $0.04$.
+
+The restriction is not rejected, and it would be a mistake to call that a
+confirmation.  The test has little power.  With a standard error of $0.8\%$ on
+each slope it would fail to reject differences of up to about $2\%$, so it
+excludes only gross violations.  More seriously, four of the five lithium
+entries in Millikan's table are the sodium entries shifted by a constant
+$0.540$~V, and a constant shift leaves the slope unchanged by construction.
+The near-zero test statistic reflects the arithmetic as much as the physics.
+Millikan established that the two metals' curves were parallel at his stated
+precision, which is how he put it.
+
+%======================================================================
+\section{Design Beats Sample Size}
+\label{sec:design}
+
+Under Gaussian errors, maximising the likelihood and minimising the sum of
+squared residuals are the same operation, so the least-squares estimates in
+\eqref{eq:fit} are also maximum likelihood estimates.  The Fisher information
+for $(\alpha,\beta)$ is $\sigma^{-2}X^\top X$, and inverting it gives the
+Cram\'er--Rao bound on the variance of any unbiased estimator of the slope,
+\begin{equation}\label{eq:crb}
+  \operatorname{Var}(\tilde\beta) \;\geq\; \frac{\sigma^2}{S_{\nu\nu}},
+  \qquad S_{\nu\nu} = \sum_i (\nu_i - \bar\nu)^2 ,
+\end{equation}
+which least squares attains exactly.  Nothing can do better.
+
+Equation \eqref{eq:crb} is a statement about the \emph{design} and not about
+the readings.  $S_{\nu\nu}$ depends only on which spectral lines the
+experimenter chose.  Spreading the frequencies apart shrinks the bound.
+Collecting more readings at the same frequencies does much less.
+
+\begin{table}[ht]
+\centering
+\caption{Effect of the frequency range on the standard error of $h/e$, holding
+the instrumental $\sigma = 10$~mV fixed.  The narrow window is the closest
+analogue Millikan's line set permits to the bands available to Hughes and to
+Richardson \& Compton.}
+\label{tab:design}
+\medskip
+\begin{tabular}{lccrr}
+\toprule
+Design & $n$ & Span (nm) & $S_{\nu\nu}$ ($10^{28}$ Hz$^2$) & Rel.\ SE \\
+\midrule
+Narrow (4047--3126 \AA)        & 3 & 92  & 2.44  & 1.55\% \\
+Millikan 5-point               & 5 & 234 & 9.28  & 0.79\% \\
+Millikan 6-point               & 6 & 293 & 24.72 & 0.49\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Going from three lines to six cuts the standard error by a factor of three,
+and almost all of the gain comes from the wider span rather than from the
+extra observations.  The point generalises past photoelectrics.  Where a parameter
+is identified by variation in a regressor, the design of that variation
+dominates the sample size.
+
+The sixth line illustrates the cost of the same strategy.  Adding the
+2535~\AA\ point, the only directly quoted number in the table, moves the slope
+to $4.070\times10^{-15}$, $1.4\%$ down.  It sits $0.04$~V below the five-point
+line, and its extreme frequency gives it the highest leverage.  Millikan
+attributed the deficit to scattered ultraviolet light and dropped the line
+from his primary determination.  The observation that contributes most to
+$S_{\nu\nu}$ is also the one most exposed to systematic error.
+
+%======================================================================
+\section{The Prediction}
+
+Converting the slope to Planck's constant needs the electron charge.  With the
+value Millikan had measured himself, $e = 1.592\times10^{-19}$~C, the
+five-point slope gives $h = 6.573\times10^{-34}$~J$\cdot$s, low by $0.81\%$
+against the modern defined value.  With the modern $e$ it gives
+$6.616\times10^{-34}$, low by $0.17\%$.  Millikan's error came from his
+oil-drop charge, which was too small by $0.64\%$, and not from the
+photoelectric slope his 1916 apparatus was built to measure.
+
+The sharper test does not involve the modern value at all.  Planck had fitted
+$h = 6.55\times10^{-27}$~erg$\cdot$s to the blackbody spectrum in 1901.  With
+Millikan's own $e$, that predicts a slope
+\begin{equation}\label{eq:pred}
+  \left(\frac{h}{e}\right)_{\rm predicted}
+  = \frac{6.55\times10^{-34}}{1.592\times10^{-19}}
+  = 4.114\times10^{-15}~\text{V}\cdot\text{s}.
+\end{equation}
+Millikan measured $4.128\times10^{-15}$.  The two agree to $0.35\%$, inside
+the $0.8\%$ standard error.
+
+No photoelectric measurement entered the prediction.  Planck fitted $h$ to a
+different phenomenon fifteen years earlier.  Einstein derived the slope in
+1905.  Millikan measured it in 1916.  The regression had one free parameter,
+the intercept, and it was not the one being tested.
+
+Both 1916-era constants were too small, and the errors partly cancel in the
+ratio.  Planck's $h$ was low by $1.15\%$ and Millikan's $e$ by $0.64\%$, so
+the predicted slope was low by $0.52\%$ and the measured slope by $0.17\%$.
+Against modern constants the comparison is $4.128$ against $4.136$.
+
+%======================================================================
+\section{The Equation Is Still in Service}
+
+Equation \eqref{eq:einstein} did not become a historical curiosity.
+Laboratories with no interest in Planck's constant read it backwards every
+day.
+
+In X-ray photoelectron spectroscopy the incident photon energy is known and
+the measured electron energy identifies the binding energy of the core
+electron the photon knocked loose:
+\begin{equation}\label{eq:xps}
+  E_B = h\nu - eV_0 - \phi_{\rm spec},
+\end{equation}
+where $\phi_{\rm spec}$ is an instrument calibration constant.  That is
+\eqref{eq:einstein} rearranged, with a different unknown.  Because every
+element has its own set of core-level binding energies, the technique reads
+the elemental composition of a surface directly.  Kai Siegbahn received the
+1981 Nobel Prize for it \citep{Siegbahn1967}, and it is now standard in
+semiconductor fabrication, catalysis and materials science.  Ultraviolet
+photoelectron spectroscopy and Kelvin probes apply the same equation to
+measure work functions of semiconductor films and photovoltaic layers to a few
+meV.
+
+Einstein's equation survives in quantum electrodynamics unchanged, as the
+energy balance for the fastest photoelectron: the electron that starts at the
+Fermi level and reaches the detector without inelastic loss.  The balance is exact.  The measured
+spectrum is not.  A real metal broadens the emission
+edge thermally, the work function belongs to a crystal face and its adsorbate
+layer rather than to an element, and final-state relaxation shifts core levels
+by amounts that matter at spectroscopic precision.  Millikan's residual
+scatter came from the surface physics.  The energy balance was never the
+problem.
+
+%======================================================================
+\section{The Man Who Confirmed It Did Not Believe It}
+
+Millikan's 1916 paper confirmed Einstein's equation to better than one
+percent.  In the same paper he wrote:
+\begin{quote}
+  ``Despite then the apparently complete success of the Einstein equation, the
+  physical theory of which it was designed to be the symbolic expression is
+  found so untenable that Einstein himself, I believe, no longer holds to
+  it.'' \citep[p.\ 388]{Millikan1916}
+\end{quote}
+
+He had built the apparatus hoping to \emph{refute} the equation.  The
+light-quantum hypothesis struck him as physically impossible, since a stream of
+localised lumps could not diffract or interfere, and diffraction and
+interference were not in doubt.  He got the opposite of what he expected and
+published it anyway, with the interpretation disowned.
+
+The stance is more defensible than it sounds, and it will be familiar to
+anyone who has estimated a reduced form.  Millikan confirmed a predictive
+relationship without endorsing the structural model that generated it.  He was
+right to separate the two, and Section~\ref{sec:limits} shows that he was
+right on the merits as well: the regression really does not establish the
+mechanism.  Where
+he erred was in thinking the equation's success left the hypothesis
+untouched.
+
+Compton scattering \citep{Compton1923} supplied independent evidence for the
+particulate character of light in 1923.  Millikan came to describe his own
+result differently:
+\begin{quote}
+  ``This work resulted, contrary to my own expectation, in the first direct
+  experimental proof \ldots\ of the complete validity of the Einstein
+  equation.''
+\end{quote}
+\noindent The sentence belongs to his later retrospective writing rather than
+to the Nobel lecture he delivered in 1924.  \citet{Holton1999} and
+\citet{Pais1982} trace how his views moved.
+
+%======================================================================
+\section{Einstein as Machine Learner}
+
+Recast the episode in the vocabulary of statistical learning.  The
+translation is not a conceit.  \citet{sargent2025sources} argues that the
+techniques now gathered under artificial intelligence have long histories
+inside the sciences that used them, and that reading old episodes this way
+shows what the methods can and cannot do.
+
+The \emph{hypothesis class} is the set of functions the estimator is allowed to
+consider.  Einstein's is
+\begin{equation}\label{eq:class}
+  \mathcal{H} = \{ \nu \mapsto \alpha + \beta\nu \},
+\end{equation}
+with $\beta$ shared across metals.  Two free parameters per metal, one shared
+slope, pseudo-dimension two.  The restriction was not a modelling convenience.
+It followed deductively from $E = h\nu$ and energy conservation.  The quantum
+hypothesis \emph{is} the inductive bias.
+
+The \emph{feature selection} was Lenard's.  In 1902 he established that the
+stopping potential does not depend on light intensity and does depend on
+frequency.  Classical wave theory predicted the opposite.  Lenard's experiment
+removed intensity from the feature set before any line was fitted.
+
+The \emph{training} is least squares, and for this class it has a closed form.
+No gradient descent, no learning rate, no early stopping.
+
+Now compare the alternative.  A three-layer network with sixteen ReLU units
+per layer has
+\[
+  p = (1\!\cdot\!16+16)+(16\!\cdot\!16+16)+(16\!\cdot\!16+16)+(16\!\cdot\!1+1)
+    = 593
+\]
+free parameters and a pseudo-dimension near $5{,}500$.  The pseudo-dimension
+is the capacity measure appropriate to real-valued function classes; for a
+linear model it equals the number of free parameters, which is why Einstein's
+class scores two.  The practitioner's rule of thumb, $n \gtrsim 10p$, calls for
+about six thousand training examples.  Millikan had five.
+
+\begin{table}[ht]
+\centering
+\caption{What was available when, against what each approach needs.  The
+network's requirement uses $n \gtrsim 10p$; the formal uniform-convergence
+bound is four orders of magnitude larger and vacuous here.}
+\label{tab:complexity}
+\medskip
+\begin{tabular}{lrll}
+\toprule
+Epoch & $n$ & Einstein's model & Neural network \\
+\midrule
+Lenard 1902   & $\approx 0$ & Sufficient$^\dagger$ & Cannot train \\
+Hughes 1912   & $\sim 30$   & Sufficient & Short by $\times$200 \\
+Millikan 1916 & 5           & Sufficient & Short by $\times$1200 \\
+Modern era    & $\sim 5000$ & Sufficient & Short by $\times$1.2 \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\begin{minipage}{0.85\textwidth}
+\footnotesize $^\dagger$ Theory fixes the functional form; two parameters
+remain to be estimated from data.
+\end{minipage}
+\end{table}
+
+The last row is the interesting one.  Given enough clean observations a
+network would eventually trace out the line.  It would still not identify the
+fitted gradient as the ratio $h/e$ of two independently measured constants of
+nature.  It would still not impose the cross-metal restriction from first
+principles, seeing universality as a coincidence to be discovered rather than
+a constraint to be applied.  And it would not decompose the intercept into a
+work function and an apparatus nuisance, because those two are not separately
+identified without the external Kelvin measurement.
+
+Identification failures of this kind are invisible to a fitting procedure.  The
+regression runs, reports a number, and says nothing about what the number
+means.
+
+Table~\ref{tab:loop} sets the two vocabularies side by side.
+
+\begin{table}[ht]
+\centering
+\caption{The photoelectric episode in two vocabularies.}
+\label{tab:loop}
+\medskip
+\begin{tabular}{p{4.3cm}p{3.6cm}p{4.3cm}}
+\toprule
+Step & Scientific name & Machine-learning name \\
+\midrule
+Propose $E = h\nu$ & Theoretical hypothesis & Model architecture \\
+Derive $V_0 = (h/e)\nu - W/e$ & Deduction & Hypothesis class \\
+Use $\nu$, not intensity & Feature selection & Feature engineering \\
+Measure $(\nu_i, V_{0i})$ & Experiment & Training data \\
+Minimise $\sum \hat\varepsilon_i^2$ & Least squares & Squared-error loss \\
+Slope matches Planck's $h/e$ & Prediction confirmed & Out-of-sample test \\
+Na and Li share a slope & Universality & Parameter tying \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Five points sufficed because the physics had already supplied the functional
+form, the parameter count, and the units of the slope.  Theory does not
+substitute for data.  It compresses how much data you need.
+
+\subsection*{Where the compression runs out}
+
+The compression is not uniform across the parameters, and the intercept shows
+where it fails.  Millikan's fitted intercept implies a sodium work function of
+$-\hat\alpha = 1.81$~eV.  The modern value for clean bulk sodium is $2.36$~eV.
+
+Part of the gap is estimation error.  The intercept extrapolates to $\nu = 0$,
+far outside the observed range, and its standard error is about $0.08$~V at
+$\sigma = 10$~mV, an order of magnitude worse in relative terms than the
+slope's.  The rest is physics.  Millikan's freshly shaved surfaces sat in
+residual gas, and adsorbed gas shifts a metal's work function by several
+tenths of a volt.  The work function also varies by some $0.3$~eV across the
+crystal faces of a single metal.  Sodium has no one work function for the
+intercept to be compared against.
+
+The two coefficients are identified on different terms.  The slope is a
+universal constant, identified by variation within a run, and immune to any
+disturbance common to all the lines.  The intercept is a surface-specific
+quantity, identified by extrapolation, and contaminated by exactly the
+conditions the apparatus could not control.  Einstein's equation is far better
+identified in its slope than in its intercept.  The slope carries the
+physics.
+
+%======================================================================
+\section{What the Regression Could Not Settle}
+\label{sec:limits}
+
+The fit is excellent and the prediction was confirmed.  Neither establishes
+that light is made of photons.
+
+\citet{Lamb1969} showed that equation \eqref{eq:einstein} follows from a
+\emph{semiclassical} model in which the electromagnetic field stays a
+classical wave and only the atom is quantised.  The equation is a statement of
+energy conservation together with quantised \emph{atomic} energy levels.  It
+does not require the radiation field itself to come in lumps.
+
+So Millikan's regression selected a functional form and ruled out a rival
+form.  It could not choose between two physical stories that imply the same
+form.  A model-selection criterion scoring in-sample fit would have reported
+overwhelming evidence and would have been answering a different question from
+the one everyone thought was being asked.
+
+Settling it took a different observable and sixty more years.  The decisive
+evidence is photon \emph{antibunching}: photons from a single quantum emitter
+arrive \emph{less} bunched than Poisson statistics allow.  No classical
+stochastic field can produce sub-Poissonian counts, however it is modulated.
+\citet{Kimble1977} observed the effect in the resonance fluorescence of
+sodium atoms.
+
+The experiment was designed to test field quantisation, and the observable it
+measured, photon-number variance, follows from Glauber's quantum theory of
+optical coherence.  Without that theory nobody would have thought to measure
+photon-number correlations at all.
+
+The photoelectric episode is usually told as a confirmation.  A division of
+labour describes it better.
+
+%======================================================================
+\section{What This Says About AI in the Sciences}
+
+Deep networks are the right tool for problems in which no parsimonious
+parametric family is known.  Image recognition has no closed form.  Neither
+does protein structure prediction, and AlphaFold's achievement was to learn a
+map that six decades of physical modelling had failed to write down.  Neither
+does language.  In each case the hypothesis class is genuinely unknown, the
+input is high-dimensional, and data are abundant.  Learning the function is
+the only available move.
+
+The photoelectric problem sits at the opposite corner of the design space: one
+input, one output, five observations, and a functional form already derived
+from a physical principle.  Nothing about the success of learned models on the
+first class of problem bears on the second.
+
+Two claims often made for AI in the sciences are worth separating against this
+example.
+
+The first is that a sufficiently capable learner can rediscover physical laws
+from data.  In a limited sense this is true and has been demonstrated.
+Symbolic regression systems such as AI Feynman \citep{Udrescu2020} recover the
+functional forms of textbook relations from tabulated data.  But they are
+given the units and the physical constants as inputs, and it is the units that
+let a fitted coefficient be matched to $h/e$ rather than reported as an
+unexplained number.  That hardcoding is prior physical knowledge.  The
+$(\nu, V_0)$ data do not contain it.
+
+The second is that scaling data collection substitutes for theory.  The
+Cram\'er--Rao bound in \eqref{eq:crb} says otherwise, and says it precisely.
+The standard error falls with the \emph{spread} of the regressor, not with the
+count of observations at fixed design.  Millikan could have taken ten thousand
+readings inside the 92-nanometre window and done worse than five readings
+across 293 nanometres.  Deciding where to look is a modelling decision, and
+the model that tells you where to look is the thing being tested.
+
+The sharper limit is the one in Section~\ref{sec:limits}.  Even a perfect fit
+of a correctly
+specified equation to unlimited data would not have settled whether light is
+quantised, because a rival physical theory implies the same equation.  Getting
+that question answered required somebody to prove that the two theories differ
+in photon-number variance, and then somebody to measure photon-number
+variance.  No quantity of $(\nu, V_0)$ pairs contains the answer.  A system
+that optimises fit on the data it is given cannot discover that it is
+measuring the wrong thing.
+
+%======================================================================
+\section{Summary}
+
+Einstein's photoelectric equation is a two-parameter regression whose slope
+was fixed in advance by a constant fitted to an unrelated phenomenon.  Five
+observations measured it to under one percent.  The regression itself is
+trivial; obtaining clean data took a decade of instrument building, and
+widening the range of the regressor mattered more than adding observations.
+The final estimates are
+\[
+  \hat\beta = 4.128\times10^{-15}~\text{V}\cdot\text{s} \pm 0.8\%,
+  \qquad
+  h = 6.62\times10^{-34}~\text{J}\cdot\text{s},
+  \qquad
+  W_{\rm Na}/e = 1.81~\text{eV}.
+\]
+
+Two results point in opposite directions.  A correctly specified model turned
+a problem needing thousands of observations into one needing five.  The same
+model, fitted to those five points as precisely as anyone could wish, left the
+physical question open for another sixty years, until a theory arrived that
+named a different thing to measure.
+
+\bigskip
+\begin{center}\rule{0.4\textwidth}{0.4pt}\end{center}
+\smallskip
+\noindent\footnotesize
+Millikan's tabulated stopping potentials, apart from the 2535~\AA\ entry, are
+reconstructions rather than independently recovered readings, and the standard
+errors quoted here come from his instrumental precision and his replicated
+sessions rather than from the residuals of the fitted line.  Planck's 1901
+value for $h$ and the sourcing of the Millikan quotations come from secondary
+sources and should be checked against the originals.
+
+\bigskip
+\bibliographystyle{plainnat}
+\bibliography{einstein_photoelectric_ML}
+
+\end{document}

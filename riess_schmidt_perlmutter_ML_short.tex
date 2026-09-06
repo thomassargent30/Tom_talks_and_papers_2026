@@ -1,0 +1,665 @@
+% riess_schmidt_perlmutter_ML_short.tex
+% Short newsletter version of riess_schmidt_perlmutter_ML.tex
+% Thomas J. Sargent, 2026
+
+\documentclass[11pt]{article}
+
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage[margin=1.15in]{geometry}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{natbib}
+\usepackage{parskip}
+
+\hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue}
+
+\title{Fifty Supernovae and One Combination of Two Parameters\\[2pt]
+       \large The Accelerating Universe as Statistical Inference, 1988--1999}
+\author{Thomas J.\ Sargent\thanks{%
+  In 2011 my good friend Christopher A.\ Sims and I shared the Nobel Prize in
+  economics.  That good luck let us meet and become friends with winners of
+  prizes in physics and other fields.  Adam Riess had majored partly in
+  economics as an undergraduate.  He and Brian Schmidt have since taught me
+  the nuts and bolts of the computer programs they used to climb the
+  likelihood function that led to their discovery.
+  This paper is one of five that read episodes in the
+  history of physics and astronomy as exercises in statistical inference and
+  machine learning.  \citet{sargent2025sources} sets out the theme: what is
+  now called artificial intelligence names practices that scientists have used
+  for centuries.  The other four treat Kepler and Newton, Einstein's photoelectric equation,
+  Pauli's exclusion principle, and the exoplanet discovery of Mayor and
+  Queloz.}}
+\date{April 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+In 1998 two teams reported that distant supernovae are fainter than a
+decelerating universe allows, and concluded that cosmic expansion is speeding
+up.  The inference is a weighted nonlinear regression with two parameters of
+interest and a nuisance intercept.  I run the Fisher-information calculation
+that prices it.  The result reproduces the published error bar from the
+observing design alone, and shows that the supernovae measured one combination
+of the two density parameters and left the orthogonal combination nearly free.
+The famous numbers assume a flat universe.  Ruling out a decelerating universe
+needs a prior the supernovae do not supply.  I also set out the episode's
+genuine out-of-sample test, which came six years later and had no free
+parameters, and I ask what the whole affair says about theory-free discovery.
+The derivations and the full data are in a longer companion version.
+\end{abstract}
+
+%======================================================================
+\section{What Was Measured}
+
+In 1998 two teams looked at exploding stars billions of light-years away and
+found them fainter than they should have been.  Fainter means further.
+Further, at a given redshift, means the universe has expanded more since the
+light left than anyone had allowed for.  The expansion is speeding up, and
+something is pushing it.  Nobody knows what.
+
+The inference from those photometric measurements to that conclusion is a
+regression, and this note is about its statistical anatomy: what was
+identified, what was assumed, and how much of the famous result the data
+actually carry.
+
+Start with the measurement.  A \emph{standard candle} is an object whose
+intrinsic brightness you know.  Knowing it, you convert observed brightness
+into distance, since flux falls as the inverse square.  Collect distances and
+redshifts for objects near and far and you have traced the expansion history
+of the universe.
+
+Type Ia supernovae are thermonuclear explosions of white dwarfs in binary
+systems.  Their peak luminosities are nearly, but not quite, uniform.  The
+account current in the 1990s had the white dwarf accreting until it neared the
+Chandrasekhar limit, so that a near-universal exploding mass gave a
+near-universal brightness.  That account no longer commands consensus.
+Sub-Chandrasekhar detonations and white-dwarf mergers are now taken seriously,
+and the progenitor population may be mixed.  The uniformity is an empirical
+fact, not a derived one, and it was empirical in 1998 too.
+
+Magnitudes are a logarithmic brightness scale on which five magnitudes is a
+factor of one hundred in flux, and larger means fainter.  Raw Type~Ia peak
+magnitudes scatter by about $0.4$ magnitudes, a $20\%$ distance error.  The
+cosmological signal these teams were chasing is about $0.25$ magnitudes.
+Before 1993 the noise was larger than the thing being measured.
+
+Two groups went after it anyway.  The Supernova Cosmology Project, led by Saul
+Perlmutter at Berkeley, began systematic high-redshift searches in the late
+1980s and reported 42 supernovae at redshift $z = 0.18$ to $0.83$
+\citep{Perlmutter1999}.  The High-Z Supernova Search Team, assembled around
+Brian Schmidt with Adam Riess writing the analysis pipeline, reported 16
+high-redshift events at $z = 0.16$ to $0.97$ together with 34 nearby ones
+\citep{Riess1998}.  Both concluded that the expansion is accelerating.
+Perlmutter took half the 2011 Nobel Prize; Riess and Schmidt shared the other
+half.
+
+%======================================================================
+\section{The Regression}
+
+General relativity, plus the assumption that the universe looks the same in
+every direction and from every place, gives the expansion rate as
+\begin{equation}\label{eq:friedmann}
+  H^2(z) = H_0^2\bigl[\Omega_M(1+z)^3 + \Omega_k(1+z)^2 + \Omega_\Lambda\bigr],
+\end{equation}
+where $\Omega_M$ is the density of matter, $\Omega_\Lambda$ the density of the
+cosmological constant, and $\Omega_k$ spatial curvature, all in units that
+make them sum to one.  A \emph{flat} universe has $\Omega_k = 0$.  Integrating
+\eqref{eq:friedmann} along the light path gives the luminosity distance
+$d_L(z; \Omega_M, \Omega_\Lambda)$, and taking logarithms gives the
+\emph{distance modulus} $\mu = 5\log_{10}(d_L/\text{Mpc}) + 25$, which is what
+a supernova's apparent magnitude measures once its intrinsic magnitude is
+known.
+
+The problem is well behaved for two reasons.  The functional form is fixed,
+exactly, by physics established seventy years earlier.  And the
+Hubble constant $H_0$ and the intrinsic magnitude $M_B$ enter only through a
+single combination,
+\begin{equation}\label{eq:calM}
+  \mathcal{M} = M_B + 5\log_{10}\!\left(\frac{c}{H_0\,\text{Mpc}}\right) + 25,
+\end{equation}
+so the measurement equation is
+\begin{equation}\label{eq:meas}
+  m_{B,i} = \mathcal{M}
+    + 5\log_{10}\tilde d_L(z_i;\Omega_M,\Omega_\Lambda) + \varepsilon_i,
+  \qquad \varepsilon_i \sim \mathcal{N}(0,\sigma_i^2),
+\end{equation}
+where $\tilde d_L$ is the dimensionless part of the distance that depends only
+on the density parameters.
+
+$\mathcal{M}$ is a textbook nuisance parameter.  It shifts the whole Hubble
+diagram vertically and leaves its shape alone.  Neither $H_0$ nor $M_B$ can be
+recovered from the diagram, because any change in one is offset exactly by a
+change in the other.  Neither needs to be.  Since $\mathcal{M}$ enters
+linearly it can be concentrated out analytically at each candidate
+$(\Omega_M, \Omega_\Lambda)$, leaving a profile criterion in two parameters.
+
+Millikan faced the same structure in 1916 measuring Planck's constant.
+The contact voltage between his photoemitting metal and his collector shifted
+every reading by the same amount and left the slope he wanted untouched.  The
+parallel is exact as far as it goes.  Section~\ref{sec:fisher} shows where it
+stops.
+
+Under Gaussian errors, maximising the likelihood means minimising
+\begin{equation}\label{eq:chi2}
+  \chi^2 = \sum_{i}
+  \frac{\bigl[m_{B,i} - \mathcal{M}
+    - 5\log_{10}\tilde d_L(z_i;\Omega_M,\Omega_\Lambda)\bigr]^2}{\sigma_i^2},
+\end{equation}
+which is weighted least squares.  Unlike Millikan's line, $\tilde d_L$ has no
+closed form, so both groups minimised \eqref{eq:chi2} on a grid, computing the
+integral numerically at each point.
+
+\subsection*{The easy case, in the preceding note}
+
+The preceding note works through Millikan's 1916 measurement of Planck's
+constant, which has this anatomy and one simplification.  A contact voltage
+between his photoemitting metal and his collector shifted every reading by the
+same amount, as $\mathcal{M}$ shifts every point of the Hubble diagram, and a
+slope carried the physics that a level could not touch.
+
+Millikan wanted one number.  Removing his nuisance parameter left that number
+identified, and five observations measured it to under one percent.  The
+Friedmann model wants two, and removing $\mathcal{M}$ leaves them entangled
+with each other, so a second degeneracy survives the first.
+Section~\ref{sec:fisher} is about that second degeneracy.  It belongs to the
+geometry of the problem rather than to any instrument, and no supernova
+measurement removes it.
+
+%======================================================================
+\section{The Feature That Made It Possible}
+
+None of this helps while the noise is $0.4$ magnitudes and the signal is
+$0.25$.
+
+\citet{Phillips1993} found the fix.  Plotting the rate at which a supernova
+fades after its peak against how bright that peak was, he found a tight
+relation: slower-declining supernovae are brighter.  Writing $\Delta m_{15}$
+for the drop in $B$-band magnitude over the fifteen days after peak,
+\begin{equation}\label{eq:phillips}
+  M_B^{\rm peak} \approx M_B^{\rm ref} + \alpha\,(\Delta m_{15} - 1.1),
+  \qquad \alpha \approx 0.75~\text{mag},
+\end{equation}
+with $\alpha$ here the \citet{Hamuy1996} calibration.  Correcting for it cuts
+the dispersion from $0.4$ to about $0.15$ magnitudes.
+
+That factor of $2.7$ in the noise is a factor of seven in the number of
+supernovae needed for a given precision.  Against the open matter-only model
+the signal at $z \approx 0.5$ is $0.22$ magnitudes, and detecting it at three
+standard errors takes about thirty supernovae at $\sigma = 0.4$ and about four
+at $\sigma = 0.15$.  Both teams had roughly the number of events that the
+pre-Phillips dispersion would have required just to see the effect, with none
+left over to separate it from anything else.
+
+\subsection*{The half of the discovery that came from data}
+
+The story so far credits theory.  General relativity fixed the functional
+form, three parameters remained, and fifty supernovae sufficed where a
+theory-free learner would have needed thousands.  Half the discovery does not
+fit that account.
+
+$\Delta m_{15}$ came out of data.  No theory of Type Ia explosions predicted
+that decline rate tracks peak luminosity, and Phillips did not derive it.  He
+plotted decline rate against absolute magnitude for nine nearby supernovae and
+fitted a line.  The relation has since been partly rationalised---more
+radioactive nickel yields both a brighter peak and slower-cooling ejecta---and
+it has never been deduced.  Thirty years on it remains an empirical
+regularity, recalibrated with every new survey.  A theorist in 1993 holding
+the correct progenitor model could not have written \eqref{eq:phillips}, and a
+theorist today still cannot.
+
+So the supernova discovery was a hybrid.  A deductively specified hypothesis
+class was bolted to an inductively discovered feature, and neither half would
+have done.  Without Friedmann there is no curve to fit and no meaning for the
+fitted numbers.  Without Phillips the scatter is twice the signal and no
+amount of theory recovers it.  The one step where a data-driven procedure did
+the indispensable work is the one step where no theory was available to do it
+instead.
+
+The pattern has continued.  Modern supernova cosmology runs on SALT2 and
+SALT3, light-curve models trained on data rather than derived from explosion
+physics, with training sets that grow every survey.  Feature extraction in
+this field has become more machine-learned over time.  The hypothesis class
+has stayed Friedmann's.
+
+%======================================================================
+\section{The Signal}
+
+Table~\ref{tab:mu} gives the distance modulus predicted by three cosmologies.
+
+\begin{table}[ht]
+\centering
+\caption{Predicted distance modulus for
+$H_0 = 70$~km\,s$^{-1}$\,Mpc$^{-1}$, by numerical integration.  The last two
+columns give the excess faintness of flat $\Lambda$CDM over the open
+matter-only model and over Einstein--de Sitter.}
+\label{tab:mu}
+\medskip
+\begin{tabular}{lcccrr}
+\toprule
+$z$ & Flat $\Lambda$CDM & Einstein--de Sitter & Open
+  & $\Lambda-$open & $\Lambda-$EdS \\
+ & $(0.3,\,0.7)$ & $(1.0,\,0.0)$ & $(0.3,\,0.0)$ & & \\
+\midrule
+0.10 & 38.32 & 38.21 & 38.25 & $+0.07$ & $+0.11$ \\
+0.25 & 40.50 & 40.27 & 40.36 & $+0.14$ & $+0.24$ \\
+0.50 & 42.26 & 41.86 & 42.05 & $+0.22$ & $+0.40$ \\
+0.75 & 43.33 & 42.82 & 43.08 & $+0.25$ & $+0.51$ \\
+1.00 & 44.10 & 43.50 & 43.84 & $+0.26$ & $+0.60$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+At $z \approx 0.5$ the models differ by $0.22$ to $0.40$ magnitudes, against a
+per-supernova error of about $0.22$ magnitudes.  Each event carries roughly
+one standard deviation of signal.  Both teams observed a weighted mean excess
+of about $+0.25 \pm 0.06$ magnitudes.
+
+Naive stacking would put forty such events at $\sqrt{40} \approx 6$ standard
+errors.  Both teams claimed about three.  The gap is the subject of the next
+section, and it is the most interesting statistical feature of the episode.
+
+The published estimates, all of which impose flatness, are in
+Table~\ref{tab:results}.
+
+\begin{table}[ht]
+\centering
+\caption{Published estimates, all imposing $\Omega_M + \Omega_\Lambda = 1$.
+Statistical uncertainties only.  The deceleration parameter is
+$q_0 = \Omega_M/2 - \Omega_\Lambda$; negative means accelerating.}
+\label{tab:results}
+\medskip
+\begin{tabular}{lccc}
+\toprule
+Analysis & $\hat\Omega_M$ & $\hat\Omega_\Lambda$ & $\hat q_0$ \\
+\midrule
+Perlmutter et al.\ (SCP)          & $0.28\pm0.09$ & $0.72\pm0.09$ & $-0.58$ \\
+Riess et al.\ (HZT), MLCS         & $0.24\pm0.10$ & $0.76\pm0.10$ & $-0.64$ \\
+Riess et al.\ (HZT), template     & $0.20\pm0.10$ & $0.80\pm0.10$ & $-0.70$ \\
+\midrule
+Planck 2018 (CMB + BAO)           & $0.315\pm0.007$ & $0.685\pm0.007$ & $-0.528$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%======================================================================
+\section{What the Supernovae Actually Measured}
+\label{sec:fisher}
+
+The Fisher information for \eqref{eq:meas} is
+\begin{equation}\label{eq:fisher}
+  \mathcal{I}_{jk} = \sum_i \frac{1}{\sigma_i^2}
+  \frac{\partial\mu(z_i)}{\partial\theta_j}
+  \frac{\partial\mu(z_i)}{\partial\theta_k},
+\end{equation}
+and inverting it bounds the variance of any unbiased estimator.  The
+calculation needs only the redshifts, the error bars, and the model.  It does
+not need the magnitudes.  Table~\ref{tab:forecast} reports it for four
+designs, each with 18 nearby supernovae and $\mathcal{M}$ profiled out.
+
+\begin{table}[ht]
+\centering
+\caption{Fisher standard errors for four observing designs, each paired with
+18 low-redshift supernovae at $\sigma = 0.17$~mag and profiled over
+$\mathcal{M}$.  High-redshift errors are $0.22$~mag, except the last row,
+which uses $0.25$.}
+\label{tab:forecast}
+\medskip
+\begin{tabular}{lccccc}
+\toprule
+High-$z$ design & $n$ & $z$ range & SE($\Omega_M$) & SE($\Omega_\Lambda$)
+  & SE($0.8\Omega_M - 0.6\Omega_\Lambda$) \\
+\midrule
+SCP-like  & 42 & 0.18--0.83 & 0.44 & 0.65 & 0.10 \\
+Truncated & 42 & 0.18--0.62 & 0.81 & 0.98 & 0.13 \\
+Bunched   & 42 & 0.35--0.55 & 1.30 & 1.50 & 0.12 \\
+HZT-like  & 16 & 0.16--0.62 & 1.32 & 1.56 & 0.19 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The individual density parameters are not measured.  The SCP-like design gives
+a standard error of $0.44$ on $\Omega_M$ and $0.65$ on $\Omega_\Lambda$.  The
+first exceeds the estimate itself, $0.28$; the second is $90\%$ of the
+estimate $0.72$.  Neither parameter is determined at all in the ordinary
+sense.
+
+One combination is measured well.  The forecast standard error on
+$0.8\Omega_M - 0.6\Omega_\Lambda$ is $0.10$, and \citet{Perlmutter1999} report
+that combination as $-0.2 \pm 0.1$.  A calculation using nothing but redshifts
+and error bars reproduces the published error bar.  The observing design fixed
+the 1998 constraint; the details of the photometry did little to it.
+
+The reason is a near-degeneracy in \eqref{eq:friedmann}.  Over the observed
+range, raising $\Omega_M$ and raising $\Omega_\Lambda$ bend $\mu(z)$ in nearly
+opposite ways, with $\partial\mu/\partial\Omega_M \approx -1.1\,
+\partial\mu/\partial\Omega_\Lambda$ at $z = 0.5$ and a ratio nearer $-1.5$
+when weighted across the whole sample.  Raising $\Omega_M$ by one unit and
+$\Omega_\Lambda$ by about $1.5$ therefore leaves the Hubble diagram nearly
+unchanged.  \citet{GoobarPerlmutter1995} derived this geometry before the data
+existed and designed the survey around it.
+
+\subsection*{Design beats sample size}
+
+The lower rows of Table~\ref{tab:forecast} price the observing strategy.  Keep
+the 42 supernovae and truncate the sample at $z = 0.62$ and the standard error
+on $\Omega_M$ nearly doubles.  Bunch all 42 near $z = 0.45$ and it triples.
+The well-measured combination barely moves in either case, from $0.10$ to
+$0.13$ and $0.12$.
+
+Reach in redshift buys separation of the two parameters.  It buys almost
+nothing on the combination.  That is why the events beyond $z = 0.6$ were
+worth their cost in telescope time: they rotate the confidence ellipse, and
+rotation is what tells $\Omega_M$ from $\Omega_\Lambda$.  Where you put the
+observations mattered more than how many you took, which is the same lesson
+Millikan's spectral range teaches in the photoelectric case.
+
+Here the parallel with Millikan ends, and the difference is the harder half of
+the problem.  Millikan's equation had one slope, so removing the contact
+voltage left it fully identified.  The Friedmann model has two shape
+parameters, and removing $\mathcal{M}$ leaves them tangled with each other.  A
+second degeneracy survives the first.  The contact voltage was an instrument
+nuisance that better instruments removed; this one is a property of the
+geometry, and no supernova measurement removes it.
+
+\subsection*{Where the three sigma came from}
+
+The published significance therefore rests on more than the supernovae.
+
+Measured by the marginal standard error on $\Omega_\Lambda$ alone, the
+SCP-like forecast puts $\Omega_\Lambda = 0.72$ just $1.1$ standard errors from
+zero.  The physical restriction $\Omega_M \geq 0$ does the rest.  Setting
+$\Omega_\Lambda = 0$ and minimising over non-negative $\Omega_M$ raises
+$\chi^2$ by $3.8$ in the same forecast, two standard errors.  No non-negative
+matter density reproduces the observed curvature with $\Omega_\Lambda = 0$,
+and that is what excludes a decelerating universe.  The size of
+$\hat\Omega_\Lambda$ on its own does not.
+
+Impose flatness instead and the picture changes.  The same forecast gives a
+standard error of $0.070$ on $\Omega_M$, putting Einstein--de Sitter ten
+standard errors away.  Flatness is what turns a two-parameter problem into a
+one-parameter problem, and it is what the published $\pm 0.09$ describes.
+
+Neither prior is controversial.  The cosmic microwave background supplies
+flatness, and its constraint in the $(\Omega_M, \Omega_\Lambda)$ plane runs
+nearly orthogonal to the supernovae's, so the two together determine what
+neither determines alone.  Both priors are nonetheless external to the
+supernova data, and the published error bars do not survive their removal.
+
+Partial identification of this kind will be familiar to economists.  The data
+pin down a linear combination of structural parameters; the rest comes from a
+restriction imported from outside.  The estimate is only as good as the
+restriction, and a careful presentation states the restriction alongside the
+number.
+
+%======================================================================
+\section{Two Teams, and the Objections}
+
+The two groups shared almost nothing but the answer.  They used different
+telescopes and observing strategies.  The High-Z team fitted multi-colour
+light-curve templates with a shape parameter; the Berkeley team stretched a
+single-colour template along the time axis.  Their $K$-corrections, which
+translate a redshifted spectrum back to a common rest-frame filter, came from
+different spectral templates.  Their colour corrections used different
+estimators.  Their high-redshift samples barely overlapped.
+
+Their best-fit matter densities, $0.28$ and $0.24$, differ by less than half a
+standard error.
+
+That agreement tests less than it appears to in one respect and more in
+another.  Both numbers assume flatness, and under flatness the supernovae
+measure a single parameter, so two teams agreeing on one number with $\pm0.10$
+error bars is a weak test.  Against that, a systematic error in any pipeline
+step would have had to be reproduced by an independent implementation to
+survive.  Replication across methods tests the standardisation.  It does not
+test the statistics.
+
+Both teams then had to answer three objections, all of which proposed that
+some systematic effect made distant supernovae look faint without any
+acceleration.
+
+\emph{Grey dust.}  A screen of intergalactic dust that absorbs all
+wavelengths equally would dim distant supernovae without the reddening that
+normally betrays dust.  Both teams checked the colour residuals.  Dust of the
+required amount would leave a correlation between colour excess and magnitude
+offset.  None was found at the level needed.
+
+\emph{Luminosity evolution.}  If supernovae at $z \approx 0.5$ were
+intrinsically fainter than nearby ones, because their progenitors were younger
+or differently composed, the signal would be spurious.  The teams compared the
+decline-rate and colour distributions of near and distant events, and compared
+their spectra.  Within measurement error the distant supernovae looked like
+nearby ones of the same light-curve shape.
+
+\emph{Selection.}  A magnitude-limited survey preferentially finds
+intrinsically bright events at high redshift, which biases the measured
+magnitudes the wrong way for acceleration but must still be quantified.  Both
+teams simulated their own selection functions and found the effect small.
+
+None of these checks is decisive on its own, and the teams said so.  The
+decisive test was the one in the next section, and it took six more years.
+
+%======================================================================
+\section{The Test That Came Later}
+\label{sec:prediction}
+
+The 1998 fits estimated parameters from the data they fitted.  The test
+described here estimated nothing.
+
+Take the flat model with $\Omega_M = 0.28$ and $\Omega_\Lambda = 0.72$, fitted
+to supernovae below $z = 0.85$, and ask what it says about $z = 1.5$.
+Referred to Einstein--de Sitter it predicts an excess faintness of $+0.41$
+magnitudes at $z = 0.5$ and only $+0.74$ at $z = 1.5$.  The curve flattens,
+because dark energy dominates late and matter dominates early.
+
+Now take the leading systematic explanation of the same 1998 data.  Grey
+intergalactic dust and luminosity evolution both dim distant supernovae by
+amounts that grow with distance.  Calibrated to reproduce the observed $+0.41$
+at $z = 0.5$, a dimming proportional to $z$ predicts $+1.24$ at $z = 1.5$ and
+keeps climbing.
+
+\begin{table}[ht]
+\centering
+\caption{Excess faintness relative to Einstein--de Sitter under the flat model
+fitted in 1998, and under a dimming proportional to $z$ calibrated to match it
+at $z = 0.5$.  Per-supernova errors at these redshifts were $0.2$ to $0.3$
+magnitudes.}
+\label{tab:prediction}
+\medskip
+\begin{tabular}{lrrr}
+\toprule
+$z$ & $\Lambda$CDM & Dimming $\propto z$ & Difference \\
+\midrule
+0.5 & $+0.41$ & $+0.41$ & $0.00$ \\
+1.0 & $+0.62$ & $+0.83$ & $-0.20$ \\
+1.5 & $+0.74$ & $+1.24$ & $-0.50$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Half a magnitude at $z = 1.5$ is two to three per-supernova standard
+deviations, which a handful of events settles.  Referred to an empty universe
+instead, the prediction is sharper: $\Lambda$CDM puts supernovae beyond $z
+\approx 1.4$ \emph{brighter} than the benchmark, the signature of the
+deceleration that preceded the dark-energy era.  No model in which distant
+supernovae are dimmed by dust or by evolution produces a change of sign.
+
+\citet{Riess2004} collected the supernovae at $z > 1$ with the Hubble Space
+Telescope and found the turnover.  The 1998 parameters had no freedom left to
+accommodate the result.  That observation is the out-of-sample test of the
+model.  The three sigma of 1998 measured parameters within it.
+
+%======================================================================
+\section{What They Could Not Settle}
+\label{sec:limits}
+
+Type Ia supernovae measure one function, the luminosity distance $d_L(z)$.
+Every quantity above is a functional of that one curve.  Two theories
+delivering the same $d_L(z)$ over the observed range are observationally
+identical to these data, whatever else they say.
+
+Three classes of theory do so.  A cosmological constant, with equation-of-state
+parameter $w = -1$, is one.  A rolling scalar field with $w(z)$ within a few
+percent of $-1$ is a second; current data bound $w$ only to about $0.03$,
+giving $w = -1.03 \pm 0.03$.  Modified theories of gravity that reproduce the
+same expansion history without any dark-energy fluid are a third.  The 1998
+data select the shape of $d_L(z)$.  They do not select the physics generating
+it.
+
+Distinguishing them needs a different observable.  \citet{Riess2004} and the
+later surveys pursued one, the effect of $w$ on $d_L(z)$ at higher redshift.
+The growth rate of large-scale structure supplies the other: modified gravity
+and dark energy predict different growth rates even when they produce
+identical expansion histories, so growth separates them where distances
+cannot.  Theory names the discriminating observable.  No one would measure
+growth rates to test dark energy without a theory predicting that the two
+differ.
+
+And the mechanism remains unexplained.  Quantum field theory predicts a vacuum
+energy density some $10^{120}$ times the observed $\Lambda$
+\citep{Weinberg1989}.  Riess, Schmidt and Perlmutter measured the curvature of
+the Hubble diagram to a few percent.  The discrepancy between that measurement
+and the theory of what it measures is the largest in physics.
+
+%======================================================================
+\section{The Machine-Learning Reading}
+
+The vocabulary of statistical learning fits this episode closely, and the
+preceding note sets out why the translation is more than a conceit
+\citep{sargent2025sources}.  Four things a trained network could not deliver
+here mark the boundary of what fitting a curve accomplishes.
+
+Start with what the physics supplies.  Friedmann's equations narrow the
+admissible curves from all functions $m_B(z)$ to a
+three-parameter family: $\mathcal{M}$, $\Omega_M$, $\Omega_\Lambda$.  The
+restriction follows deductively from general relativity, the assumption of a
+homogeneous and isotropic universe, and the scaling of matter density with
+expansion.  Each had been tested independently long before anyone looked for a
+high-redshift supernova.
+
+Compare the alternative.  The modest three-layer network priced in the
+preceding note carries 593 free parameters against the Friedmann model's
+three, and wants some six thousand labelled examples where the Friedmann model
+wants four.  Perlmutter had 42 supernovae.  Riess had 50.  The compilations of
+the 2010s, with several hundred, fall short by an order of magnitude, and
+today's samples of a few thousand by a factor of three.
+
+Give the network enough data and it would eventually trace the curve.  Four
+things would still be beyond it.
+
+It could not identify the learned function as $5\log_{10}\tilde d_L(z)$ with
+$\tilde d_L$ satisfying a particular integral from general relativity.  The
+curve would be a curve.
+
+It could not extract $\Omega_M$ and $\Omega_\Lambda$ from its weights, because
+the weights do not decompose that way without the Friedmann equations imposed
+as an external constraint.
+
+It could not relate the curvature to the deceleration parameter
+$q_0 = \Omega_M/2 - \Omega_\Lambda$, and so could not answer the question
+everyone wanted answered.
+
+And it could not predict the $z > 1$ turnover of
+Section~\ref{sec:prediction}.  Trained on data
+below $z = 1$, it would extrapolate the accelerating trend, because nothing in
+its architecture requires a transition.  The observation that settled the 1998
+result was a prediction of exactly the kind a function approximator does not
+make.
+
+%======================================================================
+\section{What This Says About AI in the Sciences}
+
+The preceding note argued that a correctly specified model can turn a problem
+needing thousands of observations into one needing five, and that no volume of
+data on the wrong observable substitutes for a theory naming the right one.
+The supernova episode bears both out.  It also complicates them in a way the
+photoelectric case does not, and the complication is the more interesting
+half.
+
+Induction did indispensable work here.  Phillips found his relation by fitting
+curves to light curves; no theory predicted it, and none derives it now.
+Without it the scatter is twice the signal, and a perfectly specified
+Friedmann model fitted to unstandardised magnitudes recovers nothing.  Without
+Friedmann the standardised magnitudes are a cloud of points with no parameter
+in them worth naming.  The discovery required a deductively specified
+hypothesis class and an inductively discovered feature, and neither half was
+optional.  Anyone arguing that theory beats learning, or that learning will
+eventually dispense with theory, has to explain this case away.
+
+The pattern has persisted.  SALT2 and SALT3, on which modern supernova
+cosmology runs, are light-curve models trained on data rather than derived
+from explosion physics, and their training sets grow with every survey.
+Feature extraction in this field has become more machine-learned over time.
+The hypothesis class has stayed Friedmann's.  The division of labour is
+stable, and it does not fall along the line the usual arguments assume.
+
+On the value of scale the supernova numbers are sharper than the photoelectric
+ones, because here the sample size can be held fixed while the design varies.
+Every row of Table~\ref{tab:forecast} has the same 42 supernovae.  Bunching
+them near $z = 0.45$ triples the standard error on $\Omega_M$ and leaves the
+well-measured combination almost untouched.  Only the aim of the telescope
+changes across the rows, and the model is what aimed it.
+
+The supernova case then adds a limit with no photoelectric counterpart.
+Millikan's slope was identified; the density parameters are not.  Fifty
+supernovae fix one combination of the two and leave the other open, so the
+published numbers close the gap with $\Omega_M \geq 0$, or with flatness taken
+from the microwave background.  Neither restriction came out of the data being
+analysed.  A procedure that returns a point estimate and a standard error
+while saying nothing about which restriction is carrying them has concealed
+the part of the inference a reader most needs to check.  That failure is not
+peculiar to neural networks.  Anyone who runs a regression and reports the
+output can commit it.
+
+Section~\ref{sec:limits} states the outer limit.  Unlimited supernova data
+would not separate a cosmological constant from a rolling scalar field,
+because the two imply the same $d_L(z)$.  The separation waits on measurements
+of the growth of structure, which exist as a target only because a theory
+predicts that the two differ there.
+
+%======================================================================
+\section{Summary}
+
+The discovery of cosmic acceleration is a three-parameter weighted nonlinear
+regression whose functional form comes from general relativity.  The
+regression is straightforward.  Two other things were not.  Standardising the
+supernovae by an empirical relation nobody had derived cut the noise by a
+factor of $2.7$.  Assembling supernovae at $z = 0.3$ to $0.8$ put observations
+where the competing models differ by two or three tenths of a magnitude.
+Neither task is statistical.
+
+Under flatness, the estimates of both groups give
+\[
+  \hat q_0 = \frac{\hat\Omega_M}{2} - \hat\Omega_\Lambda = -0.58,
+  \qquad
+  \hat\Omega_\Lambda = 0.72 \pm 0.09,
+  \qquad
+  z_t \approx 0.73 ,
+\]
+where $z_t$ is the redshift at which deceleration gave way to acceleration.
+Without flatness the individual parameters are not determined, and the
+inference to acceleration runs through the restriction $\Omega_M \geq 0$.
+
+Fifty supernovae sufficed because the physics had fixed the functional form
+and left three parameters.  The fifty could not separate two of those three,
+and the published numbers close that gap with a restriction the supernovae do
+not supply.  Both facts belong in any account of what the data
+established.
+
+\bigskip
+\begin{center}\rule{0.4\textwidth}{0.4pt}\end{center}
+\smallskip
+\noindent\footnotesize
+The Fisher forecasts use the observed redshift distributions and quoted
+uncertainties, not the individual magnitudes; the parameter estimates are the
+two teams' own published values.  The significance figures attributed to
+\citet{Riess1998}, the calibration in \eqref{eq:phillips}, and the bound on
+$w$ come from secondary sources and should be checked against the originals.
+
+\bigskip
+\bibliographystyle{plainnat}
+\bibliography{riess_schmidt_perlmutter_ML}
+
+\end{document}

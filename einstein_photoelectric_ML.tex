@@ -28,7 +28,14 @@
 \title{Einstein's Heuristic as Statistical Inference:\\
        The Photoelectric Effect as Machine Learning,
        1887--1916}
-\author{Thomas J.\ Sargent}
+\author{Thomas J.\ Sargent\thanks{%
+  This paper is one of five that read episodes in the
+  history of physics and astronomy as exercises in statistical inference and
+  machine learning.  \citet{sargent2025sources} sets out the theme: what is
+  now called artificial intelligence names practices that scientists have used
+  for centuries.  The other four treat Kepler and Newton, Pauli's exclusion principle, the
+  exoplanet discovery of Mayor and Queloz, and the accelerating universe of
+  Riess, Schmidt and Perlmutter.}}
 \date{March 2026}
 
 \begin{document}
@@ -41,27 +48,39 @@ quanta~$h\nu$.  His argument had two components: a physical \emph{model}
 (the light-quantum hypothesis) and an implied \emph{measurement equation}
 relating the observable stopping potential~$V_0$ linearly to the incident
 frequency~$\nu$.  This note examines Einstein's reasoning from a modern
-statistical perspective.  I assemble the historical data available in
-1902--1916---Lenard's qualitative findings, the intermediate quantitative
-work of Hughes (1912) and Richardson \& Compton (1912), and Millikan's
-definitive measurements (1916)---and carry out the simple ordinary-least-squares
-regression that the theory implies: $V_0 = \alpha + \beta\nu + \varepsilon$.
-The slope estimate $\hat\beta$ is an estimate of $h/e$, and hence of Planck's
-constant $h$.  Millikan's five-point regression gives $\hat\beta =
-4.129\times10^{-15}$\,V$\cdot$s, implying $h = 6.61\times10^{-34}$\,J$\cdot$s
-(0.5\% above the modern value).  A maximum likelihood treatment under
-Gaussian errors recovers the same point estimates and establishes that OLS
-achieves the Cram\'er-Rao bound; the bound also provides a formal justification
-for Millikan's design choice to use a wide frequency range.  Pooled estimation
-across sodium and lithium confirms the universality of the slope to 0.2\%.
-I interpret the episode through the lens of modern machine learning:
-Einstein's quantum hypothesis supplied the hypothesis class and inductive
-bias; Lenard's feature-importance finding eliminated intensity as a relevant
-input; and the final regression is a textbook supervised-learning problem
-in which five training points suffice because the physics has already fixed
-the functional form.  The contrast with a purely data-driven learner
-illuminates both the promises  and the limits of theory-free AI for scientific
-discovery.
+statistical perspective.  Setting Millikan's measurements against the
+qualitative findings of Lenard (1902) and the discrepant estimates of Hughes
+(1912) and Richardson \& Compton (1912), I carry out the ordinary
+least-squares regression that the theory implies:
+$V_0 = \alpha + \beta\nu + \varepsilon$.  The slope estimate $\hat\beta$
+estimates $h/e$, and hence Planck's constant $h$.  Millikan's five-point
+sodium regression gives $\hat\beta = 4.128\times10^{-15}$\,V$\cdot$s, which
+with the modern elementary charge implies $h = 6.62\times10^{-34}$\,J$\cdot$s,
+$0.17\%$ below the defined value; the larger error in Millikan's own published
+$h$ is inherited from his oil-drop charge, not from the photoelectric slope.
+A maximum likelihood treatment under Gaussian errors recovers the same point
+estimates and shows that OLS attains the Cram\'er-Rao bound.  The tabulated
+stopping potentials are reconstructions that lie on a fitted line to within a
+fraction of a millivolt, so their residuals cannot furnish a standard error.
+I take the uncertainty from Millikan's nine replicated two-point sessions
+($0.7\%$).  It agrees with the Cram\'er-Rao bound at his instrumental
+precision ($0.8\%$).  That bound also explains his central design choice.  The
+standard error on $h/e$ falls with the spread of the frequencies, not with the
+number of readings.
+Millikan's measured slope also agrees to $0.35\%$ with the slope that
+Planck's 1901 blackbody constant and Millikan's own elementary charge
+predict, a comparison in which no photoelectric datum appears.
+I then read the episode in the language of machine learning.  Einstein's
+quantum hypothesis supplied the hypothesis class and the inductive bias.
+Lenard's feature-importance finding eliminated intensity as an input.  The
+regression is a supervised-learning problem in which five training points
+suffice because the physics fixed the functional form.  A deep network given
+the same data recovers neither the constant nor its interpretation.  The
+regression selects a functional form and not a mechanism: Einstein's equation
+follows without quantising the electromagnetic field, and photon-counting
+experiments settled that question only in 1977.  Theory reduces the sample
+size that data must supply, and it also determines which measurement
+discriminates.
 \end{abstract}
 %
 %\tableofcontents
@@ -72,22 +91,28 @@ discovery.
 In December 1900, Max Planck introduced the energy quantum $h\nu$ as ``an act
 of desperation'' to fit the blackbody spectrum.  Five years later, Einstein
 borrowed that quantum and applied it to a second phenomenon---the photoelectric
-effect---in a paper that would earn him the 1921 Nobel Prize.  Einstein's paper 
-posited a falsifiable linear equation relating the stopping
-potential of emitted electrons to the incident frequency, with slope $h/e$---a
-prediction that Millikan confirmed to 0.5\% in 1916.  It also 
-introduced \emph{probability} into physics: if light consists of discrete quanta
-whose average spatial density tracks the classical wave intensity $|E|^2$, then
-$|E|^2$ functions as a probability density---not merely a classical energy
-density.  Max Born made this logic the cornerstone of quantum mechanics in 1926
-\citep{Born1926}: his rule $|\psi|^2 = \text{probability density}$, now called
-Born's rule, was---as Born stated explicitly---an extension of Einstein's photon
-reasoning to the general Schr\"odinger wave function.  The paper that launched
-the precision measurement effort documented here thus led to Born's rule.
-Einstein spent the rest of his life opposing it.
+effect---in a paper that would earn him the 1921 Nobel Prize.  Einstein posited
+a falsifiable linear equation relating the stopping potential of emitted
+electrons to the incident frequency.  Its slope is $h/e$.  Millikan confirmed
+the equation to better than $1\%$ in 1916.
+
+The 1905 paper was also a statistical argument, though not the one later
+readers often ascribe to it.  Einstein's route to the light quantum was
+thermodynamic.  He showed that in the Wien region the \emph{entropy} of
+radiation depends on volume as the entropy of an ideal gas of $n$ independent
+particles does.  He inferred that radiation behaves, for these purposes, as a
+collection of independent localised quanta.  He did not in 1905 read the
+classical intensity $|E|^2$ as a probability density for locating a quantum.
+He took that step in the 1920s, in the guise of the \emph{Gespensterfeld} or
+ghost field: a wave that guides probabilities without itself carrying energy.
+Max Born made that reading the cornerstone of quantum mechanics in 1926
+\citep{Born1926}, crediting Einstein's guiding field as he generalised it from
+photons to the Schr\"odinger wave function.  Einstein won the 1921 Nobel Prize
+for the photoelectric equation.  Born won the 1954 Prize for the probabilistic
+interpretation.  Einstein spent the rest of his life opposing it.
 
 A modern data scientist confronted with a table of (frequency, voltage) pairs
-would recognize the photoelectric experiment as a two-variable linear regression
+would recognise the photoelectric experiment as a two-variable linear regression
 problem.  The regression came after the theoretical insight.  Albert
 Einstein in 1905 wrote down the model
 \begin{equation}\label{eq:einstein}
@@ -131,21 +156,10 @@ The episode provides a microcosm of scientific inference:
   \item \textbf{Reluctance to accept the model.}  Millikan confirmed
     Einstein's equation while publicly rejecting the light-quantum
     interpretation.
-  \item \textbf{Unintended conceptual consequences.}  The light-quantum
-    hypothesis makes the classical wave intensity $|E|^2$, reinterpreted as a
-    photon density, a probability density.  Born traced his probabilistic
-    interpretation of the Schr\"odinger wave function to this precedent
-    \citep{Born1926}.
+  \item \textbf{Unintended conceptual consequences.}  The picture that
+    motivated the equation---a field that fixes probabilities for discrete
+    quanta---became, twenty years later, Born's rule \citep{Born1926}.
 \end{enumerate}
-
-Einstein's quantum hypothesis committed him to a view in which $|E|^2$ governs
-the statistical behavior of photons rather than the energy of a continuous
-wave.  In private correspondence Einstein called this a \emph{Gespensterfeld}
-(ghost field): a wave that guides probabilities without itself being
-physically real in the classical sense.  Born's 1926 paper \citep{Born1926}
-formalised that idea for the Schr\"odinger wave function.  Einstein won the
-1921 Nobel Prize for the equation.  Born won the 1954 Nobel Prize for the
-probabilistic interpretation that the equation implied.
 
 Section~\ref{sec:history} sketches the experimental history.
 Section~\ref{sec:equation} develops the regression framework.
@@ -163,6 +177,28 @@ learning and AI.
 Section~\ref{sec:dnn} contrasts Einstein's regression with what a deep
 neural network would learn from the data available at each epoch.
 Section~\ref{sec:conclusions} concludes.
+
+Appendix~\ref{app:lamb_scully} shows that Einstein's equation follows without
+quantising the electromagnetic field, so Millikan's regression selects a
+functional form and not a mechanism.
+Appendix~\ref{app:antibunching} describes the photon-counting experiments that
+settled the mechanism in 1977.
+Appendix~\ref{app:ml_implications} draws the consequence for
+Section~\ref{sec:ml}.  Theory reduces the sample size that data must supply,
+and theory also determines which measurement discriminates.
+
+The same statistical anatomy governs the discovery of cosmic acceleration by
+Riess, Schmidt and Perlmutter in 1998, which a companion paper treats in the
+same way.  General relativity replaces the quantum hypothesis in fixing the
+functional form.  A combination of the Hubble constant and the supernovae's
+absolute magnitude replaces the contact EMF as the nuisance parameter that
+shifts the level of the diagram and leaves its shape alone.  And the fit again
+settles a functional form without settling the physics behind it.  The
+difference is that Millikan's slope is a single number, fully identified once
+the nuisance parameter is removed, while the Friedmann model has two shape
+parameters that remain tangled with each other.  The photoelectric case is the
+one in which identification succeeds completely, and reading it that way makes
+the harder case legible.
 
 %======================================================================
 \section{Experimental History, 1887--1916}
@@ -208,27 +244,33 @@ time of writing, Einstein noted:
   of the photoelectric effect observed by Mr.\ Lenard.''
 \end{quote}
 There were, however, no quantitative measurements of the $V_0$--$\nu$ slope.
-The predicted slope $h/e$ is a precise, falsifiable number: $4.136\times
-10^{-15}$\,V$\cdot$s (using modern constants).
+The predicted slope $h/e$ is a precise, falsifiable number.  Since the 2019
+redefinition of the SI both $h$ and $e$ are exact, so the target is exact too:
+$h/e = 4.135667\times10^{-15}$\,V$\cdot$s.  In 1905 the number was not known
+to that accuracy, but it was already fixed---by Planck's blackbody fit five
+years earlier, with no freedom to adjust it to photoelectric data.
 
 \subsection{Early Experiments (1907--1914)}
 
 Between 1907 and 1914 three groups attempted quantitative verification.
-Table~\ref{tab:comparison} summarises their estimates of $h$.
+Table~\ref{tab:comparison} summarises the estimates of $h$ from the two that
+published numbers precise enough to enter it.
 
-\paragraph{Ladenburg (1907).}  First quantitative $V_0$--$\nu$ measurements,
-but over a wavelength range of only $\sim$50\,nm (2000--2600\,\AA).  Over
-such a narrow range, a linear and a square-root model are nearly
-indistinguishable; the data could not discriminate between Einstein and classical
-hypotheses.
+\paragraph{Ladenburg (1907).}  The first quantitative $V_0$--$\nu$
+measurements, but confined to a wavelength range of some $60$\,nm
+(2000--2600\,\AA).  Over so narrow a span a linear and a square-root law are
+nearly indistinguishable, and Ladenburg's data could not discriminate between
+Einstein's hypothesis and its classical rivals.  He reported no determination
+of $h$ stable enough to tabulate, and none appears in
+Table~\ref{tab:comparison}.
 
 \paragraph{Hughes (1912).}  Arthur Llewelyn Hughes \citep{Hughes1913} used
 three UV lines ($\lambda = 1849$, 2257, 2537\,\AA) and roughly a dozen metals.
 Two of the three frequencies were used to fit the line; the third served as a
 check.  Hughes reported $h$ values ranging from $3.55\times10^{-27}$ to
-$5.85\times10^{-27}$\,erg$\cdot$s---a spread of 65\%.  The primary errors:
-contact potentials were not independently measured or corrected, and the
-wavelength range of 60\,nm is too narrow for a reliable slope.
+$5.85\times10^{-27}$\,erg$\cdot$s---a spread of 65\%.  Hughes did not measure
+or correct the contact potentials.  The $69$\,nm span of his three lines is
+too narrow to pin down a slope.  Millikan's six lines span $293$\,nm.
 
 \paragraph{Richardson \& Compton (1912).}  Owen Richardson and Karl Compton
 \citep{RichardsonCompton1912} measured eight metals.  Their $h$ estimates
@@ -262,23 +304,43 @@ for photoelectron escape give
   = \underbrace{h\nu}_{\text{photon energy}}
   - \underbrace{W}_{\text{work function}},
 \end{equation}
-where all quantities are in SI units.  Dividing by $e$ gives the observation
-equation
+where all quantities are in SI units.  Dividing by $e$ gives the true
+stopping potential as a function of frequency,
 \begin{equation}\label{eq:obs}
   V_0 = \underbrace{\frac{h}{e}}_{\beta}\,\nu
-        - \underbrace{\frac{W}{e}}_{\alpha_0}
-        + \underbrace{v_c}_{\text{contact EMF}}
-        + \underbrace{\varepsilon}_{\text{meas.\ error}},
+        \;\underbrace{-\;\frac{W}{e}}_{\text{work function}}
+        + \underbrace{\varepsilon}_{\text{meas.\ error}}.
 \end{equation}
-where $v_c$ is the contact EMF (a nuisance parameter that shifts the intercept
-but not the slope) and $\varepsilon$ is measurement noise.  Let
-$\alpha \equiv -W/e + v_c$.  The estimating equation is
+The apparatus reads an applied potential displaced by the contact EMF $v_c$
+between photoemitter and collector,
+\begin{equation}\label{eq:obs_raw}
+  V_0^{\mathrm{obs}} = V_0 - v_c
+  = \frac{h}{e}\,\nu - \frac{W}{e} - v_c + \varepsilon .
+\end{equation}
+Because $v_c$ enters additively it shifts the intercept and leaves the slope
+alone.  Writing $\alpha$ for whichever intercept is in force, the estimating
+equation is
 \begin{equation}\label{eq:reg}
   \boxed{V_0 = \alpha + \beta\,\nu + \varepsilon, \qquad
   \beta = \frac{h}{e}.}
 \end{equation}
 This is a simple bivariate linear regression with one unknown slope ($\beta$)
 and one unknown intercept ($\alpha$).
+
+\medskip
+\noindent\textbf{Convention.}  Millikan measured $v_c$ independently by the
+Kelvin method and added it back before plotting, and the stopping potentials
+tabulated in Section~\ref{sec:data} are the corrected values
+$V_0 = V_0^{\mathrm{obs}} + v_c$.  Every regression reported below is run on
+those corrected values, so throughout this paper
+\begin{equation}\label{eq:alpha_meaning}
+  \alpha = -\,W/e ,
+\end{equation}
+and the work function is recovered from the intercept alone,
+$W/e = -\hat\alpha$.  Had the raw readings been used instead, the intercept
+would have been $-W/e-v_c$, and separating the two would have required an
+independent measurement of $v_c$.  Adding $v_c$ to $-\hat\alpha$ when the data
+already contain the correction double-counts the contact EMF.
 
 \subsection{Identification}
 
@@ -287,23 +349,28 @@ Variation in $\nu$ across spectral lines identifies $\beta = h/e$.  The
 standard error of $\hat\beta$ is $s/\sqrt{S_{\nu\nu}}$, where
 $S_{\nu\nu} = \sum_i(\nu_i - \bar\nu)^2$; spreading the $\nu_i$ apart raises
 $S_{\nu\nu}$ and shrinks the standard error.  The early experiments were
-confined to a 60\,nm UV range and gave unreliable estimates.
+confined to UV bands some $60$--$70$\,nm wide and gave unreliable estimates;
+Section~\ref{sec:fisher} quantifies the penalty.
 
 \paragraph{The intercept and the contact-EMF problem.}
-The intercept $\alpha$ conflates the work function $W$ and the contact EMF
-$v_c$.  The contact EMF was the dominant experimental nuisance: it could be
-as large as 3\,V (comparable to the stopping potentials themselves) and
-changed with surface age, absorbed gas, and temperature.  The term $v_c$
-enters additively and shifts all stopping potentials by the same amount.  A
-$v_c$ that stays constant during a run leaves $\beta$ unaffected.  Millikan verified this by monitoring $v_c$
-continuously; he found it stable to $\pm 0.01$\,V over several hours.
+The intercept is contaminated by the contact EMF $v_c$, which was the dominant
+experimental nuisance of the whole literature: it could reach $3$\,V,
+comparable to the stopping potentials themselves, and it drifted with surface
+age, adsorbed gas, and temperature.  Because it enters additively it is
+harmless to the slope so long as it is constant within a run, and fatal to it
+otherwise.  Section~\ref{sec:contact} takes up both the identification
+problem and Millikan's solution to it.
 
 \paragraph{The universal slope as a cross-metal restriction.}
 Because $\beta = h/e$ is a universal physical constant, equation
 \eqref{eq:reg} implies that \emph{all} metals share the same slope.  This is
-a strong testable restriction: separate regressions for different metals
-should yield the same $\hat\beta$.  Millikan confirmed it: his sodium and
-lithium slopes agreed to within 0.2\%.
+a strong and testable restriction.  Economists will recognise a
+cross-equation restriction, in which a single deep parameter appears
+identically in the reduced form of every metal.  Separate regressions must
+return the same $\hat\beta$.  Millikan reported that his sodium and lithium
+slopes did.  Section~\ref{sec:panel} imposes the restriction, tests it, and
+explains why his data support it less strongly than the raw agreement
+suggests.
 
 %======================================================================
 \section{The Historical Data}
@@ -382,9 +449,27 @@ $V_{0,\mathrm{true}} = V_{0,\mathrm{obs}} + v_c$ for sodium and lithium.  For
 sodium, the contact EMF was independently measured as $v_c = 2.51$\,V
 (stable to $\pm 0.01$\,V over 9 hours).  For lithium (first series),
 $v_c = 1.52$\,V.  For sodium at 2535\,\AA\ the paper explicitly states
-$V_{0,\mathrm{obs}} = 0.52$\,V, giving $V_{0,\mathrm{true}} = 3.03$\,V
-(a small scattered-light correction accounts for the 0.04\,V discrepancy
-with the regression-implied value of 3.07\,V).
+$V_{0,\mathrm{obs}} = 0.52$\,V, giving $V_{0,\mathrm{true}} = 3.03$\,V,
+which lies $0.04$\,V below the value implied by the line fitted to the
+other five points.
+
+\paragraph{Provenance of the tabulated values.}
+The 2535\,\AA\ sodium entry is Millikan's printed figure.  The other five
+sodium entries are reconstructions.  I read them off the straight line
+Millikan fitted to his Fig.~5 balance points and rounded them to three
+decimals.  His plotted curves cannot be read to better than a few hundredths
+of a volt.  The lithium column is a reconstruction too.  Its entries at
+4339--3126\,\AA\ are the sodium entries less a constant $0.540$\,V.
+
+Two consequences follow.  Residuals computed from these five points measure
+rounding, not measurement scatter, and a standard error built from them
+understates the uncertainty by more than an order of magnitude.  The sodium
+and lithium slopes agree over the four shared lines by construction.
+
+Sections~\ref{sec:regression} and~\ref{sec:mle} therefore exhibit the
+inferential logic that Einstein's equation implies.
+Section~\ref{sec:twopoint} supplies the uncertainty estimate.  Millikan's
+nine two-point sessions are repeated measurements with fresh surfaces.
 
 \begin{table}[ht]
 \centering
@@ -392,7 +477,11 @@ with the regression-implied value of 3.07\,V).
 True stopping potentials $V_0 = V_{0,\text{obs}} + v_c$ for sodium
 (Na, $v_c = 2.51$\,V) and lithium (Li, $v_c = 1.52$\,V).
 These values are reconstructed from Millikan (1916) as described
-in Section~\ref{sec:data}.  The dash for Li at 5461\,\AA\ indicates
+in Section~\ref{sec:data}; only the Na entry at 2535\,\AA\ is a directly
+quoted figure.  The Li entries at 4339--3126\,\AA\ are the Na entries less a
+constant $0.540$\,V, so the two slopes agree over those lines by construction
+(Section~\ref{sec:data}).
+The dash for Li at 5461\,\AA\ indicates
 that this wavelength is above lithium's photoemission threshold
 ($\lambda_0 \approx 5260$\,\AA).}
 \label{tab:millikan_data}
@@ -485,11 +574,11 @@ $S_{\nu V}$ in $10^{14}$\,Hz$\cdot$V.)
 \begin{align}
   \hat\beta &= \frac{S_{\nu V}}{S_{\nu\nu}}
              = \frac{3.830}{9.277}
-             = \mathbf{0.4129}\times10^{-14}\text{ V/Hz}
-             = \mathbf{4.129\times10^{-15}\text{ V$\cdot$s}},
+             = \mathbf{0.41285}\times10^{-14}\text{ V/Hz}
+             = \mathbf{4.128\times10^{-15}\text{ V$\cdot$s}},
              \label{eq:betahat_num} \\
   \hat\alpha &= \bar V_0 - \hat\beta\,\bar\nu
-             = 1.293 - 4.129\times10^{-15}\times7.522\times10^{14}
+             = 1.293 - 4.128\times10^{-15}\times7.522\times10^{14}
              = 1.293 - 3.106 = \mathbf{-1.813\text{ V}}.
              \label{eq:alphahat_num}
 \end{align}
@@ -497,69 +586,102 @@ $S_{\nu V}$ in $10^{14}$\,Hz$\cdot$V.)
 \medskip\noindent\textbf{Residuals and goodness of fit.}
 
 \begin{center}
-\begin{tabular}{c|rrrr}
+\begin{tabular}{c|rrr}
 \toprule
-$\lambda$ (\AA) & $V_{0i}$ (V) & $\hat V_{0i}$ (V) & $\hat\varepsilon_i$ (V) \\
+$\lambda$ (\AA) & $V_{0i}$ (V) & $\hat V_{0i}$ (V) & $\hat\varepsilon_i$ (mV) \\
 \midrule
-5461 & 0.454 & 0.454 & $+0.000$ \\
-4339 & 1.039 & 1.040 & $-0.001$ \\
-4047 & 1.246 & 1.247 & $-0.001$ \\
-3650 & 1.578 & 1.578 & $+0.000$ \\
-3126 & 2.147 & 2.145 & $+0.002$ \\
+5461 & 0.454 & 0.4538 & $+0.18$ \\
+4339 & 1.039 & 1.0392 & $-0.23$ \\
+4047 & 1.246 & 1.2461 & $-0.07$ \\
+3650 & 1.578 & 1.5780 & $+0.01$ \\
+3126 & 2.147 & 2.1469 & $+0.11$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\noindent $R^2 = 1 - \hat\sigma^2 n/(n-1)/S_{VV} \approx 0.99999$.
-Residuals are below 2\,mV, consistent with Millikan's stated uncertainty
-of $\pm 0.01$\,V.
+\noindent The coefficient of determination is
+$R^2 = 1 - \mathrm{RSS}/S_{VV} = 1 - (1.03\times10^{-7})/(1.58) \approx
+0.9999999$.
 
-\medskip\noindent\textbf{Uncertainty estimate.}
-The residual standard deviation is
+\medskip\noindent\textbf{The residuals measure rounding.}
+Every residual is smaller than $0.25$\,mV, forty times below Millikan's
+stated reading precision of $\pm10$\,mV.  The reconstruction of
+Section~\ref{sec:data} produced them.  Five of these six $V_0$ values were
+read off a fitted line and rounded to three decimals.  Taken at face value
+they give
 \[
   \hat\sigma = \sqrt{\frac{\sum\hat\varepsilon_i^2}{n-2}}
-  = \sqrt{\frac{(0^2+0.001^2+0.001^2+0^2+0.002^2)}{3}}
-  \approx 0.0014\text{ V}.
-\]
-The standard error of the slope is
-\[
+  = \sqrt{\frac{1.03\times10^{-7}}{3}} = 0.18\text{ mV},
+  \qquad
   \mathrm{SE}(\hat\beta) = \frac{\hat\sigma}{\sqrt{S_{\nu\nu}}}
-  = \frac{0.0014\times10^{0}}{9.277^{1/2}\times10^{14}}
-  = \frac{0.0014}{3.046\times10^{14}}
-  \approx 4.6\times10^{-18}\text{ V$\cdot$s},
+  = 6.1\times10^{-20}\text{ V$\cdot$s},
 \]
-corresponding to a \textbf{relative uncertainty of about 0.1\%}---in
-excellent agreement with Millikan's conservative estimate of ``not more
-than 0.5\%'' based on graphical fitting.
+a relative precision of $0.0015\%$.  That is three hundred times finer than
+Millikan claimed.
+
+\medskip\noindent\textbf{A plug-in from the instrument.}
+I take $\sigma$ from the instrument instead of from the residuals.  Millikan's
+balance points were reproducible to about $\sigma = 10$\,mV.  Substituting
+that value,
+\begin{equation}\label{eq:se_honest}
+  \mathrm{SE}(\hat\beta) = \frac{\sigma}{\sqrt{S_{\nu\nu}}}
+  = \frac{0.010\text{ V}}{\sqrt{9.277}\times10^{14}\text{ Hz}}
+  = 3.3\times10^{-17}\text{ V$\cdot$s},
+\end{equation}
+a relative uncertainty of $0.8\%$, and $0.5\%$ for the six-line design
+(Section~\ref{sec:fisher}).  Millikan claimed ``not more than 0.5\%'' from
+graphical fitting.  His nine two-point sessions give $0.7\%$
+(Section~\ref{sec:twopoint}).  I use $\sigma = 10$\,mV throughout.
 
 \subsection{Results: Sodium (Six Points, Including 2535\,\AA)}
 
 Including the 2535\,\AA\ point ($\nu = 11.827\times10^{14}$\,Hz,
-$V_0 = 3.030$\,V---using the explicitly stated true stopping potential)
-modestly tightens the slope estimate:
+$V_0 = 3.030$\,V---Millikan's explicitly stated true stopping potential)
+widens the design by a further $59$\,nm but moves the slope appreciably:
 
 \begin{align*}
   \bar\nu &= 8.240\times10^{14}\text{ Hz},\quad
   \bar V_0 = 1.582\text{ V}, \\
-  S_{\nu\nu} &= 28.14\times(10^{14})^2, \quad
-  S_{\nu V} = 11.64\times10^{14}\text{ V$\cdot$Hz}, \\
-  \hat\beta &= \frac{11.64}{28.14} = 4.135\times10^{-15}\text{ V$\cdot$s},
+  S_{\nu\nu} &= 24.72\times(10^{14})^2, \quad
+  S_{\nu V} = 10.06\times10^{14}\text{ V$\cdot$Hz}, \\
+  \hat\beta &= \frac{10.06}{24.72} = 4.070\times10^{-15}\text{ V$\cdot$s},
 \end{align*}
-a change of less than 0.2\% from the five-point estimate.
+$1.4\%$ below the five-point estimate, with a residual standard deviation of
+$11$\,mV---two orders of magnitude larger than in the five-point fit, and now
+in line with Millikan's stated reading precision.
+
+The single genuine datum in the table drives the movement.  The 2535\,\AA\
+point lies $0.04$\,V below the five-point line (Section~\ref{sec:data}), and
+its extreme frequency gives it the highest leverage.  Millikan attributed the
+deficit to scattered short-wavelength light in the far UV and excluded the
+line from his primary determination.  The observation that contributes most to
+$S_{\nu\nu}$ also contributes most to any systematic error in the far UV.
+Widening the design and protecting it from stray light pull against each
+other.  The $11$\,mV residual standard deviation here, against $0.18$\,mV for
+the five-point fit, confirms that the five-point residuals were rounding
+artefacts.
 
 \subsection{Results: Lithium (Five Points)}
 
-Repeating for lithium using lines 4339--2535\,\AA:
+Repeating for lithium using lines 4339--2535\,\AA\ ($n=5$,
+$S_{\nu\nu} = 15.65\times(10^{14})^2$, $S_{\nu V} = 6.457\times10^{14}$):
 
 \begin{align*}
-  \hat\beta_{\mathrm{Li}} &= 4.137\times10^{-15}\text{ V$\cdot$s},
+  \hat\beta_{\mathrm{Li}} &= 4.127\times10^{-15}\text{ V$\cdot$s},
+  \qquad \hat\alpha_{\mathrm{Li}} = -2.352\text{ V},
 \end{align*}
-consistent with the sodium result to four significant figures, confirming
-the universality of the slope.
+which differs from the sodium slope by $0.04\%$.
+
+The agreement is not an independent confirmation of universality.  Four of
+the five lithium entries are the sodium entries shifted by a constant
+(Section~\ref{sec:data}), and a constant shift leaves the slope unchanged.
+Only the 2535\,\AA\ line carries information absent from the sodium column.
+The comparison establishes something weaker.  Millikan reported the two
+metals' stopping-potential curves as parallel at his stated precision.
 
 \subsection{Deriving Planck's Constant}
 
-With the OLS slope $\hat\beta = 4.129\times10^{-15}$\,V$\cdot$s (five-point
+With the OLS slope $\hat\beta = 4.128\times10^{-15}$\,V$\cdot$s (five-point
 sodium regression) and the elementary charge $e$ from Millikan's oil-drop
 experiment:
 
@@ -569,17 +691,55 @@ experiment:
 Value of $e$ used & Implied $h = \hat\beta \cdot e$ & Error \\
 \midrule
 Millikan (1916): $1.592\times10^{-19}$\,C
-  & $6.573\times10^{-34}$\,J$\cdot$s & $-0.80\%$ \\
-Modern NIST 2022: $1.6022\times10^{-19}$\,C
-  & $6.614\times10^{-34}$\,J$\cdot$s & $+0.49\%$ \\
-Modern exact: $h = 6.6261\times10^{-34}$\,J$\cdot$s & --- & 0 \\
+  & $6.573\times10^{-34}$\,J$\cdot$s & $-0.81\%$ \\
+Modern: $e = 1.602177\times10^{-19}$\,C
+  & $6.616\times10^{-34}$\,J$\cdot$s & $-0.17\%$ \\
+Modern exact: $h = 6.626070\times10^{-34}$\,J$\cdot$s & --- & 0 \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\noindent The small positive error when using the modern $e$ reflects
-rounding in the tabulated stopping potentials.  Millikan's negative error
-arose primarily from his underestimate of $e$ (by 0.65\%).
+\noindent The error decomposes cleanly.  Paired with the modern $e$, the
+slope alone accounts for $-0.17\%$; Millikan's own $e$, too small by
+$0.64\%$, contributes the remainder.  His $h$ was therefore in error
+predominantly through the oil-drop constant rather than through the
+photoelectric slope.  His 1916 apparatus was built to measure the slope.
+Both errors lie inside the $0.8\%$ standard error of
+equation~\eqref{eq:se_honest}.
+
+\subsection{The Slope Planck's Constant Predicted}
+\label{sec:prediction}
+
+Einstein derived the slope $h/e$ from Planck's radiation law.  Planck fitted
+$h$ to the blackbody spectrum in 1901 and obtained $6.55\times10^{-27}$\,%
+erg$\cdot$s.\footnote{Planck's 1901 value and the 1913 value in
+Table~\ref{tab:comparison} both come from secondary sources and should be
+checked against the originals.}  Millikan measured
+$e = 1.592\times10^{-19}$\,C in his oil-drop experiment.  Those two numbers
+predict a slope
+\begin{equation}\label{eq:predicted_slope}
+  \left(\frac{h}{e}\right)_{\text{predicted}}
+  = \frac{6.55\times10^{-34}}{1.592\times10^{-19}}
+  = 4.114\times10^{-15}\text{ V$\cdot$s}.
+\end{equation}
+The five-point sodium regression gives $4.128\times10^{-15}$\,V$\cdot$s.  The
+measured slope exceeds the predicted slope by $0.35\%$, inside the $0.8\%$
+standard error of \eqref{eq:se_honest}.
+
+No photoelectric measurement entered the prediction.  Planck fitted $h$ to the
+blackbody spectrum in 1901.  Einstein derived the slope in 1905.  Millikan
+measured it in 1916.  The regression had no free parameter with which to meet
+the prediction: Einstein fixed $\beta$ in advance and left only $\alpha$ free.
+This comparison, and not the comparison with the modern $h$ in
+Section~\ref{sec:comparison}, is the out-of-sample test of
+equation~\eqref{eq:einstein}.
+
+Both 1916-era constants were too small.  Planck's $h$ was low by $1.15\%$ and
+Millikan's $e$ by $0.64\%$.  The errors partly cancel in the ratio.  The
+predicted slope was low by $0.52\%$ and the measured slope by $0.17\%$.  The
+agreement in \eqref{eq:predicted_slope} therefore rests in part on two errors
+of the same sign, and a reader who wants the prediction tested against modern
+constants should compare $4.128$ with $4.136\times10^{-15}$\,V$\cdot$s.
 
 %======================================================================
 \section{Maximum Likelihood Estimation of Einstein's Parameters}
@@ -591,8 +751,9 @@ Einstein's photoelectric equation defines a three-parameter
 statistical model.  The free parameters are:
 \begin{itemize}
   \item $\beta = h/e$ --- the universal slope (V$\cdot$s), encoding Planck's constant;
-  \item $\alpha = v_c - W/e$ --- a metal- and run-specific intercept (V),
-    conflating the work function and contact EMF;
+  \item $\alpha = -W/e$ --- a metal-specific intercept (V), equal to minus
+    the work function in volts under the correction convention
+    of~\eqref{eq:alpha_meaning};
   \item $\sigma^2$ --- the variance of the measurement noise $\varepsilon_i$.
 \end{itemize}
 The full parametric model for a single metal over $n$ spectral lines is:
@@ -646,17 +807,21 @@ The OLS estimator uses the degrees-of-freedom correction:
 which is unbiased ($\mathbb{E}[s^2]=\sigma^2$).  The MLE $\hat\sigma^2_{\mathrm{MLE}}$
 is biased downward by the factor $(n-2)/n$; for $n=5$ the correction is $3/5$.
 
-For the five-point sodium regression, $\mathrm{RSS} = 6\times10^{-6}$\,V$^2$
-(from the residuals in Section~\ref{sec:regression}).  Hence:
+For the five-point sodium regression,
+$\mathrm{RSS} = 1.03\times10^{-7}$\,V$^2$ (from the residuals in
+Section~\ref{sec:regression}).  Hence:
 \begin{align*}
-  \hat\sigma_{\mathrm{MLE}} &= \sqrt{6\times10^{-6}/5} = 1.1\times10^{-3}\text{ V =
-  1.1\,mV}, \\
-  s_{\mathrm{OLS}}  &= \sqrt{6\times10^{-6}/3} = 1.4\times10^{-3}\text{ V =
-  1.4\,mV}.
+  \hat\sigma_{\mathrm{MLE}} &= \sqrt{1.03\times10^{-7}/5}
+  = 0.14\times10^{-3}\text{ V} = 0.14\,\text{mV}, \\
+  s_{\mathrm{OLS}}  &= \sqrt{1.03\times10^{-7}/3}
+  = 0.18\times10^{-3}\text{ V} = 0.18\,\text{mV}.
 \end{align*}
-Both estimates lie far below Millikan's stated experimental uncertainty of
-$\pm10$\,mV, confirming that the residuals are dominated by rounding in
-the tabulated stopping potentials rather than by true measurement scatter.
+Both lie nearly two orders of magnitude below Millikan's stated experimental
+uncertainty of $\pm10$\,mV.  Sections~\ref{sec:data}
+and~\ref{sec:regression} give the reason: the residuals are rounding error in
+the tabulated stopping potentials.  I therefore use the instrumental value
+$\sigma = 10$\,mV as the plug-in, not $s$.  The six-line fit, which includes
+Millikan's one directly quoted stopping potential, gives $s = 11$\,mV.
 
 \subsection{Fisher Information and the Cram\'er-Rao Bound}
 \label{sec:fisher}
@@ -683,41 +848,54 @@ where $S_{\nu\nu}=\sum_i(\nu_i-\bar\nu)^2$.  The OLS/MLE estimator
 $\hat\beta$ achieves this bound: $\mathrm{Var}(\hat\beta) = \sigma^2/S_{\nu\nu}$
 (by the Gauss-Markov theorem, OLS is the Best Linear Unbiased Estimator).
 
-For the five-point sodium regression (using $s$ as a plug-in for $\sigma$):
+For the five-point sodium regression, with $\sigma = 10$\,mV:
 \begin{equation}\label{eq:crb_num}
   \mathrm{SE}_{\mathrm{CR}}(\hat\beta) =
-  \frac{s}{\sqrt{S_{\nu\nu}}} =
-  \frac{1.4\times10^{-3}\text{ V}}{\sqrt{9.277}\times10^{14}\text{ Hz}}
-  = 4.6\times10^{-18}\text{ V$\cdot$s},
+  \frac{\sigma}{\sqrt{S_{\nu\nu}}} =
+  \frac{1.0\times10^{-2}\text{ V}}{\sqrt{9.277}\times10^{14}\text{ Hz}}
+  = 3.3\times10^{-17}\text{ V$\cdot$s},
 \end{equation}
-corresponding to a relative precision of $0.11\%$, which OLS achieves exactly.
+corresponding to a relative precision of $0.79\%$, which OLS attains exactly.
+The bound depends on the design and not on the readings.  $S_{\nu\nu}$ depends
+only on the spectral lines Millikan chose.  The reconstruction of
+Section~\ref{sec:data} corrupts the residuals and leaves $S_{\nu\nu}$
+untouched.
 
 \paragraph{Design implications.}  By~\eqref{eq:crb},
 $\mathrm{SE}(\hat\beta) \propto 1/\sqrt{S_{\nu\nu}}$.  Spreading the
 frequencies further apart shrinks the standard error whatever the value of
 $n$.  This justifies Millikan's choice to span nearly a factor of two in $\nu$ (5461\,\AA\ to 2535\,\AA), rather
-than the narrow 60\,nm UV ranges used by Hughes and Richardson \& Compton.
+than the narrow UV ranges, $60$--$70$\,nm wide, available to Hughes and to
+Richardson \& Compton.
 
-Table~\ref{tab:crb_comparison} quantifies the improvement.  Restricting
-Millikan's data to the 4047--2535\,\AA\ range (as in Hughes) gives
-$S_{\nu\nu} = 1.96\times(10^{14})^2$ Hz$^2$ vs.\ the full-range
-$9.277\times(10^{14})^2$\,Hz$^2$ --- a factor of $4.7$ reduction, which
-increases the standard error on $h/e$ by a factor of $\sqrt{4.7}\approx2.2$.
+Table~\ref{tab:crb_comparison} quantifies the improvement.  Restrict Millikan's
+sodium lines to 4047--3126\,\AA.  That $92$\,nm window is the narrowest his
+line set permits and the closest analogue to the $\sim$60--70\,nm bands of
+Hughes and of Richardson \& Compton.  It gives
+$S_{\nu\nu} = 2.44\times(10^{14})^2$\,Hz$^2$, against $9.28$ for his
+five-point design and $24.72$ for the full six.  Holding $\sigma$ fixed, the
+standard error on $h/e$ falls by a factor of $\sqrt{9.28/2.44} = 1.9$ and
+then $\sqrt{24.72/2.44} = 3.2$.  Widening the frequency range improved the
+design.  Collecting more readings would not have.
 
 \begin{table}[ht]
 \centering
 \caption{Effect of frequency range on the Cram\'er-Rao bound for
-$\hat\beta = h/e$, using Millikan's sodium data.  ``Restricted'' uses only
-the three lines nearest to the Hughes (1912) wavelength range.}
+$\hat\beta = h/e$, using Millikan's sodium lines and a common instrumental
+$\sigma = 10$\,mV.  ``Narrow'' uses the three lines spanning the window
+closest to the ranges available to Hughes (1912) and Richardson \& Compton
+(1912).  Because $\sigma$ is held fixed, the last two columns isolate the
+contribution of the experimental design alone.}
 \label{tab:crb_comparison}
-\begin{tabular}{lcccr}
+\small
+\begin{tabular}{lccccr}
 \toprule
-Dataset & $n$ & $S_{\nu\nu}$ ($10^{28}$\,Hz$^2$) &
-  $S_{\nu\nu}^{-1/2}$ (rel.) & SE($\hat\beta$) ($10^{-18}$\,V$\cdot$s) \\
+Design & $n$ & Span & $S_{\nu\nu}$ & SE($\hat\beta$) & Rel. \\
+ & & (nm) & ($10^{28}$\,Hz$^2$) & ($10^{-17}$\,V$\cdot$s) & SE \\
 \midrule
-Restricted (4047--2535\,\AA) & 3 & 1.96 & 1.00 & 10.0 \\
-Millikan 5-pt (5461--3126\,\AA) & 5 & 9.277 & 0.46 & 4.6 \\
-Millikan full (5461--2535\,\AA) & 6 & 28.14 & 0.26 & 2.6 \\
+Narrow (4047--3126\,\AA)        & 3 & 92  & 2.44  & 6.4 & 1.55\% \\
+Millikan 5-pt (5461--3126\,\AA) & 5 & 234 & 9.28  & 3.3 & 0.79\% \\
+Millikan full (5461--2535\,\AA) & 6 & 293 & 24.72 & 2.0 & 0.49\% \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -738,12 +916,19 @@ is common to Na and Li.  The pooled OLS slope estimator is
   \frac{S_{\nu V}^{\mathrm{Na}} + S_{\nu V}^{\mathrm{Li}}}
        {S_{\nu\nu}^{\mathrm{Na}} + S_{\nu\nu}^{\mathrm{Li}}}.
 \end{equation}
-From Section~\ref{sec:regression}, $\hat\beta_{\mathrm{Na}} = 4.129$ and
-$\hat\beta_{\mathrm{Li}} = 4.137$ (both $\times10^{-15}$\,V$\cdot$s), differing
-by 0.19\%.  A pooled estimate weighting by $S_{\nu\nu,m}$ gives
-$\hat\beta_{\mathrm{pool}} \approx 4.133\times10^{-15}$\,V$\cdot$s,
-with a standard error reduced by roughly $1/\sqrt{2}$ relative to either
-single-metal estimate.
+From Section~\ref{sec:regression}, $\hat\beta_{\mathrm{Na}} = 4.128$ and
+$\hat\beta_{\mathrm{Li}} = 4.127$ (both $\times10^{-15}$\,V$\cdot$s).
+Pooling by \eqref{eq:pool_beta} gives
+\[
+  \hat\beta_{\mathrm{pool}} =
+  \frac{3.830 + 6.457}{9.277 + 15.647}
+  = 4.127\times10^{-15}\text{ V$\cdot$s},
+\]
+with $S_{\nu\nu}$ raised from $9.28$ to $24.92\times(10^{14})^2$ and hence
+$\mathrm{SE}(\hat\beta_{\mathrm{pool}}) = \sigma/\sqrt{24.92}\times10^{-14}
+= 2.0\times10^{-17}$\,V$\cdot$s, a relative precision of $0.49\%$.  Pooling
+two metals buys what adding the sixth sodium line buys.  Both enlarge
+$S_{\nu\nu}$.
 
 The Wald statistic for testing the slope-equality restriction
 $H_0\colon\beta_{\mathrm{Na}} = \beta_{\mathrm{Li}}$ is
@@ -751,21 +936,30 @@ $H_0\colon\beta_{\mathrm{Na}} = \beta_{\mathrm{Li}}$ is
   z = \frac{\hat\beta_{\mathrm{Na}} - \hat\beta_{\mathrm{Li}}}
       {\sqrt{\mathrm{SE}^2(\hat\beta_{\mathrm{Na}})
            + \mathrm{SE}^2(\hat\beta_{\mathrm{Li}})}}
-  \approx \frac{0.008\times10^{-15}}{2\times4.6\times10^{-18}}
-  \approx 0.87.
+  \approx \frac{0.002\times10^{-15}}
+      {\sqrt{2}\times3.3\times10^{-17}}
+  \approx 0.04,
 \]
-The test statistic is well below the critical value of 1.96, so the
-data provide no evidence against universality of $h/e$ across sodium
-and lithium --- a confirmation of a key structural prediction of the
-quantum hypothesis.
+far below the critical value of $1.96$.  The restriction is not rejected.
+
+The test has little power.  With a standard error of $0.8\%$ on each slope it
+would fail to reject slope differences of up to about $2\%$, so it excludes
+only gross violations of universality.  The test is also partly circular.
+Four of the five lithium observations are the sodium observations shifted by a
+constant (Section~\ref{sec:data}), which forces $\hat\beta_{\mathrm{Li}}$
+toward $\hat\beta_{\mathrm{Na}}$.  The near-zero $z$ reflects that
+construction.  Millikan reported parallel $V_0$--$\nu$ curves for the two
+metals at his stated precision.  Nothing in the pooled data contradicts
+universality.  These ten numbers do not establish it.
 
 %======================================================================
 \section{The Contact-EMF Identification Problem}
 \label{sec:contact}
 
 The contact EMF $v_c$ between the photoemitting metal and the collector is a
-nuisance parameter.  The intercept $\alpha = -W/e + v_c$ of \eqref{eq:reg}
-conflates the work function $W/e$ with the apparatus term $v_c$.
+nuisance parameter.  In the raw readings of \eqref{eq:obs_raw} the intercept
+is $-W/e-v_c$, which conflates the work function with an apparatus term that
+was often of comparable size and was not stable across the early experiments.
 
 \paragraph{Pre-Millikan experiments.}  The early experiments did not measure
 or control $v_c$.  If $v_c$ drifted between measurements at different
@@ -773,7 +967,7 @@ frequencies, the apparent stopping potentials would shift inconsistently and
 bias both slope and intercept.  Hughes and Richardson \& Compton
 measured different lines on different days with no guarantee of constant $v_c$,
 which Millikan \citeyearpar{Millikan1916} identified as a contributing cause
-of their $h$ values being 10--45\% below Planck's.
+of their $h$ values being 12--47\% below Planck's.
 
 \paragraph{Millikan's solution.}  Millikan measured all six spectral lines
 in a single continuous session after a freshly shaved surface had stabilised
@@ -783,27 +977,51 @@ $v_c$ is constant across all observations, it enters as a pure intercept shift
 and does not affect $\hat\beta$.  The slope $\hat\beta = h/e$ is then estimated
 without bias regardless of the unknown value of $v_c$.
 
-\paragraph{Separate identification of $W$.}  By independently measuring $v_c =
-2.51$\,V (Kelvin method) and reading the intercept $\hat\alpha = -1.81$\,V
-from the regression (equation~\eqref{eq:alphahat_num}), Millikan recovered
+\paragraph{Separate identification of $W$.}  The independent Kelvin
+measurement $v_c = 2.51$\,V is what makes the intercept interpretable at all.
+Having used it to convert his raw readings into true stopping potentials,
+Millikan could read the work function directly off the fitted intercept
+$\hat\alpha = -1.813$\,V of equation~\eqref{eq:alphahat_num}, since by
+\eqref{eq:alpha_meaning}
 \begin{align*}
-  W_{\mathrm{Na}}/e &= v_c - \hat\alpha = 2.51 - (-1.81) = 4.32\text{ eV},\\
-  W_{\mathrm{Na}} &= 4.32\times1.602\times10^{-19} = 6.92\times10^{-19}\text{ J}.
+  W_{\mathrm{Na}}/e &= -\hat\alpha = 1.81\text{ eV},\\
+  W_{\mathrm{Na}} &= 1.81\times1.602\times10^{-19}
+    = 2.90\times10^{-19}\text{ J}.
 \end{align*}
-However, he noted that the exact work function of a freshly scraped sodium
-surface in $10^{-2}$\,mmHg residual gas was not well characterised.  The
-widely quoted value for sodium is $W_{\mathrm{Na}} = 2.36$\,eV (modern value
-for clean bulk Na).  The larger intercept-implied value reflects the unusual
-surface conditions (freshly shaved Na in partial vacuum with absorbed
-residual gas).
+The corresponding lithium figure is $-\hat\alpha_{\mathrm{Li}} = 2.35$\,eV.
+The dependent variable already contains $v_c$.  Adding it again double-counts
+it.
+
+These estimates are the weakest quantities in the analysis.  The modern value
+for clean bulk sodium is $2.36$\,eV, and the intercept-implied figure is low
+by about $0.5$\,eV.  Estimation error accounts for part of the gap.  The
+intercept extrapolates to $\nu=0$, far outside the observed range
+($5.5$--$11.8\times10^{14}$\,Hz), and its standard error is
+$\sigma\sqrt{1/n + \bar\nu^2/S_{\nu\nu}} \approx 0.08$\,V at
+$\sigma = 10$\,mV.  Surface physics accounts for more.  Millikan's shaved
+surfaces sat in $10^{-2}$\,mmHg of residual gas, and adsorbed gas shifts a
+metal's work function by several tenths of a volt.  $W$ varies by some
+$0.3$\,eV across the crystal faces of a single metal.  Sodium has no one work
+function for the intercept to be compared against.
+
+The two coefficients are identified on different terms.  The slope is a
+universal constant.  Variation within a run identifies it, and any disturbance
+common to all lines leaves it alone.  The intercept is a surface-specific
+quantity.  Extrapolation identifies it, and the conditions Millikan could not
+control contaminate it.  Einstein's equation is better identified in its slope
+than in its intercept.  The slope carries the physics.
 
 %======================================================================
 \section{Nine Two-Point Determinations}
 \label{sec:twopoint}
 
-In addition to the direct regression, Millikan independently estimated the
-slope from nine pairs of spectral lines, always pairing one line with 5461\,\AA\
-(chosen for its high intensity and hence most precise balance point).
+The five- and six-point regressions cannot supply a credible standard error
+from their own residuals (Section~\ref{sec:data}).  Millikan's Table~II can.
+He estimated the slope from nine pairs of spectral lines, always pairing one
+line with 5461\,\AA, chosen for its high intensity and its precise balance
+point.  Each row is a separate session with a freshly shaved surface.  The
+nine values are replications.  Their dispersion measures what varied from run
+to run: surface condition, residual gas, drift in $v_c$, reading error.
 
 \begin{table}[ht]
 \centering
@@ -834,12 +1052,25 @@ Std.~error of mean & & $0.029$ \\
 \end{tabular}
 \end{table}
 
-\noindent The two-point mean $4.131\times10^{-15}$\,V$\cdot$s agrees with
-the five-point OLS estimate $4.129\times10^{-15}$\,V$\cdot$s to better than
-0.1\%.  The variation across sessions (sessions 5 and 8 giving 4.24 vs.\
-sessions 3 and 6 giving 3.98--4.10) reflects day-to-day instrumental noise
-and small variations in surface condition, consistent with Millikan's stated
-per-measurement uncertainty of 1--4\%.
+\noindent The confidence interval is Student-$t$ with eight degrees of
+freedom ($t_{.975,8} = 2.306$); the normal approximation would give
+$[4.073,\,4.189]$.
+
+The two-point mean $4.131\times10^{-15}$\,V$\cdot$s agrees with the five-point
+OLS estimate $4.128\times10^{-15}$\,V$\cdot$s to better than $0.1\%$.  The
+reconstruction of Section~\ref{sec:data} has not distorted the slope.  The
+session-to-session standard deviation of $0.087$, or $2.1\%$ of the mean, is
+the scale of the experiment's variability.  It exceeds the $0.18$\,mV residual
+scatter of the five-point fit by a factor of about a hundred.  The standard
+error of the mean, $0.029\times10^{-15}$ or $0.71\%$, estimates the precision
+of Millikan's determination from repeated measurement alone.
+
+That figure sits on the Cram\'er-Rao bound of Section~\ref{sec:fisher}, which
+the design and $\sigma = 10$\,mV give as $0.79\%$ for the five-line span.
+Replication and the information matrix agree to within a tenth of a percent.
+This agreement warrants the uncertainty attached to $h$ in this paper.  The
+$1$--$4\%$ spread of individual sessions is what $\sigma\approx10$\,mV applied
+to a two-point slope produces.
 
 %======================================================================
 \section{Comparison of Historical Estimates}
@@ -852,40 +1083,59 @@ pre-1920 photoelectric experiments.
 \centering
 \caption{Historical estimates of Planck's constant $h$ from photoelectric
 experiments.  Millikan's attribution of earlier errors is discussed in
-\citet[pp.\ 373--375]{Millikan1916}.  ``Error'' is relative to the modern
-NIST CODATA 2022 value $h = 6.6261\times10^{-27}$\,erg$\cdot$s.}
+\citet[pp.\ 373--375]{Millikan1916}.  For the Millikan rows the slope
+$\hat\beta$ is converted to $h$ twice: once with the charge Millikan himself
+had measured, $e = 1.592\times10^{-19}$\,C, and once with the modern
+$e = 1.602177\times10^{-19}$\,C.  Errors are relative to the defined value
+$h = 6.626070\times10^{-27}$\,erg$\cdot$s.  The two Planck values come from
+secondary sources and should be checked against the originals.}
 \label{tab:comparison}
-\begin{tabular}{p{4.2cm}rcrc}
+\small
+\begin{tabular}{p{3.6cm}rcrrr}
 \toprule
-Authors & Year & Metal(s) & $h$ ($10^{-27}$\,erg$\cdot$s) & Error \\
+Authors & Year & Metal(s) & $h$, Millikan's $e$ & Err.
+  & $h$, mod. $e$ \\
 \midrule
-Hughes        & 1912--13 & various & 3.55--5.85 & $-$12 to $-$46\% \\
-Richardson \& Compton & 1912 & 8 metals & 3.5--5.8 & $-$12 to $-$47\% \\
-Millikan (Na, 5-pt)  & 1916 & Na & 6.573 & $-$0.80\% \\
-Millikan (Na, 9-pt)  & 1916 & Na & 6.578 & $-$0.73\% \\
-Millikan (Li)        & 1916 & Li & 6.584 & $-$0.64\% \\
-Millikan (Na+Li mean)& 1916 & Na+Li & \textbf{6.579} & $\mathbf{-0.72\%}$ \\
-Planck (black body)  & 1913 & --- & 6.415 & $-$3.19\% \\
+Hughes        & 1912--13 & various & 3.55--5.85 & $-$12 to $-$46\% & --- \\
+Richardson \& Compton & 1912 & 8 metals & 3.5--5.8 & $-$12 to $-$47\% & --- \\
+Millikan (Na, 5-pt)  & 1916 & Na & 6.573 & $-$0.81\% & 6.615 \\
+Millikan (Na, 9 two-pt)& 1916 & Na & 6.577 & $-$0.74\% & 6.619 \\
+Millikan (Li, 5-pt)  & 1916 & Li & 6.570 & $-$0.85\% & 6.612 \\
+Millikan (Na+Li pooled)& 1916 & Na+Li & \textbf{6.571} & $\mathbf{-0.83\%}$
+  & \textbf{6.613} \\
+Planck (black body)  & 1901 & --- & 6.55 & $-$1.15\% & --- \\
+Planck (black body)  & 1913 & --- & 6.415 & $-$3.19\% & --- \\
 \midrule
-Modern NIST 2022     & 2022 & --- & 6.6261 & 0 \\
+Modern (defined)     & 2019 & --- & 6.626070 & 0 & 6.626070 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-All pre-Millikan estimates are biased downward by
-10--47\%.  The bias is attributable to stray short-wavelength light
-(raises apparent $V_0$ at long-wavelength lines, flattening the slope),
-restricted frequency range (enlarges SE of slope), and uncontrolled contact
-EMF (adds noise and possible trend bias to the intercept).  Millikan's
-engineering solutions---fresh surfaces, filtered lines, wide frequency range,
-Kelvin $v_c$ measurement---removed all three sources of bias simultaneously.
+Millikan's photoelectric determinations sit $0.7$--$0.9\%$ below the modern
+value.  His oil-drop charge, too small by $0.64\%$, accounts for almost all of
+that gap.  Rerun with the modern $e$, every one of his slopes lands within
+$0.22\%$ of the defined $h$, inside the $0.8\%$ standard error of the design.
+His photoelectric measurement was more accurate than the number he published.
+
+The pre-Millikan estimates are biased downward by $12$--$47\%$.  The
+discrepancy exceeds any plausible sampling error by two orders of magnitude,
+so it is systematic.  Three mechanisms produce it.  Stray short-wavelength
+light raises the apparent $V_0$ at long-wavelength lines and flattens the
+slope.  A restricted frequency range inflates the standard error, as
+Table~\ref{tab:crb_comparison} quantifies, and leaves the estimate at the
+mercy of a single bad line.  Contact EMF that drifts between sessions
+contaminates observations individually instead of shifting a common intercept,
+and biases the slope in an unpredictable direction.  Millikan's engineering
+addressed all three: fresh surfaces, filtered lines, a wide frequency range,
+and continuous Kelvin monitoring of $v_c$.  Only the second is a statistical
+problem.  Estimation theory cannot repair the other two after the fact.
 
 %======================================================================
 \section{Millikan's Reluctance}
 \label{sec:millikan_reluctance}
 
 Millikan's 1916 paper confirmed Einstein's equation~\eqref{eq:einstein} to
-within 0.5\%.  Yet Millikan wrote:
+to better than $1\%$.  Yet Millikan wrote:
 \begin{quote}
   ``Despite then the apparently complete success of the Einstein equation,
   the physical theory of which it was designed to be the symbolic expression
@@ -897,13 +1147,18 @@ implausible because it conflicted with the wave theory of diffraction and
 interference.  He had hoped his experiment would \emph{refute} the equation,
 and was surprised when it confirmed it.
 
-By 1923---after Compton scattering \citep{Compton1923} provided independent
-evidence for the particulate nature of light---Millikan conceded:
+Compton scattering \citep{Compton1923} supplied, in 1923, the independent
+evidence for the particulate character of light that the photoelectric
+regression could not.  Millikan came to describe his own result in these
+terms:
 \begin{quote}
   ``This work resulted, contrary to my own expectation, in the first direct
-  experimental proof \ldots of the complete validity of the Einstein equation.''
-  \quad (Nobel address, 1923; quoted by \citealt{Holton1999})
+  experimental proof \ldots of the complete validity of the Einstein
+  equation.''
 \end{quote}
+\noindent The sentence belongs to Millikan's later retrospective writing, not
+to the Nobel lecture he delivered in May 1924.  \citet{Holton1999} and
+\citet{Pais1982} trace the trajectory of his views.
 
 A macroeconomist likewise can confirm a reduced-form predictive relationship
 without endorsing the structural model that motivated it.
@@ -917,8 +1172,11 @@ without endorsing the structural model that motivated it.
 The vocabulary of modern machine learning---supervised learning, hypothesis
 class, loss function, inductive bias, feature engineering, transfer
 learning---did not exist in 1905.  The operations Einstein performed are the
-ones that statistical learning theory formalises.  This section states the
-correspondence and its limits.
+ones that statistical learning theory formalises.
+\citet{sargent2025sources} argues that this is the rule rather than the
+exception, and that the techniques now gathered under artificial intelligence
+have long histories inside the sciences that used them.  This section states
+the correspondence for the photoelectric case and its limits.
 
 \subsection{Supervised Learning and Labeled Data}
 
@@ -929,9 +1187,9 @@ a function $f:\nu\mapsto V_0$ that generalises to unobserved frequencies.
 
 Lenard (1902) provided the \emph{qualitative} version: the label was observed
 (high $V_0$ at high frequency) but not quantified reliably.  Millikan (1916)
-provided the \emph{quantitative} training set: six labeled pairs
-$(\nu_i, V_{0i})$ for each metal, with measurement precision sufficient to
-estimate the slope $h/e$ to 0.5\%.
+provided the \emph{quantitative} training set: six labelled pairs
+$(\nu_i, V_{0i})$ for sodium and five for lithium, with precision sufficient
+to estimate the slope $h/e$ to under $1\%$.
 
 \subsection{The Hypothesis Class and Inductive Bias}
 \label{sec:hyp_class}
@@ -942,8 +1200,11 @@ Einstein's hypothesis class is:
   \bigm|\alpha\in\mathbb{R},\;\beta>0\bigr\},
 \end{equation}
 together with the \emph{cross-metal constraint} that $\beta$ is the same
-for all metals.  This is an extremely tight class: a one-parameter family
-of parallel lines.
+for all metals.  The class is extremely tight.  For a single metal it has
+two free parameters, $(\alpha,\beta)$.  Across $M$ metals the constraint bites:
+instead of $2M$ free parameters there are $M+1$---one intercept apiece and a
+single shared slope---so the class is a family of parallel lines whose common
+gradient is the one physical unknown.
 
 The restriction to $\mathcal{H}$ was not ad hoc.  It followed deductively
 from the quantum hypothesis $E=h\nu$ and energy conservation for photoemission.
@@ -985,12 +1246,19 @@ global minimum; no stochastic gradient descent is needed.
 
 \paragraph{Generalisation.}
 The fitted line $\hat V_0 = \hat\alpha + \hat\beta\nu$ predicts stopping
-potentials for frequencies \emph{not in the training set}.  The near-zero
-residuals (Section~\ref{sec:regression}) show no overfitting.  In
-learning-theoretic terms, the Vapnik-Chervonenkis (VC) dimension of
-$\mathcal{H}$ (a one-dimensional affine class) equals~2, so five training
-points are more than sufficient for reliable generalisation with high
-probability.
+potentials for frequencies \emph{not in the training set}.  The residuals of
+the five-point fit cannot establish this, since they measure rounding
+(Section~\ref{sec:data}).  Two other results can.  The six-point fit, which
+includes a line withheld from the five-point design, leaves a residual
+standard deviation of $11$\,mV at that line.  The nine two-point sessions of
+Section~\ref{sec:twopoint} each fit two lines and agree with the five-point
+slope to $0.1\%$.  In
+learning-theoretic terms, the relevant capacity measure for a real-valued
+class is the pseudo-dimension (the Vapnik-Chervonenkis dimension is defined
+for classifiers); for affine functions of a single input it equals~2, the
+number of free parameters.  Five training points against a capacity of two
+leave three residual degrees of freedom---enough both to fit and to assess the
+fit, which is precisely what a capacity of five or more would forbid.
 
 \paragraph{Transfer learning.}
 A model trained on sodium data successfully predicts lithium stopping
@@ -999,23 +1267,44 @@ transferred exactly from one metal to another.  Training on sodium provides a
 pre-trained feature extractor, the slope; the lithium task fine-tunes the
 intercept $\alpha_{\mathrm{Li}}$, the metal-specific work-function parameter.  The Wald test of
 Section~\ref{sec:panel} confirms that the zero-shot transfer of the slope
-from Na to Li fails to be rejected by the data ($z = 0.87$).
+from Na to Li is not rejected by the data ($z = 0.04$), subject to the two
+cautions recorded there.
 
 \subsection{Model Selection: Quantum vs.\ Classical Wave Theory}
 
 At the time of Einstein's paper two models were in competition:
 \begin{itemize}
-  \item \textbf{Classical wave model.}  Intensity determines energy transfer;
-    $V_0$ increases with wave amplitude $A \propto \sqrt{I}$.  This predicts
-    zero $\nu$-dependence in~$V_0$, i.e., $R^2 = 0$ on the $(\nu, V_0)$ data.
-  \item \textbf{Quantum model.}  $V_0 = (h/e)\nu - W/e$.  This predicts
-    an exact linear $\nu$-dependence with a specific slope that is universal
-    across metals.
+  \item \textbf{Classical energy-transfer model.}  The energy delivered to an
+    electron is set by the wave amplitude $A \propto \sqrt{I}$ accumulated over
+    the illumination time.  $V_0$ should therefore rise with intensity, rise
+    with exposure, and depend on frequency only weakly and through no
+    prescribed functional form.
+  \item \textbf{Einstein's model.}  $V_0 = (h/e)\nu - W/e$: exactly linear in
+    $\nu$, wholly independent of $I$, with a slope fixed \emph{a priori} at
+    $h/e$ and common to every metal.
 \end{itemize}
-Millikan's data delivers $R^2 \approx 0.99999$ for the quantum model.
-Any modern model selection criterion --- AIC, BIC, cross-validation, Bayes
-factor --- would produce essentially infinite evidence in favour of the
-quantum model over the classical alternative.
+On these data the second model wins by any criterion.  The data bear on three
+claims, and the evidence for them differs.
+
+Lenard settled the irrelevance of intensity before anyone ran a regression,
+and that alone refutes the classical energy-transfer picture.  The regression
+establishes linearity in $\nu$.  The numerical value of the slope is the
+sharpest test.  Planck's blackbody constant fixed $h/e$ in advance, Einstein's
+prediction had no free parameter to adjust, and the measured slope came within
+$0.35\%$ of it (Section~\ref{sec:prediction}).  A model-selection criterion
+that scores in-sample fit credits a correct prediction and a lucky post-hoc
+fit alike, and misses this last point.
+
+The data do not select the light-quantum mechanism.
+Equation~\eqref{eq:einstein} follows from energy conservation together with
+quantised \emph{atomic} energy levels, and a semiclassical model in which the
+radiation field remains a classical wave delivers it too
+(Appendix~\ref{app:lamb_scully}).  The regression identifies the best-fitting
+member of a hypothesis class and rules out a rival class.  It cannot
+discriminate between two physical stories that imply the same class.
+Photon-number statistics discriminated between them sixty years later.  Model
+selection has this limitation generally, and Millikan's execution of it is not
+at fault.
 
 \subsection{What a Naive Machine Learning System Would Miss}
 
@@ -1024,9 +1313,9 @@ pairs, would learn the following.
 
 \begin{enumerate}
   \item A linear regression package would correctly recover
-    $\hat\beta = 4.129\times10^{-15}$\,V$\cdot$s and $R^2 \approx 1$.
+    $\hat\beta = 4.128\times10^{-15}$\,V$\cdot$s.
   \item It would \emph{not} know that $\hat\beta$ identifies a fundamental
-    constant of nature.  The number $4.129\times10^{-15}$ is physically
+    constant of nature.  The number $4.128\times10^{-15}$ is physically
     meaningless without the quantum hypothesis that gives it the
     interpretation $h/e$.
   \item It would \emph{not} impose the cross-metal universality
@@ -1034,12 +1323,16 @@ pairs, would learn the following.
     principles.  The universality is a prediction of the quantum hypothesis;
     from a purely data-driven perspective, it is just a coincidence to be
     discovered, not a constraint to be imposed.
-  \item Modern symbolic regression systems such as AI Feynman
-    \citep{Udrescu2020} can, in principle, rediscover the linear form from
-    data.  But they require knowledge of units and physical constants to
-    identify $\hat\beta$ with $h/e$ rather than reporting it as an
-    unexplained numerical coefficient.
+  \item It would have no way to decompose the intercept into the physical
+    work function $-W/e$ and the apparatus nuisance $v_c$, since the two are
+    not separately identified without the external Kelvin measurement
+    (Section~\ref{sec:contact}).  Identification failures of this kind are
+    invisible to a fitting procedure: the regression runs, reports an
+    intercept, and says nothing about what the intercept means.
 \end{enumerate}
+Section~\ref{sec:dnn} pursues the comparison to a system with far greater
+capacity than a linear regression package, and reaches the same conclusion by
+a different route.
 
 Einstein supplied the theoretical framework that gives the regression
 coefficients their physical meaning.  Specifying the hypothesis class required
@@ -1087,8 +1380,8 @@ from data faces a far larger sample-complexity problem.
 
 Einstein's model and a deep neural network (DNN) represent opposite
 extremes of the bias-variance spectrum for the photoelectric regression.
-Einstein's hypothesis class is equation~\eqref{eq:hyp_class}: a
-one-parameter family of parallel lines with VC dimension equal to~2.
+Einstein's hypothesis class is equation~\eqref{eq:hyp_class}: two free
+parameters per metal, one shared slope across metals, pseudo-dimension~2.
 The Gauss--Markov theorem and the Cram\'er--Rao bound together guarantee
 that OLS achieves minimum variance among all unbiased estimators;
 five training points are more than sufficient.
@@ -1103,23 +1396,35 @@ hidden layers with 16 ReLU neurons each---has approximately
   p = (1\cdot16+16)+(16\cdot16+16)+(16\cdot16+16)+(16\cdot1+1)
     = 593
 \]
-free parameters.  The VC dimension of this network is of order $p\log p
-\approx 5{,}700$ \citep{Vapnik1998}.  Reliable generalisation to unseen
-frequencies then requires $n\gtrsim 5{,}700$ labeled training examples for
-1\% accuracy with high probability.  The
-five points Millikan assembled in 1916 fall short by three orders of
-magnitude.
+free parameters.  For ReLU networks the pseudo-dimension grows like
+$p\log_2 p$, here $593\log_2 593 \approx 5{,}500$ \citep{Vapnik1998}.
+
+The literature offers no single conversion from a capacity figure to a
+required sample size.  The uniform-convergence bound $n = O(d/\epsilon^2)$,
+with $d$ the pseudo-dimension, gives $n \sim 10^7$ for $\epsilon = 1\%$.  The
+bound is vacuous at that size.  The practitioner's rule $n \gtrsim 10p$ gives
+$n \gtrsim 6{,}000$.  I use the rule throughout as the ``sufficient $n$'' for
+the DNN.  The rule is a heuristic.  The formal bound is four orders of
+magnitude worse.
+
+Capacity bounds of this kind are loose.  Overparameterised networks generalise
+in regimes where uniform-convergence theory predicts they cannot
+\citep{Belkin2019}, and the argument below does not rest on a claim that a DNN
+provably fails.  The difficulty at $n=5$ concerns identifiability and not
+generalisation error.  Section~\ref{sec:epochIII} makes it precise.  The
+comparison with Einstein's two-parameter model turns on degrees of freedom,
+not on a VC bound.
 
 \subsection{Epoch I---Lenard's Qualitative Findings (1902)}
 
 Lenard established two qualitative facts: stopping potential rises with
-frequency and is independent of intensity.  There are no numerical
-$(\nu_i,\,V_{0i})$ pairs.  A DNN requires labeled numerical examples;
-with none, it cannot begin training.  Einstein required zero labeled
+frequency and is independent of intensity.  Lenard recorded no
+$(\nu_i,\,V_{0i})$ pairs.  A DNN requires
+labelled numerical examples;
+with none, it cannot begin training.  Einstein required zero labelled
 examples: the quantum hypothesis plus energy conservation yielded
-equation~\eqref{eq:einstein} as a deduction.  The asymmetry is stark---
-Einstein's ``model fitting'' was a one-paragraph derivation;
-the DNN's fitting cannot start.
+equation~\eqref{eq:einstein} as a deduction.  Einstein's ``model fitting'' was
+a one-paragraph derivation.  The network's fitting cannot begin.
 
 \subsection{Epoch II---Hughes and Richardson \& Compton (1907--1914)}
 
@@ -1138,8 +1443,9 @@ without a held-out validation set; with $n=30$ this is statistically
 isolated.
 
 \paragraph{Restricted frequency range.}
-A linear, a quadratic, and a square-root form fit equally well over a 60\,nm
-UV band ($\Delta\nu \approx 0.7\times10^{14}$\,Hz).  The DNN has no mechanism
+A linear, a quadratic, and a square-root form fit almost equally well over a
+$60$--$70$\,nm UV band ($\Delta\nu \approx 1.5\times10^{14}$\,Hz).  The DNN has
+no mechanism
 to infer which of them is the global functional form.
 
 \paragraph{Systematic label contamination.}
@@ -1151,9 +1457,10 @@ linear physical trend from the systematic noise.  The learned function
 absorbs both, producing a biased and uninterpretable output.
 
 \subsection{Epoch III---Millikan's Data (1916)}
+\label{sec:epochIII}
 
-Millikan's five-point sodium dataset is the cleanest photoelectric
-dataset of the era.
+Millikan's sodium experiment was the cleanest of the era.  It yielded five
+usable $(\nu_i, V_{0i})$ pairs for the primary determination.
 
 \paragraph{The interpolation regime.}
 With $n=5$ and any DNN with $p>5$ (which includes every
@@ -1190,18 +1497,20 @@ the model.
 By the mid-twentieth century, photoelectric measurements spanned
 decades of metals, surface preparations, and photon energies.
 Pooling even a modest subset---say $n=5{,}000$ clean observations
-over two octaves of frequency for a single metal---places a DNN
-firmly in the classical regime ($n\gg p$).
+over two octaves of frequency for a single metal---brings a DNN into the
+classical regime ($n\gg p$), if only barely on the reckoning above.
 
 With smooth activations and appropriate regularisation, the
 DNN would converge, as $n\to\infty$, to the
 minimum-population-risk function in its hypothesis class.  Because
 the true function is exactly linear, the minimum-risk function in
 any sufficiently rich class \emph{is} the linear function.  The
-DNN would eventually recover the line.  What it still could not do:
+DNN would eventually recover the line.  It would still not identify the
+constant, impose the cross-metal restriction, decompose the intercept, or
+match Einstein's sample size:
 \begin{itemize}
   \item Identify the learned slope $\hat{w} \approx
-    4.129\times10^{-15}$\,V$\cdot$s as the ratio $h/e$ of two
+    4.128\times10^{-15}$\,V$\cdot$s as the ratio $h/e$ of two
     independently measured constants.  The slope appears as a
     numerical weight, not as a ratio of fundamental quantities.
   \item Impose the cross-metal constraint $\beta_{\mathrm{Na}} =
@@ -1220,9 +1529,8 @@ DNN would eventually recover the line.  What it still could not do:
 Modern symbolic regression systems such as AI Feynman \citep{Udrescu2020}
 can, in principle, rediscover the linear form and even match $\hat{w}$ to
 $h/e$ if given units and physical constants as hardcoded inputs.  But
-that hardcoding is itself a form of prior physical knowledge---the quantum
-hypothesis in disguise---not something extracted from the $(\nu,V_0)$
-data.
+that hardcoding supplies prior physical knowledge.  The $(\nu,V_0)$ data do
+not contain it.
 
 \subsection{Summary: Sample Complexity and the Value of Theory}
 
@@ -1231,10 +1539,12 @@ Table~\ref{tab:sample_complexity} quantifies the contrast.
 \begin{table}[ht]
 \centering
 \caption{Sample-complexity comparison between Einstein's two-parameter
-linear model (VC dimension $= 2$, derived from the quantum hypothesis) and
+linear model (pseudo-dimension $=2$, derived from the quantum hypothesis) and
 a three-layer DNN with 16 neurons per layer ($p=593$ parameters,
-VC dim $\approx 5{,}700$).  The ``sufficient $n$'' for a 1\% generalisation
-error at 95\% confidence is $O(\text{VC dim}/\epsilon^2)$.}
+pseudo-dimension $\approx 5{,}500$).  ``Sufficient $n$'' uses the
+practitioner's rule $n\gtrsim10p \approx 6{,}000$; the formal
+uniform-convergence requirement $O(d/\epsilon^2)$ is some four orders of
+magnitude larger and is not used here.}
 \label{tab:sample_complexity}
 \begin{tabular}{p{2.8cm}rp{2.4cm}p{2.4cm}p{4.0cm}}
 \toprule
@@ -1243,11 +1553,11 @@ Epoch & $n$ available & Einstein model & DNN (VC$\approx$5700) & DNN outcome \\
 Lenard 1902   & $\approx 0$  & Sufficient$^\dagger$ & Insufficient
   & Cannot train (no labels) \\
 Hughes 1912   & $\sim 30$    & Sufficient
-  & Insufficient ($\times$190) & Memorises; no generalisation \\
+  & Insufficient ($\times$200) & Memorises; no generalisation \\
 Millikan 1916 & 5            & Sufficient
-  & Catastrophically insufficient & Interpolates; no inference \\
+  & Insufficient ($\times$1200) & Interpolates; no inference \\
 Modern era    & $\sim 5000$  & Sufficient
-  & Sufficient & Recovers linear shape;
+  & Short by $\times$1.2 & Recovers linear shape;
   cannot identify $h/e$ \\
 \bottomrule
 \multicolumn{5}{p{14cm}}{$^\dagger$ The functional form is derived from
@@ -1264,7 +1574,7 @@ five to thirty training examples.
 Einstein's proposal $E=h\nu$ reduced the hypothesis space from the
 infinite-dimensional function class of a DNN to a two-dimensional manifold of
 parallel lines, and with it the required number of training examples by three
-orders of magnitude.  He did so before a single labeled example was
+orders of magnitude.  He did so before a single labelled example was
 available.
 
 %======================================================================
@@ -1272,13 +1582,13 @@ available.
 \label{sec:conclusions}
 
 Einstein's photoelectric equation is a single-regressor linear model with
-one slope ($h/e$) and one intercept ($-W/e + v_c$).  The central estimation
-challenge is not the regression itself---which is trivial given clean data---but
-obtaining clean data: fresh metal surfaces free of oxide (eliminates
-work-function noise), high vacuum (eliminates atmospheric contamination),
-spectrally pure light (eliminates bias from stray UV), a wide frequency range
-(reduces SE of slope), and control of the nuisance parameter $v_c$ (enables
-identification of both slope and intercept).
+one slope ($h/e$) and one intercept ($-W/e$, once the contact EMF has been
+measured and removed).  The regression is trivial
+given clean data.  Obtaining clean data was the central challenge.  Fresh
+metal surfaces free of oxide eliminate work-function noise.  High vacuum
+eliminates atmospheric contamination.  Spectrally pure light eliminates bias
+from stray UV.  A wide frequency range reduces the standard error of the
+slope.  Control of $v_c$ identifies the intercept.
 
 Millikan's decade-long experimental program was a campaign to
 raise data quality until the OLS standard errors were small enough to
@@ -1287,12 +1597,33 @@ from the alternatives implied by earlier, discrepant theories.
 
 The final five-point sodium regression gives
 \begin{align*}
-  \hat\beta &= 4.129\times10^{-15}\text{ V$\cdot$s}
-             \quad (h = 6.61\times10^{-34}\text{ J$\cdot$s}, \text{ 0.5\% above modern}), \\
+  \hat\beta &= 4.128\times10^{-15}\text{ V$\cdot$s} \;\pm\; 0.8\%
+    \quad (h = 6.62\times10^{-34}\text{ J$\cdot$s at the modern }e,
+    \text{ }0.17\%\text{ low}), \\
   \hat\alpha &= -1.813\text{ V}
-             \quad (W_{\mathrm{Na}}/e \approx 4.3\text{ eV given } v_c=2.51\text{ V}), \\
-  R^2 &\approx 0.99999.
+             \quad (W_{\mathrm{Na}}/e = 1.81\text{ eV}).
 \end{align*}
+The quoted standard error is the Cram\'er-Rao bound at Millikan's
+instrumental precision of $10$\,mV, not the residual-based figure, which the
+reconstruction of the tabulated potentials renders meaningless
+(Section~\ref{sec:data}).  It agrees with the $0.7\%$ standard error of his
+nine independent two-point sessions, and with his own claim of ``not more
+than $0.5\%$'' for the full six-line design.
+
+Five observations sufficed to measure a fundamental constant to under one
+percent.  The physics had already fixed the functional form, the number of
+free parameters, and the units of the slope.  A learner obliged to discover
+those from data would need thousands of observations and would still not know
+what it had found.  Theory compresses the sample size that data must supply.
+
+Millikan's fit selected Einstein's functional form over its classical rival.
+It could not select the light-quantum mechanism.  The same equation follows
+from a semiclassical model in which the field is never quantised
+(Appendix~\ref{app:lamb_scully}).  Photon-antibunching experiments settled
+that question sixty-one years later (Appendix~\ref{app:antibunching}).  No one
+would have performed them without the quantum theory of optical coherence to
+say which observable mattered.  Theory sets the hypothesis class.  Theory then
+tells the experimenter which measurement discriminates within it.
 
 %======================================================================
 \appendix
@@ -1302,22 +1633,30 @@ The final five-point sodium regression gives
 
 \subsection{The Equation Remains Exact}
 
-Einstein's photoelectric equation~\eqref{eq:einstein} is not an
-approximation to a deeper expression---it is an exact consequence of
-quantum electrodynamics (QED).  In QED the photoelectric effect is
-described as the absorption of a single photon by an electron near
-the Fermi level of a metal; energy conservation yields
-equation~\eqref{eq:einstein} directly.  The work function $W$ is the
-electrochemical potential required to remove an electron from the Fermi
-level to the vacuum level; modern density-functional theory computes $W$
-to within a few percent for clean surfaces.  Millikan's regression
-therefore tests an exact result of QED, not an empirical approximation.
+Einstein's photoelectric equation~\eqref{eq:einstein} has not been
+superseded.  The equation states energy conservation for the fastest
+photoelectron, the electron that starts at the Fermi level and reaches the
+detector without inelastic loss.  It survives intact in the
+quantum-electrodynamical treatment, where single-photon photoemission is a
+first-order process whose energy balance is exactly \eqref{eq:einstein}.
+
+The word applies to the energy balance and not to the measured spectrum.  A
+real metal broadens the photoemission edge over $\sim k_BT$, so the stopping
+potential locates an edge and not a sharp cutoff.  $W$ is a property of the
+crystal face and of the adsorbate layer, not of the element.  Final-state
+relaxation shifts core-level energies by amounts that matter at spectroscopic
+precision.  The
+work function $W$ is the energy required to move an electron from the Fermi
+level to the vacuum level, and density-functional theory computes it to a few
+tenths of an eV for clean surfaces.  Millikan's regression tests the energy
+balance, which is exact; the residual scatter he saw came from the surface
+physics, which is not.
 
 The equation is exploited continuously in surface science.  Ultraviolet
 Photoelectron Spectroscopy (UPS) and Kelvin probe instruments apply
 equation~\eqref{eq:einstein} to measure work functions
 of semiconductor films, organic photovoltaic layers, and heterogeneous
-catalysts with sub-meV resolution.
+catalysts, routinely resolving differences of a few meV.
 
 \subsection{X-ray Photoelectron Spectroscopy}
 \label{app:xps}
@@ -1359,9 +1698,13 @@ energies exceeding the single-photon threshold by integer multiples of
 $h\nu$---was first observed by \citet{Agostini1979}.  The resulting
 photoelectron spectrum displays a comb of peaks separated by $h\nu$,
 each satisfying equation~\eqref{eq:multiphoton} for the corresponding
-$n$.  ATI extends hypothesis class~\eqref{eq:hyp_class} to allow non-unit
-photon multiplicity; the slope remains
-$h/e$ and the universal structure is preserved across metals.
+$n$.  ATI extends hypothesis class~\eqref{eq:hyp_class} to allow non-unit photon
+multiplicity.  The $n$-photon branch has slope $nh/e$, not $h/e$: the class
+becomes a family of lines whose gradients are integer multiples of a single
+universal constant, with the metal still entering only through the common
+intercept.  In regression terms this is a mixture model over a discrete latent
+index $n$.  The gradients are quantised rather than free, and a single
+parameter governs every branch.
 
 \subsection{Does the Photoelectric Effect Prove the Quantisation of Light?}
 \label{app:lamb_scully}
@@ -1377,7 +1720,7 @@ quantised \emph{atomic} level structure alone; it does not require the
 radiation field itself to be quantised.
 
 Millikan's regression confirms the functional form $V_0 \propto \nu$ and
-measures $h/e$ to 0.5\%.  It does not distinguish the quantised-field
+measures $h/e$ to better than $1\%$.  It does not distinguish the quantised-field
 hypothesis from semiclassical alternatives.  The slope $h/e$ gives Planck's
 constant whether or not the field is composed of quanta.
 
@@ -1405,16 +1748,24 @@ The decisive evidence for field quantisation is photon
 single quantum emitter are \emph{less} likely to arrive together than
 Poisson statistics predict.  \citet{Kimble1977} first observed
 sub-Poissonian photon-number statistics in the resonance fluorescence of
-individual sodium atoms.  Antibunching is impossible in any classical or
-semiclassical model of the electromagnetic field: a classical field,
-however modulated or noisy, always produces at minimum Poissonian
-coincidences.  The antibunching experiment rules out the semiclassical
-hypothesis of \citeauthor{Lamb1969} and establishes that the radiation field
-is quantised.
+individual sodium atoms.  Antibunching is impossible for any classical stochastic field: such a field,
+however modulated or noisy, yields a photocount distribution at least as broad
+as Poisson, so sub-Poissonian statistics have no classical representation.
+The observation therefore refutes the \emph{neoclassical} radiation theories
+that sought to dispense with field quantisation altogether, and establishes
+that the radiation field is quantised.
+
+The result does not refute \citeauthor{Lamb1969}.  He argued that the
+photoelectric effect by itself does not compel field quantisation, and
+antibunching leaves that claim standing.  The measurement of
+\citet{Kimble1977} required correction for fluctuations in the number of atoms
+in the observation volume, which by themselves produce super-Poissonian
+counts.  Cleaner demonstrations with single trapped ions followed in the
+1980s.
 
 Einstein's 1905 paper introduced
 the photon as a \emph{heuristic}---his own word in the title---and
-Millikan confirmed its equation to 0.5\% in 1916.  Definitive experimental
+Millikan confirmed its equation to better than $1\%$ in 1916.  Definitive experimental
 evidence that the radiation field is itself quantised arrived only in 1977,
 by a route---photon-number statistics in resonance fluorescence---that
 Einstein's equation neither anticipated nor directly implied.  The
@@ -1452,8 +1803,8 @@ its prediction of sub-Poissonian statistics, there was no reason to
 measure photon-number correlations at all.  Theory specifies the hypothesis
 class and, from it, the decisive test.  Each theoretical refinement between
 Millikan (1916) and \citeauthor{Kimble1977} (1977) generated a new and more
-discriminating experiment, a chain of hypothetico-deductive loops
-(Table~\ref{tab:loop}) whose links are forged by theory, not by data alone.
+discriminating experiment.  Theory forged the links in that chain of
+hypothetico-deductive loops (Table~\ref{tab:loop}).
 
 \bigskip
 \bibliographystyle{plainnat}
